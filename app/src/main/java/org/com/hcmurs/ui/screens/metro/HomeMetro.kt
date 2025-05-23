@@ -1,15 +1,24 @@
 package org.com.hcmurs.ui.screens.metro
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.constant.ScreenTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,10 +44,16 @@ fun HomePage(navController: NavHostController) {
 //                Icon(Icons.Default.Add, contentDescription = "Add")
 //            }
 //        }
+        modifier = Modifier.background(
+            Color.Cyan
+        )
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
+                .background(
+                    Color.Cyan
+                )
                 .padding(16.dp)
         ) {
             WelcomeSection()
@@ -53,10 +69,51 @@ fun HomePage(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar() {
+    var selectedLanguage by remember { mutableStateOf("Vietnamese") }
+
     TopAppBar(
-        title = { Text("Trang chủ") }
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Trang chủ")
+                LanguageDropdown(selectedLanguage, onLanguageChange = { selectedLanguage = it })
+            }
+        }
     )
 }
+
+@Composable
+fun LanguageDropdown(selected: String, onLanguageChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
+        Text(
+            text = selected,
+            modifier = Modifier
+                .clickable { expanded = true }
+                .padding(8.dp)
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            listOf("Vietnamese", "English").forEach { lang ->
+                DropdownMenuItem(
+                    text = { Text(lang) },
+                    onClick = {
+                        onLanguageChange(lang)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
 
 @Composable
 fun WelcomeSection() {
@@ -67,26 +124,43 @@ fun WelcomeSection() {
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuickActionsSection() {
-    var list = listOf("a", "b", "c", "d", "e", "f", "g", "h")
+    val list = ScreenTitle.values().toList()
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(4), // 4 cột
-        contentPadding = PaddingValues(10.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-    ) {
-        items(8) { index ->  // 4 cột * 2 hàng = 8 phần tử
-            val item = list[index]
-            Box(
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()
-                    .background(color = Color.Green),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = item)
+    val pages = list.chunked(8) // paginate every 8 items
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { pages.size }
+    )
+
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier
+            .border(2.dp, Color.Black)
+            .fillMaxWidth()
+            .height(250.dp), // enough for 2 rows
+    ) { page ->
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(4),
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(pages[page].size) { index ->
+                val item = pages[page][index]
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .background(Color.Green),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = item.title)
+                }
             }
         }
     }

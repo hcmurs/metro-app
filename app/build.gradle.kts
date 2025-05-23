@@ -67,6 +67,8 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 
+    implementation(libs.accompanist.pager)
+
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.animation)//androidx.compose.animation:animation:1.6.7
 
