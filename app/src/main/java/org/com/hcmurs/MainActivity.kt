@@ -1,45 +1,39 @@
 package org.com.hcmurs
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import org.com.hcmurs.ui.theme.hcmursTheme
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import dagger.hilt.android.AndroidEntryPoint
+import org.com.hcmurs.ui.theme.hcmursTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private var authResultCallback: ((Intent?) -> Unit)? = null
+
+    private val authResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // Pass the result to the callback set by LoginViewModel
+        authResultCallback?.invoke(result.data)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             hcmursTheme {
-                Navigation()
+                Navigation(
+                    authResultLauncher = authResultLauncher,
+                    setAuthResultCallback = { callback ->
+                        authResultCallback = callback
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    hcmursTheme {
-        Greeting("Metro HCM", Modifier.padding(16.dp))
     }
 }

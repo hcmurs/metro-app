@@ -1,12 +1,19 @@
 package org.com.hcmurs.ui.screens.login
 
+import android.content.Intent
+import android.os.Build
+import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,53 +28,104 @@ import org.com.hcmurs.MainViewModel
 import org.com.hcmurs.Screen
 import org.com.hcmurs.common.enum.LoadStatus
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
     viewModel: LoginViewModel,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    authResultLauncher: ActivityResultLauncher<Intent>? = null,
+    setAuthResultCallback: ((Intent?) -> Unit) -> Unit = {}
 ) {
     val state = viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
+    // Set the callback for auth results
+    LaunchedEffect(Unit) {
+        setAuthResultCallback { intent ->
+            viewModel.handleAuthResult(intent)
+        }
+    }
+
+    // Handle authentication success
+    LaunchedEffect(state.value.isAuthenticated) {
+        if (state.value.isAuthenticated) {
+            mainViewModel.setAuthenticated(true)
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
+        }
+    }
+
+    // Handle errors
+    LaunchedEffect(state.value.status) {
+        if (state.value.status is LoadStatus.Error) {
+            mainViewModel.setError(state.value.status.description)
+            viewModel.resetStatus()
+        }
+    }
+
+    LoginScreenContent(
+        status = state.value.status,
+        onLoginClick = {
+            viewModel.startLogin(context, authResultLauncher)
+        }
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    status: LoadStatus,
+    onLoginClick: () -> Unit = {}
+) {
     Column(
-        Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (state.value.status is LoadStatus.Loading) {
-            CircularProgressIndicator()
-        } else if (state.value.status is LoadStatus.Success) {
-            LaunchedEffect(Unit) {
-                navController.navigate(Screen.Home.route)
+        Text(
+            text = "Welcome to Note Manager",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        when (status) {
+            is LoadStatus.Loading -> {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Authenticating...")
             }
-        } else {
-            if (state.value.status is LoadStatus.Error) {
-                mainViewModel.setError(state.value.status.description)
-                viewModel.reset()
-            }
-            OutlinedTextField(value = state.value.username, onValueChange = {
-                viewModel.updateUsername(it)
-            }, modifier = Modifier.padding(16.dp),
-                label = { Text("Username") }
-            )
-            OutlinedTextField(value = state.value.password, onValueChange = {
-                viewModel.updatePassword(it)
-            }, modifier = Modifier.padding(16.dp),
-                label = { Text("Password") }
-            )
-            ElevatedButton(onClick = { viewModel.login() }, modifier = Modifier.padding(16.dp)) {
-                Text("Login")
+            else -> {
+                Button(
+                    onClick = onLoginClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text("Login with Keycloak")
+                }
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        navController = NavHostController(LocalContext.current),
-        viewModel = LoginViewModel(null, null),
-        mainViewModel = MainViewModel()
+    LoginScreenContent(
+        status = LoadStatus.Init(),
+        onLoginClick = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenLoadingPreview() {
+    LoginScreenContent(
+        status = LoadStatus.Loading(),
+        onLoginClick = {}
     )
 }
