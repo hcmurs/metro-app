@@ -2,19 +2,18 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
-    //id ("kotlin-kapt")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
     namespace = "org.com.hcmurs"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "org.com.hcmurs"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -53,40 +52,45 @@ android {
 }
 
 dependencies {
-
+    // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
+    // Compose BOM and UI dependencies
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.animation)
+    implementation(libs.compose.constraint.layout)
 
-
+    // Hilt for dependency injection
     implementation(libs.hilt.android)
-    //kapt(libs.hilt.android.compiler)
     ksp(libs.hilt.android.compiler)
-    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
-    // https://mvnrepository.com/artifact/net.openid/appauth
+    // Room database
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+
+    // Authentication and browser
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
 
+    // UI utilities
     implementation(libs.accompanist.pager)
 
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.animation)//androidx.compose.animation:animation:1.6.7
-
+    // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debug dependencies
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
-
-//kapt {
-//    correctErrorTypes = true
-//}
