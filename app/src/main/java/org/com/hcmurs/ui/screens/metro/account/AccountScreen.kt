@@ -1,9 +1,11 @@
 package org.com.hcmurs.ui.screens.metro.account
+import androidx.compose.foundation.Image
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Divider as HorizontalDivider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +31,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,11 +43,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.foundation.R
 
 data class MenuItem(
     val icon: ImageVector,
@@ -50,7 +56,14 @@ data class MenuItem(
     val hasArrow: Boolean = true,
     val isDestructive: Boolean = false
 )
-
+@Composable
+fun HurcLogo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = org.com.hcmurs.R.drawable.hurc),
+        contentDescription = "HURC Logo",
+        modifier = modifier
+    )
+}
 @Composable
 fun MenuItemRow(
     item: MenuItem,
@@ -114,6 +127,40 @@ fun MenuItemRow(
 }
 
 @Composable
+fun LogoutButton(
+    onClick: () -> Unit
+) {
+    Button (
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFE53935), // Red color for warning/destructive action
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.ExitToApp,
+                contentDescription = "Logout",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Đăng xuất",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+@Composable
 fun AccountScreen(
     onBackClick: () -> Unit = {},
     onMenuItemClick: (MenuItem) -> Unit = {}
@@ -121,7 +168,7 @@ fun AccountScreen(
     // Placeholder for the Account screen content
     // This will be implemented later
     // You can use MenuItem data class to create menu items for the account screen
-    val menuItem= listOf(
+    val menuItem = listOf(
         MenuItem(
             icon = Icons.Default.Person,
             title = "Họ tên: Anh Tú",
@@ -151,7 +198,7 @@ fun AccountScreen(
     )
 
     Box(
-        modifier= Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -166,7 +213,7 @@ fun AccountScreen(
         // Here you can use the menuItem list to create your account screen UI
         // For example, you can use LazyColumn to display the menu items
         // and handle onClick events for each item
-        Column( modifier = Modifier.fillMaxSize()){
+        Column(modifier = Modifier.fillMaxSize()) {
             // status bar spacer
             Spacer(modifier = Modifier.height(24.dp))
             //header
@@ -175,8 +222,8 @@ fun AccountScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-            ){
-                IconButton (onClick=onBackClick)
+            ) {
+                IconButton(onClick = onBackClick)
                 {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -187,8 +234,8 @@ fun AccountScreen(
                 Text(
                     text = "Thông tin tài khoản",
                     color = Color.White,
-                    fontSize=18.sp,
-                    fontWeight= FontWeight.Medium
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.width(48.dp))
 
@@ -232,66 +279,29 @@ fun AccountScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Points badge
-//                Surface  (
-//                    modifier = Modifier.clip(RoundedCornerShape(20.dp)),
-//                    color = Color.White.copy(alpha = 0.2f)
-//                ){
-//                    Row(
-//                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-//                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//
-//                    ){
-//                        Box(
-//                            modifier = Modifier
-//                                .size(24.dp)
-//                                .background(Color(0xFF4CAF50), CircleShape),
-//                            contentAlignment = androidx.compose.ui.Alignment.Center
-//                        ) {
-//                            Icon(
-//                                imageVector = Icons.Default.Create,
-//                                contentDescription = "Points",
-//                                tint = Color.White,
-//                                modifier = Modifier.size(16.dp)
-//                            )
-//                        }
-//
-//                    }
-//
-//
-                // HURC logo
+                // HURC logo đúng chuẩn
                 Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(bottom = 24.dp),
-                    contentAlignment = androidx.compose.ui.Alignment.Center
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = (28).dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Surface(
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(56.dp),
                         shape = CircleShape,
                         color = Color.White,
-                        shadowElevation = 4.dp
-                    )
-                    {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "HURC",
-                                color = Color(0xFF2196F3),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-
-                            )
+                        shadowElevation = 6.dp
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            HurcLogo(modifier = Modifier.size(40.dp))
                         }
                     }
-
                 }
             }
-
                 // Content Card
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     color = Color.White,
                     shadowElevation = 8.dp
                 ) {
@@ -311,7 +321,7 @@ fun AccountScreen(
 
                         // Divider
                         HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 16.dp),
+                            modifier = Modifier.padding(vertical = 8.dp),
                             color = Color(0xFFE0E0E0)
                         )
 
@@ -321,89 +331,27 @@ fun AccountScreen(
                                 icon = Icons.Default.ExitToApp,
                                 title = "Đăng xuất",
                                 hasArrow = false,
-                                isDestructive = true
+                                isDestructive = false
                             ),
                             onClick = { /* Handle logout */ }
                         )
 
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(50.dp))
+
                     }
+
                 }
 
 
-
-            }
-            
-        }
-    @Composable
-    fun MenuItemRow(
-        item: MenuItem,
-        onClick: () -> Unit
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .clickable() { onClick() }
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Icon Background
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = CircleShape,
-                color = if (item.isDestructive)
-                    Color(0xFFFFEBEE)
-                else
-                    Color(0xFFE3F2FD)
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = item.icon,
-                        contentDescription = null,
-                        tint = if (item.isDestructive)
-                            Color(0xFFE53935)
-                        else
-                            Color(0xFF2196F3),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Title
-            Text(
-                text = item.title,
-                color = if (item.isDestructive)
-                    Color(0xFFE53935)
-                else
-                    Color(0xFF424242),
-                fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
-            )
-
-            // Arrow
-            if (item.hasArrow) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Navigate",
-                    tint = Color(0xFF9E9E9E),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
         }
     }
-
 }
+
 @Preview(showBackground = true)
 @Composable
 fun AccountInfoScreenPreview() {
     MaterialTheme {
         AccountScreen()
     }
-
 }
 
