@@ -31,7 +31,7 @@ import org.com.hcmurs.constant.ScreenTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(navController: NavHostController) {
+fun HomeMetroScreen(navController: NavHostController) {
 
 
     Scaffold(
@@ -236,7 +236,7 @@ fun NewsTile(title: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun HomePagePreview() {
+fun HomeMetroScreenPreview() {
     val navController = rememberNavController()
-    HomePage(navController = navController)
+    HomeMetroScreen(navController = navController)
 }

@@ -51,7 +51,7 @@ fun LoginScreen(
     LaunchedEffect(state.value.isAuthenticated) {
         if (state.value.isAuthenticated) {
             mainViewModel.setAuthenticated(true)
-            navController.navigate(Screen.Home.route) {
+            navController.navigate(Screen.HomeMetro.route) {
                 popUpTo(Screen.Login.route) { inclusive = true }
             }
         }
@@ -78,6 +78,8 @@ private fun LoginScreenContent(
     status: LoadStatus,
     onLoginClick: () -> Unit = {}
 ) {
+    val greetingText = "Welcome to HCMURS - Ho Chi Minh Urban Railway System"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +88,7 @@ private fun LoginScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Welcome to Note Manager",
+            text = greetingText,
             style = MaterialTheme.typography.headlineMedium
         )
 

@@ -19,6 +19,7 @@ import org.com.hcmurs.ui.screens.detail.DetailScreen
 import org.com.hcmurs.ui.screens.home.HomeScreen
 import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
+import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -58,6 +59,10 @@ fun Navigation(
 
         composable(Screen.Home.route) {
             HomeScreen(navController, viewModel = hiltViewModel<HomeViewModel>(), mainViewModel)
+        }
+
+        composable(Screen.HomeMetro.route) {
+            HomeMetroScreen(navController)
         }
 
         composable(
