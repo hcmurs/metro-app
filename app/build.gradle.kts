@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "org.com.hcmurs"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "org.com.hcmurs"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -74,6 +74,11 @@ dependencies {
     implementation(libs.androidx.browser)
 
     implementation(libs.accompanist.pager)
+
+    implementation(libs.androidx.core.splashscreen)
+
+//    Load image from network
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.animation)//androidx.compose.animation:animation:1.6.7
