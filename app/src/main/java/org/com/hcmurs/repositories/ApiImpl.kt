@@ -2,6 +2,7 @@ package org.com.hcmurs.repositories
 
 import org.com.hcmurs.model.NoteItem
 import kotlinx.coroutines.delay
+import org.com.hcmurs.common.exception.AppException
 import javax.inject.Inject
 
 class ApiImpl @Inject constructor() : Api {
@@ -16,7 +17,7 @@ class ApiImpl @Inject constructor() : Api {
     override suspend fun login(username: String, password: String): Boolean {
         delay(1000)
         if (username != "1" || password != "1") {
-            throw Exception("Wrong credentials")
+            throw AppException.InvalidCredentialsException("Wrong credentials")
         }
         return true
     }

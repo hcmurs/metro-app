@@ -10,10 +10,10 @@ class StoreImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : Store {
     override fun getValue(key: String): String {
-        TODO("Not yet implemented")
+        return sharedPreferences.getString(key, "") ?: ""
     }
 
     override fun setValue(key: String, value: String) {
-        TODO("Not yet implemented")
+        sharedPreferences.edit().putString(key, value).apply()
     }
 }
