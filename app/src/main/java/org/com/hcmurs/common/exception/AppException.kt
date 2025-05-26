@@ -1,9 +1,7 @@
 package org.com.hcmurs.common.exception
 
-<<<<<<< Updated upstream
-class AppException {
-}
-=======
+
+import java.lang.Exception
 sealed class AppException(message: String?) : Exception(message) {
     class NetworkException : AppException("No internet connection")
     class UnauthorizedException : AppException("Unauthorized")
@@ -12,4 +10,3 @@ sealed class AppException(message: String?) : Exception(message) {
 
     class InvalidCredentialsException(message: String = "Wrong username or password") : AppException(message)
 }
->>>>>>> Stashed changes
