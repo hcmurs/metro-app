@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,8 +55,10 @@ fun HomeMetroScreen(navController: NavHostController) {
                 .background(
                     Color.Cyan
                 )
-                .padding(16.dp)
+                .padding(24.dp)
         ) {
+            Box(modifier = Modifier.fillMaxWidth()
+                .height(200.dp)){}
             WelcomeSection()
             QuickActionsSection()
             Spacer(modifier = Modifier.height(16.dp))
@@ -156,8 +160,16 @@ fun QuickActionsSection() {
                         .height(100.dp)
                         .fillMaxWidth()
                         .background(Color.Green),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.TopCenter,
+
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = item.title,
+                        modifier = Modifier.size(24.dp), // Adjust size as needed
+                        tint = Color.White,
+                        // Replace with actual icon
+                    )
                     Text(text = item.title)
                 }
             }
