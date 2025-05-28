@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+
 
     implementation(libs.hilt.android)
     //kapt(libs.hilt.android.compiler)
