@@ -86,12 +86,12 @@ data class RouteInfo(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Regular tickets
-            TicketOptionsSection()
+            TicketOptionsSection(navController)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             // Student section
-            StudentSection()
+            StudentSection(navController)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -100,7 +100,7 @@ data class RouteInfo(
             Spacer(modifier = Modifier.height(24.dp))
             LongTermTicketSection()
             Spacer(modifier = Modifier.height(24.dp))
-            TicketOptionsSection()
+            TicketOptionsSection(navController)
             Spacer(modifier = Modifier.height(80.dp)) // Space for bottom navigation
         }
 
@@ -193,7 +193,7 @@ fun HotSection() {
     }
 }
 @Composable
-fun TicketOptionsSection() {
+fun TicketOptionsSection(navController: NavHostController) {
     val ticketOptions = listOf(
         TicketOption("Vé 1 ngày", "40.000 đ"),
         TicketOption("Vé 3 ngày", "90.000 đ"),
@@ -204,17 +204,24 @@ fun TicketOptionsSection() {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ticketOptions.forEach { ticket ->
-            TicketCard(ticket = ticket)
+            TicketCard(ticket = ticket,
+                navController = navController)
+
         }
     }
 }
 
 @Composable
-fun TicketCard(ticket: TicketOption) {
+fun TicketCard(ticket: TicketOption,
+               navController: NavHostController
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable() { /* Handle ticket selection */ },
+            .clickable() {
+                navController.navigate("ticket_detail/${ticket.title}/${ticket.price}")
+
+            },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -251,7 +258,7 @@ fun TicketCard(ticket: TicketOption) {
     }
 }
 @Composable
-fun StudentSection() {
+fun StudentSection(navController: NavHostController) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 8.dp)
@@ -284,6 +291,7 @@ fun StudentSection() {
 
     TicketCard(
         ticket = TicketOption("Vé tháng HSSV", "150.000 đ")
+            ,navController = navController
     )
 }
 

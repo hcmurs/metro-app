@@ -64,6 +64,7 @@ fun TicketDetailScreen(
     ticketType: String = "Vé 1 ngày",
     ticketPrice: String = "40.000 đ"
 ) {
+
     // Create ticket detail based on type
     val ticketDetail = remember (ticketType) {
         when (ticketType) {
