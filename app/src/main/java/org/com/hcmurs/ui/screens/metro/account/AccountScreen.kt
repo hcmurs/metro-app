@@ -47,6 +47,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 import androidx.compose.material3.Divider as HorizontalDivider
 
 data class MenuItem(
@@ -161,7 +164,7 @@ fun LogoutButton(
 }
 @Composable
 fun AccountScreen(
-    onBackClick: () -> Unit = {},
+    navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {}
 ) {
     // Placeholder for the Account screen content
@@ -222,7 +225,9 @@ fun AccountScreen(
                 horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
-                IconButton(onClick = onBackClick)
+                IconButton(onClick = {
+                    navController.navigate(Screen.HomeMetro.route)
+                })
                 {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -350,7 +355,7 @@ fun AccountScreen(
 @Composable
 fun AccountInfoScreenPreview() {
     MaterialTheme {
-        AccountScreen()
+        AccountScreen(navController = rememberNavController())
     }
 }
 

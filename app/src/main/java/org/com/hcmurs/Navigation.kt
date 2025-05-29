@@ -22,6 +22,8 @@ import org.com.hcmurs.ui.screens.detail.DetailScreen
 import org.com.hcmurs.ui.screens.home.HomeScreen
 import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
+import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
+import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
@@ -36,6 +38,19 @@ sealed class Screen(val route: String) {
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
+
+    // Add new screen routes for the grid items
+    object BuyTicket : Screen("buyTicket")
+    object Route : Screen("route")
+    object Maps : Screen("maps")
+    object VirtualTour : Screen("virtualTour")
+    object TicketInformation : Screen("ticketInformation")
+    object Account : Screen("account")
+    object Event : Screen("event")
+    object ConstructionImage : Screen("constructionImage")
+    object Setting : Screen("setting")
+    object CooperationLink : Screen("cooperationLink")
+    object Introduction : Screen("introduction")
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -88,6 +103,52 @@ fun Navigation(
             HomeMetroScreen(navController)
         }
 
+        // Add placeholder screens for the new routes
+        // Replace these with your actual screen implementations
+        composable(Screen.BuyTicket.route) {
+            PlaceholderScreen(navController, "Buy Ticket Screen")
+        }
+
+        composable(Screen.Route.route) {
+            PlaceholderScreen(navController, "Route Screen")
+        }
+
+        composable(Screen.Maps.route) {
+            PlaceholderScreen(navController, "Maps Screen")
+        }
+
+        composable(Screen.VirtualTour.route) {
+            PlaceholderScreen(navController, "Virtual Tour Screen")
+        }
+
+        composable(Screen.TicketInformation.route) {
+            PlaceholderScreen(navController, "Ticket Information Screen")
+        }
+
+        composable(Screen.Account.route) {
+            AccountScreen(navController)
+        }
+
+        composable(Screen.Event.route) {
+            PlaceholderScreen(navController, "Event Screen")
+        }
+
+        composable(Screen.ConstructionImage.route) {
+            PlaceholderScreen(navController, "Construction Image Screen")
+        }
+
+        composable(Screen.Setting.route) {
+            PlaceholderScreen(navController, "Setting Screen")
+        }
+
+        composable(Screen.CooperationLink.route) {
+            PlaceholderScreen(navController, "Cooperation Link Screen")
+        }
+
+        composable(Screen.Introduction.route) {
+            PlaceholderScreen(navController, "Introduction Screen")
+        }
+
         composable(
             Screen.Detail.route + "?noteIndex={noteIndex}",
             arguments = listOf(
@@ -98,7 +159,7 @@ fun Navigation(
             )
         ) { backStackEntry ->
             val noteIndex = backStackEntry.arguments?.getInt("noteIndex") ?: -1
-            val parentEntry = navController.getBackStackEntry(Screen.Home.route)
+            val parentEntry = navController.getBackStackEntry(Screen.HomeMetro.route)
             val homeViewModel: HomeViewModel = hiltViewModel(parentEntry)
 
             DetailScreen(navController, homeViewModel, mainViewModel, noteIndex)
@@ -114,7 +175,7 @@ fun Navigation(
             )
         ) { backStackEntry ->
             val noteIndex = backStackEntry.arguments?.getInt("noteIndex") ?: -1
-            val parentEntry = navController.getBackStackEntry(Screen.Home.route)
+            val parentEntry = navController.getBackStackEntry(Screen.HomeMetro.route)
             val homeViewModel: HomeViewModel = hiltViewModel(parentEntry)
 
             AddOrEditScreen(

@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.utils.navigateToHome
 
 val PrimaryGreen = Color(0xFF2E7D32)
 val ErrorRed = Color(0xFFD32F2F)
@@ -132,7 +133,7 @@ fun TopBar(navController: NavController) {
         },
         navigationIcon = {
             IconButton(
-                onClick = {  navController.navigate(Screen.Home.route) }
+                onClick = {  navigateToHome(navController) }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,

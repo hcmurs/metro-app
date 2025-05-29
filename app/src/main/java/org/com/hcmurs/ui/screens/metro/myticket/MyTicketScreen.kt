@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.utils.navigateToHome
 
 
 @Composable
@@ -167,7 +168,7 @@ fun MyTicketTopBar(navController: NavController) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = { navController.navigate(Screen.Home.route) }) {
+            IconButton(onClick = { navigateToHome(navController) }) {
                 Icon(Icons.Default.Home, contentDescription = "Home", tint = Color(0xFF2D1E66))
             }
         },
