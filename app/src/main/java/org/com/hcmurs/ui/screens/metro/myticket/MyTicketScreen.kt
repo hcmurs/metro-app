@@ -37,10 +37,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 
 
 @Composable
-fun MyTicketScreen() {
+fun MyTicketScreen(navController: NavController) {
     val selectedTab = remember { mutableStateOf("active") } // Default là "Đang sử dụng"
 
     val activeTickets = listOf(
@@ -50,7 +53,7 @@ fun MyTicketScreen() {
     )
 
     Scaffold(
-        topBar = { MyTicketTopBar() },
+        topBar = { MyTicketTopBar(navController) },
         containerColor = Color.Transparent
     ) { padding ->
         Column(
@@ -156,7 +159,7 @@ fun TicketCard(ticket: Ticket) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTicketTopBar() {
+fun MyTicketTopBar(navController: NavController) {
     TopAppBar(
         title = {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -164,7 +167,7 @@ fun MyTicketTopBar() {
             }
         },
         navigationIcon = {
-            IconButton(onClick = { /* TODO: Navigate home */ }) {
+            IconButton(onClick = { navController.navigate(Screen.Home.route) }) {
                 Icon(Icons.Default.Home, contentDescription = "Home", tint = Color(0xFF2D1E66))
             }
         },
@@ -207,5 +210,5 @@ fun TabButton(
 @Preview(showBackground = true)
 @Composable
 fun MyTicketScreenPreview() {
-    MyTicketScreen()
+    MyTicketScreen(navController = rememberNavController())
 }

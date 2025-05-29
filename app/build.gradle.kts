@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey.alias
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -53,38 +55,31 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
-    implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
 
-
-    implementation(libs.hilt.android)
-    //kapt(libs.hilt.android.compiler)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 
-    // https://mvnrepository.com/artifact/net.openid/appauth
-    implementation(libs.appauth)
-    implementation(libs.androidx.browser)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.accompanist.pager)
-
     implementation(libs.androidx.core.splashscreen)
-
-//    Load image from network
     implementation(libs.coil.compose)
-
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.animation)//androidx.compose.animation:animation:1.6.7
+    implementation(libs.appauth)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.animation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

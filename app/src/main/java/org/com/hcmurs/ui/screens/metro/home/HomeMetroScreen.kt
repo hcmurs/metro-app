@@ -12,6 +12,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
@@ -38,13 +40,15 @@ fun HomeMetroScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = { HomeTopBar() },
-//        floatingActionButton = {
-//            FloatingActionButton(onClick = {
-//                // TODO: Chuyển hướng đến màn thêm mới
-//            }) {
-//                Icon(Icons.Default.Add, contentDescription = "Add")
-//            }
-//        }
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /* TODO: Handle new feedback */ },
+                containerColor = Color.Green,
+                contentColor = Color.White,
+            ) {
+                Icon(Icons.Default.Phone, contentDescription = "Call Now")
+            }
+        },
         modifier = Modifier.background(
             Color.Cyan
         )

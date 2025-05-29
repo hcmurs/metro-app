@@ -1,9 +1,12 @@
 package org.com.hcmurs
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResult
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,16 +22,24 @@ import org.com.hcmurs.ui.screens.detail.DetailScreen
 import org.com.hcmurs.ui.screens.home.HomeScreen
 import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
+import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
+import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
+import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Home : Screen("home")
     object Detail : Screen("detail")
     object AddOrEdit : Screen("addOrEdit")
-    object HomeMetro: Screen("homeMetro")
+    object HomeMetro : Screen("homeMetro")
+    object Feedback : Screen("feedback")
+    object RedeemCodeForTicket : Screen("redeemCodeForTicket")
+    object MyTicket : Screen("myTicket")
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     authResultLauncher: ActivityResultLauncher<Intent>? = null,
@@ -46,7 +57,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.HomeMetro.route) {
         composable(Screen.Login.route) {
             LoginScreen(
                 navController = navController,
@@ -55,6 +66,18 @@ fun Navigation(
                 authResultLauncher = authResultLauncher,
                 setAuthResultCallback = setAuthResultCallback
             )
+        }
+
+        composable(Screen.RedeemCodeForTicket.route) {
+            RedeemCodeForTicketScreen(navController)
+        }
+
+        composable(Screen.MyTicket.route) {
+            MyTicketScreen(navController)
+        }
+
+        composable(Screen.Feedback.route) {
+            FeedbackScreen(navController)
         }
 
         composable(Screen.Home.route) {

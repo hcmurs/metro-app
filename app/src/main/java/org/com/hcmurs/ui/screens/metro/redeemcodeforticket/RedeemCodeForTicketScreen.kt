@@ -18,8 +18,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 
 val PrimaryGreen = Color(0xFF2E7D32)
 val ErrorRed = Color(0xFFD32F2F)
@@ -31,7 +33,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
     var isError by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBar() },
+        topBar = { TopBar(navController) },
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
@@ -114,7 +116,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
             Box(
@@ -130,7 +132,7 @@ fun TopBar() {
         },
         navigationIcon = {
             IconButton(
-                onClick = { /* TODO: Handle back navigation */ }
+                onClick = {  navController.navigate(Screen.Home.route) }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
