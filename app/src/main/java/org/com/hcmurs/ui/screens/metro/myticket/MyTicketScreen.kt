@@ -1,6 +1,7 @@
 package org.com.hcmurs.ui.screens.metro.myticket
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,7 +41,13 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun MyTicketScreen() {
-    val selectedTab = remember { mutableStateOf("unused") }
+    val selectedTab = remember { mutableStateOf("active") } // Default là "Đang sử dụng"
+
+    val activeTickets = listOf(
+        Ticket("Vé tháng HSSV", "17:12 21/05/2025", "17:12 20/06/2025", false),
+        Ticket("Vé tháng thường", "06:00 01/06/2025", "06:00 30/06/2025", true),
+        Ticket("Vé tuần học sinh", "08:00 27/05/2025", "08:00 03/06/2025", false)
+    )
 
     Scaffold(
         topBar = { MyTicketTopBar() },
@@ -71,27 +78,78 @@ fun MyTicketScreen() {
                     text = "Đang sử dụng",
                     selected = selectedTab.value == "active",
                     onClick = { selectedTab.value = "active" },
-                    modifier = Modifier.weight(1f) // Fill available space equally
+                    modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 TabButton(
                     text = "Chưa sử dụng",
                     selected = selectedTab.value == "unused",
                     onClick = { selectedTab.value = "unused" },
-                    modifier = Modifier.weight(1f) // Fill available space equally
+                    modifier = Modifier.weight(1f)
                 )
             }
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(24.dp))
 
-            // Empty ticket message
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            if (selectedTab.value == "active") {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    activeTickets.forEach {
+                        TicketCard(ticket = it)
+                    }
+                }
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Bạn không có vé nào",
+                        color = Color.Gray,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class Ticket(
+    val title: String,
+    val startTime: String,
+    val endTime: String,
+    val isConnected: Boolean
+)
+
+@Composable
+fun TicketCard(ticket: Ticket) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(40.dp)
+                    .background(Color(0xFFECF4FB), shape = RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("🎫", fontSize = 18.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(ticket.title, fontWeight = FontWeight.Bold, color = Color(0xFF2D1E66))
                 Text(
-                    text = "Bạn không có vé nào",
-                    color = Color.Gray,
-                    fontSize = 16.sp
+                    text = "HSD: ${ticket.startTime} - ${ticket.endTime}",
+                    color = Color.Red,
+                    fontSize = 10.sp
                 )
             }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = if (ticket.isConnected) "Đã kết nối" else "Chưa kết nối",
+                color = Color.Gray,
+                fontSize = 12.sp
+            )
         }
     }
 }
