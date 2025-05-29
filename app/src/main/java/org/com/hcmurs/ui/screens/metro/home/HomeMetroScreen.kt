@@ -32,11 +32,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.constant.ScreenTitle
+import org.com.hcmurs.Screen
+import org.com.hcmurs.utils.getNavigationRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeMetroScreen(navController: NavHostController) {
-
 
     Scaffold(
         topBar = { HomeTopBar() },
@@ -64,7 +65,7 @@ fun HomeMetroScreen(navController: NavHostController) {
             Box(modifier = Modifier.fillMaxWidth()
                 .height(200.dp)){}
             WelcomeSection()
-            QuickActionsSection()
+            QuickActionsSection(navController)
             Spacer(modifier = Modifier.height(16.dp))
             New2()
             Spacer(modifier = Modifier.height(24.dp))
@@ -121,7 +122,6 @@ fun LanguageDropdown(selected: String, onLanguageChange: (String) -> Unit) {
     }
 }
 
-
 @Composable
 fun WelcomeSection() {
     Text(
@@ -133,7 +133,7 @@ fun WelcomeSection() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun QuickActionsSection() {
+fun QuickActionsSection(navController: NavHostController) {
     val list = ScreenTitle.values().toList()
 
     val pages = list.chunked(8) // paginate every 8 items
@@ -163,10 +163,20 @@ fun QuickActionsSection() {
                     modifier = Modifier
                         .height(100.dp)
                         .fillMaxWidth()
-                        .background(Color.Green),
+                        .background(Color.Green)
+                        .clickable {
+                            // Navigate to the corresponding screen
+                            val route = getNavigationRoute(item)
+                            try {
+                                navController.navigate(route)
+                            } catch (e: Exception) {
+                                // Handle navigation error - screen might not be implemented yet
+                                println("Navigation failed for route: $route - ${e.message}")
+                            }
+                        },
                     contentAlignment = Alignment.TopCenter,
 
-                ) {
+                    ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
                         contentDescription = item.title,
