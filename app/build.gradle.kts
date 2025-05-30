@@ -74,6 +74,10 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.gson)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil.compose)
