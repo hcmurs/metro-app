@@ -104,22 +104,22 @@ fun MapScreen(navController: NavController) {
                         marker.title = "Ho Chi Minh City"
                         overlays.add(marker)
 
-                        // Create a polyline
-                        val line = Polyline().apply {
-                            // Add points to the line (varying longitude)
-                            station.forEach { point ->
-                                addPoint(point)
-                            }
-
-                            // Customize line appearance
-                            outlinePaint.strokeWidth = 10f
-                            outlinePaint.color = Color.RED
-                            outlinePaint.strokeCap = Paint.Cap.ROUND
-                            outlinePaint.isAntiAlias = true
-                        }
-
-                        // Add the line to map overlays
-                        overlays.add(line)
+//                        // Create a polyline
+//                        val line = Polyline().apply {
+//                            // Add points to the line (varying longitude)
+//                            station.forEach { point ->
+//                                addPoint(point)
+//                            }
+//
+//                            // Customize line appearance
+//                            outlinePaint.strokeWidth = 10f
+//                            outlinePaint.color = Color.RED
+//                            outlinePaint.strokeCap = Paint.Cap.ROUND
+//                            outlinePaint.isAntiAlias = true
+//                        }
+//
+//                        // Add the line to map overlays
+//                        overlays.add(line)
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
