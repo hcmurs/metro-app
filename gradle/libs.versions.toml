@@ -4,8 +4,11 @@ agp = "8.9.0"
 animation = "1.6.7"
 appauth = "0.11.1"
 browser = "1.8.0"
-coilCompose = "3.2.0"
+coilCompose = "3.0.4"
+coilNetworkOkhttp = "3.0.4"
+converterGson = "2.9.0"
 coreSplashscreen = "1.0.1"
+gson = "2.11.0"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.21"
@@ -16,6 +19,9 @@ espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.8.0"
 activityCompose = "1.9.0"
 composeBom = "2023.08.00"
+okhttp = "4.12.0"
+osmdroidAndroid = "6.1.11"
+retrofit = "2.4.0"
 roomCompiler = "2.7.1"
 ksp = "2.0.0-1.0.23"
 navigationCompose = "2.7.3"
@@ -45,12 +51,18 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitExt" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

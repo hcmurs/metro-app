@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.com.hcmurs.constant.AuthConstants
 import org.json.JSONObject
 import java.util.Base64
 import javax.inject.Inject
@@ -17,18 +18,18 @@ class AuthRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val sharedPrefs: SharedPreferences =
-        context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        context.getSharedPreferences(AuthConstants.SHARED_PREFS_NAME, Context.MODE_PRIVATE)
 
     suspend fun storeToken(token: String) = withContext(Dispatchers.IO) {
-        sharedPrefs.edit().putString("access_token", token).apply()
+        sharedPrefs.edit().putString(AuthConstants.TOKEN_KEY, token).apply()
     }
 
     suspend fun getStoredToken(): String? = withContext(Dispatchers.IO) {
-        sharedPrefs.getString("access_token", null)
+        sharedPrefs.getString(AuthConstants.TOKEN_KEY, null)
     }
 
     suspend fun clearToken() = withContext(Dispatchers.IO) {
-        sharedPrefs.edit().remove("access_token").apply()
+        sharedPrefs.edit().remove(AuthConstants.TOKEN_KEY).apply()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

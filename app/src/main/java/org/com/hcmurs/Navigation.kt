@@ -28,6 +28,9 @@ import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
+import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
+import org.com.hcmurs.ui.screens.userprofile.ProfileScreen
+import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -51,6 +54,10 @@ sealed class Screen(val route: String) {
     object Setting : Screen("setting")
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
+
+    // Test
+    object UserProfile : Screen("userProfile")
+    object OsmdroidMap : Screen("osmdroidMap")
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -72,7 +79,17 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.HomeMetro.route) {
+    NavHost(navController = navController, startDestination = Screen.OsmdroidMap.route) {
+
+        composable(Screen.OsmdroidMap.route) {
+            OsmdroidMapScreen(navController)
+        }
+
+        composable(Screen.UserProfile.route) {
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(navController = navController, viewModel = profileViewModel)
+        }
+
         composable(Screen.Login.route) {
             LoginScreen(
                 navController = navController,

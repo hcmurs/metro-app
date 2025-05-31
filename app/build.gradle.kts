@@ -74,9 +74,20 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.okhttp)
+
+    implementation(libs.gson)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil.compose)
+
+    implementation(libs.coil.network.okhttp)
+
+    implementation(libs.osmdroid.android)
+
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
