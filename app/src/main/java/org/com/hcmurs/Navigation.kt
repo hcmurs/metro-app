@@ -26,6 +26,7 @@ import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
+import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
@@ -79,7 +80,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.OsmdroidMap.route) {
+    NavHost(navController = navController, startDestination = Screen.Maps.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
@@ -131,7 +132,7 @@ fun Navigation(
         }
 
         composable(Screen.Maps.route) {
-            PlaceholderScreen(navController, "Maps Screen")
+            MapScreen(navController)
         }
 
         composable(Screen.VirtualTour.route) {
