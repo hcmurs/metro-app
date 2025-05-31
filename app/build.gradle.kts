@@ -86,6 +86,8 @@ dependencies {
 
     implementation(libs.coil.network.okhttp)
 
+    implementation(libs.osmdroid.android)
+
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
