@@ -45,6 +45,7 @@ sealed class Screen(val route: String) {
 
     // Add new screen routes for the grid items
     object BuyTicket : Screen("buyTicket")
+    object BuyTicketDetail : Screen("buyTicketDetail")
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -126,7 +127,9 @@ fun Navigation(
         composable(Screen.BuyTicket.route) {
             PlaceholderScreen(navController, "Buy Ticket Screen")
         }
-
+        composable  (Screen.BuyTicketDetail.route) {
+            PlaceholderScreen(navController, "Buy Ticket Detail Screen")
+        }
         composable(Screen.Route.route) {
             PlaceholderScreen(navController, "Route Screen")
         }

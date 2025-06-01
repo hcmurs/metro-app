@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 
 data class TicketOption(
     val title: String,
@@ -219,7 +220,7 @@ fun TicketCard(ticket: TicketOption,
         modifier = Modifier
             .fillMaxWidth()
             .clickable() {
-                navController.navigate("ticket_detail/${ticket.title}/${ticket.price}")
+                navController.navigate(Screen.BuyTicketDetail.route + "/${ticket.title}/${ticket.price}")  // Navigate to ticket detail screen
 
             },
         shape = RoundedCornerShape(16.dp),
