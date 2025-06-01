@@ -26,6 +26,7 @@ roomCompiler = "2.7.1"
 ksp = "2.0.0-1.0.23"
 navigationCompose = "2.7.3"
 materialIconsExtended = "1.6.1"
+composeIcons = "1.1.1"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -63,6 +64,8 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-compiler", version.re
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+
+composeIcons-fontAwesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "composeIcons" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

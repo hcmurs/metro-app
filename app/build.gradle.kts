@@ -74,6 +74,9 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.composeIcons.fontAwesome)
+
+
     implementation(libs.okhttp)
 
     implementation(libs.gson)
