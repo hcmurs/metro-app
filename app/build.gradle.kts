@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.android
+import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey.alias
 
 plugins {
@@ -67,6 +69,7 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.appcompat)
 
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
@@ -75,7 +78,16 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.composeIcons.fontAwesome)
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
+    implementation("androidx.camera:camera-core:1.3.1")
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
+
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
     implementation(libs.okhttp)
 
@@ -102,6 +114,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+
 }
 
 //kapt {
