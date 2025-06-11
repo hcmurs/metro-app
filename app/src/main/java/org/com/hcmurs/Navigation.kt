@@ -23,6 +23,7 @@ import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
+import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
@@ -164,7 +165,7 @@ fun Navigation(
         }
 
         composable(Screen.CooperationLink.route) {
-            PlaceholderScreen(navController, "Cooperation Link Screen")
+            CooperationLinkScreen(navController)
         }
 
         composable(Screen.Introduction.route) {

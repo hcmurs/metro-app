@@ -7,12 +7,10 @@ import org.com.hcmurs.ui.components.common.CommonTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> Unit = {}) {
+fun CooperationLinkTopBar(navController: NavController) {
     CommonTopBar(
         navController = navController,
-        title = "Thông tin vé",
-        showSearchBar = true,
-        searchHint = "Tìm kiếm vé...",
-        onSearch = onSearch
+        title = "Liên kết hợp tác",
+        showSearchBar = false
     )
 }
