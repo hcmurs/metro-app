@@ -13,6 +13,13 @@ val Lime80 = Color(0xFFDCEDC8)       // Lime Green 80%
 val Green40 = Color(0xFF388E3C)      // Dark Green
 val GreenGrey40 = Color(0xFF4CAF50)  // Medium Green
 val Lime40 = Color(0xFF689F38)       // Lime Darker Green
+
+val PrimaryGreen = Color(0xFF2E7D32)
+val SecondaryBlue = Color(0xFF2D1E66)
+val NeutralGray = Color.Gray
+val DarkGray = Color.DarkGray
+val ErrorRed = Color(0xFFD32F2F)
+
 val LightColorScheme = lightColorScheme(
     primary = Green40,
     onPrimary = Color.White,

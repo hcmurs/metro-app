@@ -22,10 +22,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.theme.ErrorRed
+import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.navigateToHome
-
-val PrimaryGreen = Color(0xFF2E7D32)
-val ErrorRed = Color(0xFFD32F2F)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
