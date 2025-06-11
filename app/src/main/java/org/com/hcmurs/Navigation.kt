@@ -24,6 +24,7 @@ import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
+import org.com.hcmurs.ui.screens.metro.event.EventScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
@@ -127,7 +128,7 @@ fun Navigation(
         composable(Screen.BuyTicket.route) {
             PlaceholderScreen(navController, "Buy Ticket Screen")
         }
-        composable  (Screen.BuyTicketDetail.route) {
+        composable(Screen.BuyTicketDetail.route) {
             PlaceholderScreen(navController, "Buy Ticket Detail Screen")
         }
         composable(Screen.Route.route) {
@@ -151,7 +152,7 @@ fun Navigation(
         }
 
         composable(Screen.Event.route) {
-            PlaceholderScreen(navController, "Event Screen")
+            EventScreen(navController)
         }
 
         composable(Screen.ConstructionImage.route) {
