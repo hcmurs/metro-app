@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +29,7 @@ import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
+import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.userprofile.ProfileScreen
 import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
@@ -144,7 +144,7 @@ fun Navigation(
         }
 
         composable(Screen.TicketInformation.route) {
-            PlaceholderScreen(navController, "Ticket Information Screen")
+            TicketInformationScreen(navController)
         }
 
         composable(Screen.Account.route) {
