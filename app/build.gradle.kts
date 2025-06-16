@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
+    implementation(libs.logging.interceptor)
+
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 
