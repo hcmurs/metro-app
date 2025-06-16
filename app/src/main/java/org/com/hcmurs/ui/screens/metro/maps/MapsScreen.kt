@@ -2,6 +2,7 @@ package org.com.hcmurs.ui.screens.metro.maps
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.preference.PreferenceManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,8 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import android.graphics.Color
-import android.graphics.Paint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,6 +25,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+import org.com.hcmurs.R
+import org.com.hcmurs.model.BusStop
+import org.com.hcmurs.utils.getNearbyBusStops
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -50,6 +52,14 @@ fun MapScreen(navController: NavController) {
         GeoPoint(10.82165609486406, 106.75933605616969), // Ga Phuoc Long
         GeoPoint(10.832473464905071, 106.76444401173823), // Ga Binh Thai
         GeoPoint(10.846639523705255, 106.7720542821162),  // Ga Thu Duc
+    )
+
+    val allBusStops = listOf(
+        BusStop(1, "Bến xe buýt Thới An", 10.8785859, 106.6477263),
+        BusStop(2, "Bến xe buýt Thới An", 10.8788114, 106.6488621),
+        BusStop(3, "Thới An 13", 10.8811509, 106.6486586),
+        BusStop(4, "Võ Thị Phải", 10.8852588, 106.648306),
+        // ...etc
     )
 
     val context = LocalContext.current
@@ -125,6 +135,42 @@ fun MapScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 update = { mapView ->
                     // This block will be called on recomposition
+
+                    // Xóa overlay cũ trước khi vẽ mới
+                    mapView.overlays.clear()
+
+                    // Vẽ metro stations
+                    station.forEach { stationPoint ->
+                        val metroMarker = Marker(mapView).apply {
+                            position = stationPoint
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = "Metro Station"
+                        }
+                        mapView.overlays.add(metroMarker)
+
+                        // Vẽ bus stop gần stationPoint
+                        val nearbyStops = getNearbyBusStops(stationPoint, allBusStops)
+                        nearbyStops.forEach { stop ->
+                            val stopMarker = Marker(mapView).apply {
+                                position = GeoPoint(stop.latitude, stop.longitude)
+                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                                title = stop.name
+                                icon = context.getDrawable(R.drawable.ic_bus) // optional
+                            }
+                            mapView.overlays.add(stopMarker)
+                        }
+                    }
+
+                    // Vẽ polyline metro line
+                    val polyline = Polyline().apply {
+                        station.forEach { addPoint(it) }
+                        outlinePaint.strokeWidth = 10f
+                        outlinePaint.color = Color.RED
+                    }
+                    mapView.overlays.add(polyline)
+
+                    // Refresh bản đồ
+                    mapView.invalidate()
                 }
             )
         }
