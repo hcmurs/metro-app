@@ -29,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +48,7 @@ import org.com.hcmurs.MainViewModel
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.common.enum.LoadStatus
+import org.com.hcmurs.ui.components.dialog.NotificationDialog
 import org.com.hcmurs.utils.navigateToHome
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -56,6 +59,15 @@ fun LoginScreen(
     mainViewModel: MainViewModel
 ) {
     val state = viewModel.uiState.collectAsState()
+    val showSuccessDialog = remember { mutableStateOf(false) }
+
+    if (showSuccessDialog.value) {
+        NotificationDialog(
+            title = "Chúc mừng",
+            message = "Bạn đã tạo tài khoản thành công",
+            onDismiss = { showSuccessDialog.value = false }
+        )
+    }
 
     // Handle authentication success
     LaunchedEffect(state.value.isAuthenticated) {
@@ -78,7 +90,10 @@ fun LoginScreen(
     LoginScreenContent(
         navController = navController,
         status = state.value.status,
-        onGoogleLoginClick = viewModel::loginWithGoogle,
+        onGoogleLoginClick = {
+            viewModel.loginWithGoogle()
+            showSuccessDialog.value = true // Show success dialog on Google login
+        },
         onFacebookLoginClick = viewModel::loginWithFacebook
     )
 }
