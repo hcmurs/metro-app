@@ -7,12 +7,19 @@ import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
 import dagger.hilt.android.HiltAndroidApp
+import okhttp3.OkHttpClient
 import okio.Path.Companion.toPath
+import javax.inject.Inject
 
 @HiltAndroidApp
 class MainApplication : Application() {
+
+    @Inject
+    lateinit var okHttpClient: OkHttpClient
+
     @OptIn(ExperimentalCoilApi::class)
     override fun onCreate() {
         super.onCreate()
@@ -21,7 +28,7 @@ class MainApplication : Application() {
         SingletonImageLoader.setSafe {
             ImageLoader.Builder(this@MainApplication)
                 .components {
-                    // Add any custom components if needed
+                    add(OkHttpNetworkFetcherFactory(okHttpClient))
                 }
                 .memoryCache {
                     MemoryCache.Builder()

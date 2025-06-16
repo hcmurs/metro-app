@@ -98,9 +98,7 @@ fun Navigation(
             LoginScreen(
                 navController = navController,
                 viewModel = hiltViewModel(),
-                mainViewModel = mainViewModel,
-                authResultLauncher = authResultLauncher,
-                setAuthResultCallback = setAuthResultCallback
+                mainViewModel = mainViewModel
             )
         }
 

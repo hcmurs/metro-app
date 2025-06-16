@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import org.com.hcmurs.repositories.ProfileApi
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.security.TokenProvider
@@ -51,6 +52,9 @@ class NetworkModule {
     fun provideOkHttpClient(authInterceptor: Interceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
     }
 
