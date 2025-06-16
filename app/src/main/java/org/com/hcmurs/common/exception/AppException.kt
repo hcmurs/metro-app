@@ -1,7 +1,5 @@
 package org.com.hcmurs.common.exception
 
-
-import java.lang.Exception
 sealed class AppException(message: String?) : Exception(message) {
     class NetworkException : AppException("No internet connection")
     class UnauthorizedException : AppException("Unauthorized")
