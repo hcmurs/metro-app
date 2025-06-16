@@ -10,7 +10,12 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import org.com.hcmurs.di.OAuthHandler
+import org.com.hcmurs.ui.screens.login.GoogleOAuthScreen
 import org.com.hcmurs.ui.theme.hcmursTheme
 
 @AndroidEntryPoint
@@ -34,13 +39,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             hcmursTheme {
-                Navigation(
-                    authResultLauncher = authResultLauncher,
-                    setAuthResultCallback = { callback ->
-                        authResultCallback = callback
-                    }
-                )
+//                Navigation(
+//                    authResultLauncher = authResultLauncher,
+//                    setAuthResultCallback = { callback ->
+//                        authResultCallback = callback
+//                    }
+//                )
+                GoogleOAuthScreen();
             }
         }
     }
+
+
+
 }

@@ -7,7 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.openid.appauth.AuthorizationService
+import org.com.hcmurs.repositories.AuthApiService
 import org.com.hcmurs.repositories.AuthRepository
+import org.com.hcmurs.repositories.IAuthRepository
 import javax.inject.Singleton
 
 @Module
@@ -16,7 +19,18 @@ class AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(@ApplicationContext context: Context): AuthRepository {
-        return AuthRepository(context)
+    fun provideAuthorizationService(@ApplicationContext context: Context): AuthorizationService {
+        return AuthorizationService(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        authApiService: AuthApiService,
+        authorizationService: AuthorizationService,
+        @ApplicationContext context: Context
+    ): IAuthRepository {
+        return AuthRepository(authApiService, authorizationService,context)
+    }
+
 }

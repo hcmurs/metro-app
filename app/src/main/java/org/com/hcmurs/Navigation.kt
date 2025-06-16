@@ -20,7 +20,6 @@ import org.com.hcmurs.ui.screens.addoredit.AddOrEditScreen
 import org.com.hcmurs.ui.screens.detail.DetailScreen
 import org.com.hcmurs.ui.screens.home.HomeScreen
 import org.com.hcmurs.ui.screens.home.HomeViewModel
-import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
@@ -32,8 +31,6 @@ import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
-import org.com.hcmurs.ui.screens.userprofile.ProfileScreen
-import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -89,20 +86,20 @@ fun Navigation(
             OsmdroidMapScreen(navController)
         }
 
-        composable(Screen.UserProfile.route) {
-            val profileViewModel = hiltViewModel<ProfileViewModel>()
-            ProfileScreen(navController = navController, viewModel = profileViewModel)
-        }
-
-        composable(Screen.Login.route) {
-            LoginScreen(
-                navController = navController,
-                viewModel = hiltViewModel(),
-                mainViewModel = mainViewModel,
-                authResultLauncher = authResultLauncher,
-                setAuthResultCallback = setAuthResultCallback
-            )
-        }
+//        composable(Screen.UserProfile.route) {
+//            val profileViewModel = hiltViewModel<ProfileViewModel>()
+//            ProfileScreen(navController = navController, viewModel = profileViewModel)
+//        }
+//
+//        composable(Screen.Login.route) {
+//            LoginScreen(
+//                navController = navController,
+//                viewModel = hiltViewModel(),
+//                mainViewModel = mainViewModel,
+//                authResultLauncher = authResultLauncher,
+//                setAuthResultCallback = setAuthResultCallback
+//            )
+//        }
 
         composable(Screen.RedeemCodeForTicket.route) {
             RedeemCodeForTicketScreen(navController)

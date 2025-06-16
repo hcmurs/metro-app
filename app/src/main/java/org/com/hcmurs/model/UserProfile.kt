@@ -6,10 +6,10 @@ data class SocialLink(
     val iconUrl: String
 )
 
-data class UserProfile(
-    val name: String,
-    val avatarUrl: String,
-    val githubAccount: String,
-    val role: String,
-    val socialLinks: List<SocialLink>
-)
+//data class UserProfile(
+//    val name: String,
+//    val avatarUrl: String,
+//    val githubAccount: String,
+//    val role: String,
+//    val socialLinks: List<SocialLink>
+//)

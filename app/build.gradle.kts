@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey.alias
 
 plugins {
@@ -91,10 +92,10 @@ dependencies {
 
     implementation(libs.osmdroid.android)
 
+    
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

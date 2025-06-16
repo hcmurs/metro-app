@@ -2,51 +2,118 @@ package org.com.hcmurs.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.browser.customtabs.CustomTabsIntent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.ResponseTypeValues
 import org.com.hcmurs.constant.AuthConstants
+import org.com.hcmurs.model.AuthResult
 import org.json.JSONObject
 import java.util.Base64
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class AuthRepository @Inject constructor(
+    private val authApiService: AuthApiService,
+    private val authorizationService: AuthorizationService,
     @ApplicationContext private val context: Context
-) {
-    private val sharedPrefs: SharedPreferences =
-        context.getSharedPreferences(AuthConstants.SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+) : IAuthRepository {
 
-    suspend fun storeToken(token: String) = withContext(Dispatchers.IO) {
-        sharedPrefs.edit().putString(AuthConstants.TOKEN_KEY, token).apply()
-    }
+    private val authorizationEndpoint = "http://10.0.2.2:4003/api/oauth2/authorization/google"
+    private val tokenEndpoint = "http://10.0.2.2:4003/api/oauth2/token"
+    private val redirectUri = "org.com.hcmurs://oauth2/redirect"
 
-    suspend fun getStoredToken(): String? = withContext(Dispatchers.IO) {
-        sharedPrefs.getString(AuthConstants.TOKEN_KEY, null)
-    }
+    // Simple in-memory storage - trong production nên dùng DataStore hoặc SharedPreferences
+    private var storedToken: String? = null
 
-    suspend fun clearToken() = withContext(Dispatchers.IO) {
-        sharedPrefs.edit().remove(AuthConstants.TOKEN_KEY).apply()
-    }
+    override suspend fun startGoogleLogin(): AuthResult<String> {
+        return try {
+            val serviceConfig = AuthorizationServiceConfiguration(
+                Uri.parse(authorizationEndpoint),
+                Uri.parse(tokenEndpoint)
+            )
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun isTokenValid(token: String): Boolean = withContext(Dispatchers.IO) {
-        try {
-            // Basic JWT token validation (you might want to use a proper JWT library)
-            val parts = token.split(".")
-            if (parts.size != 3) return@withContext false
+            val authRequestBuilder = AuthorizationRequest.Builder(
+                serviceConfig,
+                "your-client-id", // Thay thế bằng client ID thực
+                ResponseTypeValues.CODE,
+                Uri.parse(redirectUri)
+            )
 
-            val payload = String(Base64.getDecoder().decode(parts[1]))
-            val json = JSONObject(payload)
-            val exp = json.getLong("exp")
-            val currentTime = System.currentTimeMillis() / 1000
+            val authRequest = authRequestBuilder
+                .setScope("openid profile email")
+                .build()
 
-            exp > currentTime
+            val authIntent = authorizationService.getAuthorizationRequestIntent(
+                authRequest,
+                CustomTabsIntent.Builder().build()
+            )
+
+            AuthResult.Success(authIntent.toString())
         } catch (e: Exception) {
-            false
+            AuthResult.Error("Không thể khởi tạo đăng nhập: ${e.message}")
         }
+    }
+
+    override suspend fun exchangeCodeForToken(code: String): AuthResult<String> {
+        return try {
+            val response = authApiService.exchangeCodeForToken(
+                TokenExchangeRequest(code, redirectUri)
+            )
+
+            if (response.isSuccessful) {
+                val tokenResponse = response.body()
+                if (tokenResponse != null) {
+                    saveToken(tokenResponse.accessToken)
+                    AuthResult.Success(tokenResponse.accessToken)
+                } else {
+                    AuthResult.Error("Response body is null")
+                }
+            } else {
+                AuthResult.Error("HTTP ${response.code()}: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            AuthResult.Error("Network error: ${e.message}")
+        }
+    }
+
+    override suspend fun getUserProfile(token: String): AuthResult<UserProfile> {
+        return try {
+            val response = authApiService.getUserProfile("Bearer $token")
+
+            if (response.isSuccessful) {
+                val userProfile = response.body()
+                if (userProfile != null) {
+                    AuthResult.Success(userProfile)
+                } else {
+                    AuthResult.Error("User profile is null")
+                }
+            } else {
+                AuthResult.Error("HTTP ${response.code()}: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            AuthResult.Error("Network error: ${e.message}")
+        }
+    }
+
+    override fun getStoredToken(): Flow<String?> = flow {
+        emit(storedToken)
+    }
+
+    override suspend fun saveToken(token: String) {
+        storedToken = token
+    }
+
+    override suspend fun clearToken() {
+        storedToken = null
     }
 }

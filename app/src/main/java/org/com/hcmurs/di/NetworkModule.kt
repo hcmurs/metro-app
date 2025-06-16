@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.com.hcmurs.repositories.AuthApiService
 import org.com.hcmurs.repositories.ProfileApi
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.security.TokenProvider
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     private val BASE_URL = "https://6512cbd2b8c6ce52b3963937.mockapi.io/api/v1/"
-
+    private val AUTH_URL = "https://localhost:4003/"
     @Provides
     @Singleton
     fun provideAuthInterceptor(tokenProvider: TokenProvider): Interceptor {
@@ -44,7 +45,7 @@ class NetworkModule {
         val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
         return SharedPreferencesTokenProvider(sharedPreferences)
     }
-
+    
 
     @Provides
     @Singleton
@@ -58,7 +59,7 @@ class NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl("http://10.0.2.2:4003/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -68,5 +69,10 @@ class NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ProfileApi {
         return retrofit.create(ProfileApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideAuthApiService(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 }
