@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.com.hcmurs.oauth.OAuth2Service
 import org.com.hcmurs.repositories.AuthApi
 import org.com.hcmurs.repositories.AuthRepository
 import retrofit2.Retrofit
@@ -17,6 +18,12 @@ class AuthModule {
 
     @Provides
     @Singleton
+    fun provideOAuth2Service(@ApplicationContext context: Context): OAuth2Service {
+        return OAuth2Service(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
@@ -25,8 +32,9 @@ class AuthModule {
     @Singleton
     fun provideAuthRepository(
         @ApplicationContext context: Context,
-        authApi: AuthApi
+        authApi: AuthApi,
+        oAuth2Service: OAuth2Service
     ): AuthRepository {
-        return AuthRepository(context, authApi)
+        return AuthRepository(context, authApi, oAuth2Service)
     }
 }

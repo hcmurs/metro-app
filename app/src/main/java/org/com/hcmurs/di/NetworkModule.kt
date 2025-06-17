@@ -20,7 +20,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-    private val BASE_URL = "https://6512cbd2b8c6ce52b3963937.mockapi.io/api/v1/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
 
     @Provides
     @Singleton

@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(
     private fun checkExistingAuth() {
         viewModelScope.launch {
             val existingToken = authRepository.getStoredToken()
-            if (existingToken != null && authRepository.isTokenValid(existingToken)) {
+            if (existingToken != null && existingToken != "oauth_pending" && authRepository.isTokenValid(existingToken)) {
                 _uiState.value = _uiState.value.copy(
                     isAuthenticated = true,
                     accessToken = existingToken
@@ -60,7 +60,12 @@ class LoginViewModel @Inject constructor(
                 val result = authRepository.loginWithProvider(provider)
                 if (result.isSuccess) {
                     val token = result.getOrNull()
-                    if (token != null) {
+                    if (token == "oauth_pending") {
+                        // OAuth flow initiated, waiting for redirect
+                        _uiState.value = _uiState.value.copy(
+                            status = LoadStatus.Init()
+                        )
+                    } else if (token != null) {
                         _uiState.value = _uiState.value.copy(
                             isAuthenticated = true,
                             accessToken = token,
@@ -80,6 +85,19 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     status = LoadStatus.Error("Login error: ${e.message}")
+                )
+            }
+        }
+    }
+
+    fun handleOAuthSuccess() {
+        viewModelScope.launch {
+            val token = authRepository.getStoredToken()
+            if (token != null && token != "oauth_pending") {
+                _uiState.value = _uiState.value.copy(
+                    isAuthenticated = true,
+                    accessToken = token,
+                    status = LoadStatus.Success()
                 )
             }
         }
