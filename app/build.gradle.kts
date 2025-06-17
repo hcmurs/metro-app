@@ -84,7 +84,7 @@ dependencies {
     implementation(libs.gson)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
-
+    implementation(libs.okhttp.urlconnection)
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil.compose)

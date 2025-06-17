@@ -13,13 +13,11 @@ class OAuth2Service @Inject constructor(
 ) {
     companion object {
         private const val GOOGLE_AUTH_URL = "http://10.0.2.2:4003/api/oauth2/authorization/google"
-        private const val REDIRECT_URL = "org.com.hcmurs://callback"
     }
 
     fun initiateGoogleLogin() {
         val authUri = Uri.parse(GOOGLE_AUTH_URL)
             .buildUpon()
-            .appendQueryParameter("redirect_uri", REDIRECT_URL)
             .appendQueryParameter("response_type", "code")
             .appendQueryParameter("scope", "openid email profile")
             .build()

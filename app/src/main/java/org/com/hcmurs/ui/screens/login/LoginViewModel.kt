@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(
     private fun checkExistingAuth() {
         viewModelScope.launch {
             val existingToken = authRepository.getStoredToken()
-            if (existingToken != null && existingToken != "oauth_pending" && authRepository.isTokenValid(existingToken)) {
+            if (existingToken != null && authRepository.isTokenValid(existingToken)) {
                 _uiState.value = _uiState.value.copy(
                     isAuthenticated = true,
                     accessToken = existingToken
@@ -45,7 +45,35 @@ class LoginViewModel @Inject constructor(
     }
 
     fun loginWithGoogle() {
-        loginWithProvider("google")
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(status = LoadStatus.Loading())
+            try {
+                val result = authRepository.loginWithProvider("google")
+                if (result.isSuccess) {
+                    val token = result.getOrNull()
+                    if (token != null) {
+                        _uiState.value = _uiState.value.copy(
+                            isAuthenticated = true,
+                            accessToken = token,
+                            status = LoadStatus.Success()
+                        )
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            status = LoadStatus.Error("No token received")
+                        )
+                    }
+                } else {
+                    val error = result.exceptionOrNull()?.message ?: "Unknown error"
+                    _uiState.value = _uiState.value.copy(
+                        status = LoadStatus.Error("Login failed: $error")
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    status = LoadStatus.Error("Login error: ${e.message}")
+                )
+            }
+        }
     }
 
     fun loginWithFacebook() {
