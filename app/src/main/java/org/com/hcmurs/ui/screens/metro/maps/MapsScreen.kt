@@ -9,21 +9,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BusStop
@@ -36,7 +42,10 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
 @Composable
-fun MapScreen(navController: NavController) {
+fun MapScreen(
+    navController: NavController,
+    busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>()
+) {
 
     //Ben thanh 10.770696325149563, 106.69754740398896
 
@@ -54,14 +63,9 @@ fun MapScreen(navController: NavController) {
         GeoPoint(10.846639523705255, 106.7720542821162),  // Ga Thu Duc
     )
 
-    val allBusStops = listOf(
-        BusStop(1, "Bến xe buýt Thới An", 10.8785859, 106.6477263),
-        BusStop(2, "Bến xe buýt Thới An", 10.8788114, 106.6488621),
-        BusStop(3, "Thới An 13", 10.8811509, 106.6486586),
-        BusStop(4, "Võ Thị Phải", 10.8852588, 106.648306),
-        // ...etc
-    )
-
+    val busStops by busStationViewModel.busStops.collectAsState()
+    val isLoading by busStationViewModel.isLoading.collectAsState()
+    val error by busStationViewModel.error.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var hasLocationPermission by remember { mutableStateOf(false) }
@@ -81,9 +85,26 @@ fun MapScreen(navController: NavController) {
         if (!hasLocationPermission) {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+
+        busStationViewModel.getBusStations()
     }
 
     Scaffold { paddingValues ->
+
+        // Show loading indicator if needed
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+
+        // Show error if needed
+        error?.let {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Error: $it")
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -149,7 +170,7 @@ fun MapScreen(navController: NavController) {
                         mapView.overlays.add(metroMarker)
 
                         // Vẽ bus stop gần stationPoint
-                        val nearbyStops = getNearbyBusStops(stationPoint, allBusStops)
+                        val nearbyStops = getNearbyBusStops(stationPoint, busStops)
                         nearbyStops.forEach { stop ->
                             val stopMarker = Marker(mapView).apply {
                                 position = GeoPoint(stop.latitude, stop.longitude)
