@@ -23,27 +23,27 @@
             android:networkSecurityConfig="@xml/network_security_config"
             >
             <!-- OAuth2 Redirect Handler -->
-            <activity
-                android:name=".oauth.OAuth2RedirectActivity"
-                android:exported="true"
-                android:launchMode="singleTop"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-                <intent-filter>
-                    <action android:name="android.intent.action.VIEW" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                    <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="org.com.hcmurs" />
-                </intent-filter>
-                <intent-filter android:autoVerify="true">
-                    <action android:name="android.intent.action.VIEW" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                    <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="http"
-                        android:host="10.0.2.2"
-                        android:port="3000"
-                        android:path="/oauth2/redirect" />
-                </intent-filter>
-            </activity>
+<!--            <activity-->
+<!--                android:name=".oauth.OAuth2RedirectActivity"-->
+<!--                android:exported="true"-->
+<!--                android:launchMode="singleTop"-->
+<!--                android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+<!--                <intent-filter>-->
+<!--                    <action android:name="android.intent.action.VIEW" />-->
+<!--                    <category android:name="android.intent.category.DEFAULT" />-->
+<!--                    <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                    <data android:scheme="org.com.hcmurs" />-->
+<!--                </intent-filter>-->
+<!--                <intent-filter android:autoVerify="true">-->
+<!--                    <action android:name="android.intent.action.VIEW" />-->
+<!--                    <category android:name="android.intent.category.DEFAULT" />-->
+<!--                    <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                    <data android:scheme="http"-->
+<!--                        android:host="10.0.2.2"-->
+<!--                        android:port="3000"-->
+<!--                        android:path="/oauth2/redirect" />-->
+<!--                </intent-filter>-->
+<!--            </activity>-->
             <activity
                 android:name="net.openid.appauth.RedirectUriReceiverActivity"
                 android:exported="true"

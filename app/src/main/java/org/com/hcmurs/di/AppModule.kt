@@ -7,13 +7,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.com.hcmurs.repositories.ApiService
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
-    @Provides //inject dependencies (not my own class)
+    @Provides
     @Singleton
     fun provideSharedPreferences(
         @ApplicationContext context: Context

@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.JavaNetCookieJar
+import org.com.hcmurs.repositories.AuthApi
 import org.com.hcmurs.repositories.BusStationApi
 import org.com.hcmurs.repositories.BusStationRepository
 import org.com.hcmurs.repositories.ProfileApi
@@ -26,11 +27,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-    private val BASE_URL = "http://10.0.2.2:4003/"
+    private val BASE_URL = "http://10.0.2.2:4006/"
     private val MOCKY_BASE_URL = "https://run.mocky.io/"
 
     @Provides
     @Singleton
+    @Named("Auth")
     fun provideAuthInterceptor(tokenProvider: TokenProvider): Interceptor {
         return Interceptor { chain ->
             val original = chain.request()
@@ -63,9 +65,14 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: Interceptor, cookieManager: CookieManager): OkHttpClient {
+    fun provideOkHttpClient(
+        @Named("Auth")   authInterceptor: Interceptor,
+        @Named("ApiKey") apiKeyInterceptor: Interceptor,
+        cookieManager: CookieManager
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .addInterceptor(apiKeyInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -88,6 +95,31 @@ class NetworkModule {
     fun provideApiService(retrofit: Retrofit): ProfileApi {
         return retrofit.create(ProfileApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    @Named("ApiKey")
+    fun provideApiKeyInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            val original = chain.request()
+            val request = original.newBuilder()
+                .header("Content-Type", "application/json") // luôn set JSON
+                .header(
+                    "x-api-key",
+                    "c761c9f0bb379612afbfd6ffeca90261db961bb93bce17728bc2a74430a66c0a"
+                ) // API key của bạn
+                .build()
+            chain.proceed(request)
+        }
+    }
+
+
 
     //mock bus station api
     @Provides

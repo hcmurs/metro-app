@@ -98,7 +98,7 @@ fun Navigation(
             LoginScreen(
                 navController = navController,
                 viewModel = hiltViewModel(),
-                mainViewModel = mainViewModel
+             //   mainViewModel = mainViewModel
             )
         }
 
