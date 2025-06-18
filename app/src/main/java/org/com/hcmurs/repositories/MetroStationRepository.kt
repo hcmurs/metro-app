@@ -1,26 +1,26 @@
 package org.com.hcmurs.repositories
 
-import org.com.hcmurs.model.BusStop
-import org.com.hcmurs.repositories.apis.BusStationApi
+import org.com.hcmurs.repositories.apis.MetroStation
+import org.com.hcmurs.repositories.apis.MetroStationApi
 import javax.inject.Inject
 
-class BusStationRepository @Inject constructor(
-    private val api: BusStationApi
+class MetroStationRepository @Inject constructor(
+    private val api: MetroStationApi
 ) {
-    suspend fun getBusStations(): List<BusStop> {
+    suspend fun getMetroStations(): List<MetroStation> {
         try {
-            val response = api.getBusStations()
+            val response = api.getMetroStations()
             return if (response.isSuccessful && response.body() != null) {
                 response.body()!!.map { station ->
-                    BusStop(
-                        id = station.id.toIntOrNull() ?: 0,
+                    MetroStation(
+                        id = station.id ?: 0,
                         name = station.name,
                         latitude = station.latitude,
                         longitude = station.longitude
                     )
                 }
             } else {
-                throw Exception("Failed to fetch bus stations: ${response.code()} ${response.message()}")
+                throw Exception("Failed to fetch metro stations: ${response.code()} ${response.message()}")
             }
         } catch (e: Exception) {
             throw Exception("Network error: ${e.message}")

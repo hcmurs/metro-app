@@ -41,6 +41,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
+import org.com.hcmurs.model.station
 import org.com.hcmurs.ui.components.common.CommonTopBar
 import org.com.hcmurs.utils.getNearbyBusStops
 import org.osmdroid.config.Configuration
@@ -52,28 +53,16 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import kotlin.compareTo
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun MapScreen(
     navController: NavController,
     busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>()
 ) {
-
-    //Ben thanh 10.770696325149563, 106.69754740398896
-
-    var station = listOf<GeoPoint>(
-        GeoPoint(10.770696325149563, 106.69754740398896), // Ben Thanh
-        GeoPoint(10.774692602241206, 106.7022005846861), // Ga Nha Hat Thanh Pho
-        GeoPoint(10.781671962644449, 106.70840954773367), // Ba Son
-        GeoPoint(10.796761528709158, 106.71677316492446), // Cong Vien Van Thanh
-        GeoPoint(10.79893614957232, 106.72410295882501),  // Tan Cang
-        GeoPoint(10.800635526123163, 106.73447068211519), // Thao Dien
-        GeoPoint(10.802432989593624, 106.74275024588567), // An Phu
-        GeoPoint(10.808621477482305, 106.7557946347932), // Rach Chiec
-        GeoPoint(10.82165609486406, 106.75933605616969), // Ga Phuoc Long
-        GeoPoint(10.832473464905071, 106.76444401173823), // Ga Binh Thai
-        GeoPoint(10.846639523705255, 106.7720542821162),  // Ga Thu Duc
-    )
 
     val busStops by busStationViewModel.busStops.collectAsState()
     val isLoading by busStationViewModel.isLoading.collectAsState()
@@ -213,7 +202,7 @@ fun MapScreen(
                             currentZoom < 16 -> 12f
                             else -> 16f
                         }
-                        outlinePaint.color = Color.parseColor("#FF1976D2") // Material Blue
+                        outlinePaint.color = "#FF1976D2".toColorInt() // Material Blue
                         outlinePaint.strokeCap = Paint.Cap.ROUND
                         outlinePaint.isAntiAlias = true
                     }
@@ -223,15 +212,31 @@ fun MapScreen(
                     station.forEachIndexed { index, stationPoint ->
                         val metroMarker = Marker(mapView).apply {
                             position = stationPoint
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                             title = "Metro Station ${index + 1}"
 
-                            // Use a prominent metro icon with zoom-responsive sizing
-                            icon = createIconDrawable(
-                                R.drawable.ic_metro, // Use a metro-specific icon
-                                currentZoom,
-                                128 // Base size 48dp * 2.67 for different densities
-                            )
+                            // Use a bitmap-based approach for icon creation
+                            val metroIcon = ContextCompat.getDrawable(context, R.drawable.ic_metro)?.mutate()
+                            metroIcon?.let { drawable ->
+                                // Determine size based on zoom
+                                val iconSize = when {
+                                    currentZoom < 12 -> 64
+                                    currentZoom < 15 -> 96
+                                    currentZoom < 18 -> 128
+                                    else -> 160
+                                }
+
+                                // Create bitmap with proper dimensions
+                                val bitmap = createBitmap(iconSize, iconSize)
+                                val canvas = android.graphics.Canvas(bitmap)
+
+                                // Set bounds to fill the bitmap
+                                drawable.setBounds(0, 0, iconSize, iconSize)
+                                drawable.draw(canvas)
+
+                                // Use bitmap as icon
+                                icon = bitmap.toDrawable(context.resources)
+                            }
 
                             // Metro stations are always visible and clickable
                             setOnMarkerClickListener { marker, mapView ->

@@ -11,10 +11,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.JavaNetCookieJar
-import org.com.hcmurs.repositories.BusStationApi
+import org.com.hcmurs.repositories.apis.BusStationApi
 import org.com.hcmurs.repositories.BusStationRepository
-import org.com.hcmurs.repositories.ProfileApi
+import org.com.hcmurs.repositories.MetroStationRepository
+import org.com.hcmurs.repositories.apis.ProfileApi
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
+import org.com.hcmurs.repositories.apis.MetroStationApi
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -93,15 +95,15 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideBusStationApi(
-        @Named("mockyRetrofit") retrofit: Retrofit
+        @Named("mockyBusRetrofit") retrofit: Retrofit
     ): BusStationApi {
         return retrofit.create(BusStationApi::class.java)
     }
 
     @Provides
-    @Named("mockyRetrofit")
+    @Named("mockyBusRetrofit")
     @Singleton
-    fun provideMockyRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideMockyBusStationRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(MOCKY_BASE_URL)
             .client(okHttpClient)
@@ -114,4 +116,31 @@ class NetworkModule {
     fun provideBusStationRepository(api: BusStationApi): BusStationRepository {
         return BusStationRepository(api)
     }
+
+    //metro station api
+    @Provides
+    @Singleton
+    fun provideMetroStationApi(
+        @Named("metroStationRetrofit") retrofit: Retrofit
+    ): MetroStationApi {
+        return retrofit.create(MetroStationApi::class.java)
+    }
+
+    @Provides
+    @Named("metroStationRetrofit")
+    @Singleton
+    fun provideMetroStationRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(MOCKY_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMetroStationRepository(api: MetroStationApi): MetroStationRepository {
+        return MetroStationRepository(api)
+    }
+
 }

@@ -11,15 +11,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import org.com.hcmurs.ui.screens.addoredit.AddOrEditScreen
-import org.com.hcmurs.ui.screens.detail.DetailScreen
-import org.com.hcmurs.ui.screens.home.HomeScreen
-import org.com.hcmurs.ui.screens.home.HomeViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
@@ -30,6 +24,7 @@ import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
+import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.userprofile.ProfileScreen
@@ -114,10 +109,6 @@ fun Navigation(
             FeedbackScreen(navController)
         }
 
-        composable(Screen.Home.route) {
-            HomeScreen(navController, viewModel = hiltViewModel<HomeViewModel>(), mainViewModel)
-        }
-
         composable(Screen.HomeMetro.route) {
             HomeMetroScreen(navController)
         }
@@ -131,7 +122,7 @@ fun Navigation(
             PlaceholderScreen(navController, "Buy Ticket Detail Screen")
         }
         composable(Screen.Route.route) {
-            PlaceholderScreen(navController, "Route Screen")
+            RouteScreen(navController)
         }
 
         composable(Screen.Maps.route) {
@@ -168,44 +159,6 @@ fun Navigation(
 
         composable(Screen.Introduction.route) {
             PlaceholderScreen(navController, "Introduction Screen")
-        }
-
-        composable(
-            Screen.Detail.route + "?noteIndex={noteIndex}",
-            arguments = listOf(
-                navArgument("noteIndex") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
-        ) { backStackEntry ->
-            val noteIndex = backStackEntry.arguments?.getInt("noteIndex") ?: -1
-            val parentEntry = navController.getBackStackEntry(Screen.HomeMetro.route)
-            val homeViewModel: HomeViewModel = hiltViewModel(parentEntry)
-
-            DetailScreen(navController, homeViewModel, mainViewModel, noteIndex)
-        }
-
-        composable(
-            Screen.AddOrEdit.route + "?noteIndex={noteIndex}",
-            arguments = listOf(
-                navArgument("noteIndex") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
-        ) { backStackEntry ->
-            val noteIndex = backStackEntry.arguments?.getInt("noteIndex") ?: -1
-            val parentEntry = navController.getBackStackEntry(Screen.HomeMetro.route)
-            val homeViewModel: HomeViewModel = hiltViewModel(parentEntry)
-
-            AddOrEditScreen(
-                navController,
-                homeViewModel,
-                hiltViewModel(),
-                mainViewModel,
-                noteIndex
-            )
         }
     }
 }
