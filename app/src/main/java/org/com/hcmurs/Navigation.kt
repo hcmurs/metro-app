@@ -83,7 +83,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Maps.route) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)

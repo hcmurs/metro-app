@@ -10,6 +10,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.JavaNetCookieJar
 import org.com.hcmurs.repositories.BusStationApi
 import org.com.hcmurs.repositories.BusStationRepository
 import org.com.hcmurs.repositories.ProfileApi
@@ -17,13 +18,15 @@ import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.CookieManager
+import java.net.CookiePolicy
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-    private val BASE_URL = "https://6512cbd2b8c6ce52b3963937.mockapi.io/api/v1/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
     private val MOCKY_BASE_URL = "https://run.mocky.io/"
 
     @Provides
@@ -50,15 +53,23 @@ class NetworkModule {
         return SharedPreferencesTokenProvider(sharedPreferences)
     }
 
+    @Provides
+    @Singleton
+    fun provideCookieManager(): CookieManager {
+        return CookieManager().apply {
+            setCookiePolicy(CookiePolicy.ACCEPT_ALL)
+        }
+    }
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: Interceptor): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: Interceptor, cookieManager: CookieManager): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            .cookieJar(JavaNetCookieJar(cookieManager))
             .build()
     }
 
