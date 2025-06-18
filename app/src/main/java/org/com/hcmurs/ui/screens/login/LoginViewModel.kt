@@ -45,19 +45,10 @@ class LoginViewModel @Inject constructor(
     }
 
     fun loginWithGoogle() {
-        loginWithProvider("google")
-    }
-
-    fun loginWithFacebook() {
-        loginWithProvider("facebook")
-    }
-
-    private fun loginWithProvider(provider: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(status = LoadStatus.Loading())
-
             try {
-                val result = authRepository.loginWithProvider(provider)
+                val result = authRepository.loginWithProvider("google")
                 if (result.isSuccess) {
                     val token = result.getOrNull()
                     if (token != null) {
@@ -80,6 +71,61 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     status = LoadStatus.Error("Login error: ${e.message}")
+                )
+            }
+        }
+    }
+
+    fun loginWithFacebook() {
+        loginWithProvider("facebook")
+    }
+
+    private fun loginWithProvider(provider: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(status = LoadStatus.Loading())
+
+            try {
+                val result = authRepository.loginWithProvider(provider)
+                if (result.isSuccess) {
+                    val token = result.getOrNull()
+                    if (token == "oauth_pending") {
+                        // OAuth flow initiated, waiting for redirect
+                        _uiState.value = _uiState.value.copy(
+                            status = LoadStatus.Init()
+                        )
+                    } else if (token != null) {
+                        _uiState.value = _uiState.value.copy(
+                            isAuthenticated = true,
+                            accessToken = token,
+                            status = LoadStatus.Success()
+                        )
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            status = LoadStatus.Error("No token received")
+                        )
+                    }
+                } else {
+                    val error = result.exceptionOrNull()?.message ?: "Unknown error"
+                    _uiState.value = _uiState.value.copy(
+                        status = LoadStatus.Error("Login failed: $error")
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    status = LoadStatus.Error("Login error: ${e.message}")
+                )
+            }
+        }
+    }
+
+    fun handleOAuthSuccess() {
+        viewModelScope.launch {
+            val token = authRepository.getStoredToken()
+            if (token != null && token != "oauth_pending") {
+                _uiState.value = _uiState.value.copy(
+                    isAuthenticated = true,
+                    accessToken = token,
+                    status = LoadStatus.Success()
                 )
             }
         }

@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.constant.AuthConstants
+import org.com.hcmurs.oauth.OAuth2Service
 import org.json.JSONObject
 import retrofit2.Response
 import java.util.Base64
@@ -17,22 +18,49 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val authApi: AuthApi
+    private val authApi: AuthApi,
+    private val oAuth2Service : OAuth2Service
 ) {
     private val sharedPrefs: SharedPreferences =
         context.getSharedPreferences(AuthConstants.SHARED_PREFS_NAME, Context.MODE_PRIVATE)
 
     suspend fun loginWithProvider(provider: String): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val request = ProviderLoginRequest(provider = provider)
-            val response = authApi.loginWithProvider(request)
+            when (provider) {
+                "google" -> {
+                    // Initiate OAuth2 flow with browser
+                    oAuth2Service.initiateGoogleLogin()
+                    // Return pending state - actual token will be handled in redirect
+                    Result.success("oauth_pending")
+                }
+                else -> {
+                    val request = ProviderLoginRequest(provider = provider)
+                    val response = authApi.loginWithProvider(request)
+
+                    if (response.isSuccessful && response.body() != null) {
+                        val token = response.body()!!.token
+                        storeToken(token)
+                        Result.success(token)
+                    } else {
+                        Result.failure(Exception("Login failed: ${response.message()}"))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    //oauth2
+    suspend fun handleOAuth2Redirect(code: String): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val response = authApi.exchangeCodeForToken(OAuth2CodeRequest(code))
 
             if (response.isSuccessful && response.body() != null) {
                 val token = response.body()!!.token
                 storeToken(token)
                 Result.success(token)
             } else {
-                Result.failure(Exception("Login failed: ${response.message()}"))
+                Result.failure(Exception("Token exchange failed: ${response.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
