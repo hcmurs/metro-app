@@ -2,23 +2,30 @@ package org.com.hcmurs.ui.screens.metro.route
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,17 +40,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
 import org.com.hcmurs.model.station
+import org.com.hcmurs.repositories.apis.MetroStation
 import org.com.hcmurs.ui.components.common.CommonTopBar
+import org.com.hcmurs.utils.initialView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -53,9 +65,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import androidx.core.graphics.toColorInt
-import androidx.core.graphics.drawable.toDrawable
-import org.com.hcmurs.utils.initialView
 
 @Composable
 fun RouteScreen(
@@ -70,6 +79,9 @@ fun RouteScreen(
     var hasLocationPermission by remember { mutableStateOf(false) }
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var currentCenter by remember { mutableStateOf<GeoPoint?>(null) }
+
+    var selectedStartStation by remember { mutableStateOf<MetroStation?>(null) }
+    var selectedEndStation by remember { mutableStateOf<MetroStation?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -147,13 +159,19 @@ fun RouteScreen(
                         addMapListener(object : MapListener {
                             override fun onScroll(event: ScrollEvent?): Boolean {
                                 currentCenter = mapCenter as GeoPoint
-                                Log.d("RouteScreen", "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}")
+                                Log.d(
+                                    "RouteScreen",
+                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}"
+                                )
                                 return true
                             }
 
                             override fun onZoom(event: ZoomEvent?): Boolean {
                                 currentCenter = mapCenter as GeoPoint
-                                Log.d("RouteScreen", "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}, Zoom: ${event?.zoomLevel}")
+                                Log.d(
+                                    "RouteScreen",
+                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}, Zoom: ${event?.zoomLevel}"
+                                )
                                 return true
                             }
                         })
@@ -189,7 +207,8 @@ fun RouteScreen(
                             title = "Metro Station ${index + 1}"
 
                             // Use a bitmap-based approach for icon creation
-                            val metroIcon = ContextCompat.getDrawable(context, R.drawable.ic_metro)?.mutate()
+                            val metroIcon =
+                                ContextCompat.getDrawable(context, R.drawable.ic_metro)?.mutate()
                             metroIcon?.let { drawable ->
                                 // Determine size based on zoom
                                 val iconSize = when {
@@ -232,6 +251,123 @@ fun RouteScreen(
                     mapView.invalidate()
                 }
             )
+
+            // Route Selection Box
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .align(Alignment.TopCenter),
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Start station selector
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Điểm đi", style = MaterialTheme.typography.labelMedium)
+                            FilledTonalButton(
+                                onClick = { /* Show start station selector */ },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(4.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            ) {
+                                Text(
+                                    selectedStartStation?.name ?: "Chọn ga đi",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+
+                        // Reverse button
+                        IconButton(
+                            onClick = {
+                                val temp = selectedStartStation
+                                selectedStartStation = selectedEndStation
+                                selectedEndStation = temp
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.SwapVert,
+                                contentDescription = "Đảo ga"
+                            )
+                        }
+
+                        // End station selector
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Điểm đến", style = MaterialTheme.typography.labelMedium)
+                            FilledTonalButton(
+                                onClick = { /* Show end station selector */ },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(4.dp),
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            ) {
+                                Text(
+                                    selectedEndStation?.name ?: "Chọn ga đến",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Bottom Time Information Box
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        "Thông tin chuyến đi",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    if (selectedStartStation != null && selectedEndStation != null) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text("Thời gian")
+                                Text("25 phút", style = MaterialTheme.typography.bodyLarge)
+                            }
+                            Column {
+                                Text("Khoảng cách")
+                                Text("12.5 km", style = MaterialTheme.typography.bodyLarge)
+                            }
+                            Column {
+                                Text("Giá vé")
+                                Text("10000 VND", style = MaterialTheme.typography.bodyLarge)
+                            }
+                        }
+                    } else {
+                        Text(
+                            "Vui lòng chọn ga đi và ga đến để xem thông tin",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
+            }
 
             // Floating Action Button to reset map to initial view
             FloatingActionButton(
@@ -282,9 +418,12 @@ fun RouteScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, apiLevel = 35)
 @Composable
 fun RouteScreenPreview() {
     // This preview will not show the map, but it allows you to see the layout structure
-    RouteScreen(navController = NavController(LocalContext.current))
+    RouteScreen(
+        navController = NavController(LocalContext.current),
+        metroStationViewModel = hiltViewModel<MetroStationViewModel>()
+    )
 }
