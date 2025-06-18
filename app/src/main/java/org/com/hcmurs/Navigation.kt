@@ -32,9 +32,6 @@ import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
-    object Home : Screen("home")
-    object Detail : Screen("detail")
-    object AddOrEdit : Screen("addOrEdit")
     object HomeMetro : Screen("homeMetro")
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
@@ -78,7 +75,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.HomeMetro.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)

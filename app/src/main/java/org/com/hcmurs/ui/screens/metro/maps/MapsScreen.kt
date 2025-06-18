@@ -57,6 +57,7 @@ import kotlin.compareTo
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
+import org.com.hcmurs.utils.initialView
 
 @Composable
 fun MapScreen(
@@ -157,12 +158,11 @@ fun MapScreen(
 
                         // Center the map on a default location
                         //val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
-                        val startPoint = GeoPoint(10.800679710193421, 106.73543930053711) // Metro View
-                        controller.setCenter(startPoint)
+                        controller.setCenter(initialView)
 
                         // Add a marker at the center
                         val marker = Marker(this)
-                        marker.position = startPoint
+                        marker.position = initialView
                         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         marker.title = "Ho Chi Minh City"
                         overlays.add(marker)
@@ -290,8 +290,8 @@ fun MapScreen(
             FloatingActionButton(
                 onClick = {
                     mapView?.let { map ->
-                        val initialPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
-                        map.controller.animateTo(initialPoint, 15.0, 1000L)
+                        val initialPoint = initialView
+                        map.controller.animateTo(initialPoint, 14.0, 1000L)
                     }
                 },
                 modifier = Modifier

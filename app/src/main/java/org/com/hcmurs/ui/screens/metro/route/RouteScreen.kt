@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MyLocation
@@ -54,6 +55,7 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import androidx.core.graphics.toColorInt
 import androidx.core.graphics.drawable.toDrawable
+import org.com.hcmurs.utils.initialView
 
 @Composable
 fun RouteScreen(
@@ -129,12 +131,11 @@ fun RouteScreen(
 
                         // Center the map on a default location
                         //val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
-                        val startPoint = GeoPoint(10.800679710193421, 106.73543930053711) // Metro View
-                        controller.setCenter(startPoint)
+                        controller.setCenter(initialView)
 
                         // Add a marker at the center
                         val marker = Marker(this)
-                        marker.position = startPoint
+                        marker.position = initialView
                         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         marker.title = "Ho Chi Minh City"
                         overlays.add(marker)
@@ -236,40 +237,19 @@ fun RouteScreen(
             FloatingActionButton(
                 onClick = {
                     mapView?.let { map ->
-                        val initialPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
-                        map.controller.animateTo(initialPoint, 15.0, 1000L)
+                        val initialPoint = initialView
+                        map.controller.animateTo(initialPoint, 14.0, 1000L)
                     }
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.MyLocation,
                     contentDescription = "Reset to initial view",
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            // Debug FAB to log current location
-            FloatingActionButton(
-                onClick = {
-                    mapView?.let { map ->
-                        val center = map.mapCenter as GeoPoint
-                        val zoom = map.zoomLevelDouble
-                        Log.d("RouteScreen", "Manual Log - Lat: ${center.latitude}, Lng: ${center.longitude}, Zoom: $zoom")
-                        // You can also show a toast or update UI with this info
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.secondary
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Log current location",
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
