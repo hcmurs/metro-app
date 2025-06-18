@@ -11,6 +11,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.JavaNetCookieJar
+import org.com.hcmurs.repositories.BusStationApi
+import org.com.hcmurs.repositories.BusStationRepository
 import org.com.hcmurs.repositories.ProfileApi
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.security.TokenProvider
@@ -18,12 +20,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.CookieManager
 import java.net.CookiePolicy
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     private val BASE_URL = "http://10.0.2.2:4003/"
+    private val MOCKY_BASE_URL = "https://run.mocky.io/"
 
     @Provides
     @Singleton
@@ -83,5 +87,31 @@ class NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ProfileApi {
         return retrofit.create(ProfileApi::class.java)
+    }
+
+    //mock bus station api
+    @Provides
+    @Singleton
+    fun provideBusStationApi(
+        @Named("mockyRetrofit") retrofit: Retrofit
+    ): BusStationApi {
+        return retrofit.create(BusStationApi::class.java)
+    }
+
+    @Provides
+    @Named("mockyRetrofit")
+    @Singleton
+    fun provideMockyRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(MOCKY_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideBusStationRepository(api: BusStationApi): BusStationRepository {
+        return BusStationRepository(api)
     }
 }

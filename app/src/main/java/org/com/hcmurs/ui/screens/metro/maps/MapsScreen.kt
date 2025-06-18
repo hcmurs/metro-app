@@ -3,32 +3,50 @@ package org.com.hcmurs.ui.screens.metro.maps
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
-import org.com.hcmurs.model.BusStop
+import org.com.hcmurs.ui.components.common.CommonTopBar
 import org.com.hcmurs.utils.getNearbyBusStops
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -36,7 +54,10 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
 @Composable
-fun MapScreen(navController: NavController) {
+fun MapScreen(
+    navController: NavController,
+    busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>()
+) {
 
     //Ben thanh 10.770696325149563, 106.69754740398896
 
@@ -54,22 +75,43 @@ fun MapScreen(navController: NavController) {
         GeoPoint(10.846639523705255, 106.7720542821162),  // Ga Thu Duc
     )
 
-    val allBusStops = listOf(
-        BusStop(1, "Bến xe buýt Thới An", 10.8785859, 106.6477263),
-        BusStop(2, "Bến xe buýt Thới An", 10.8788114, 106.6488621),
-        BusStop(3, "Thới An 13", 10.8811509, 106.6486586),
-        BusStop(4, "Võ Thị Phải", 10.8852588, 106.648306),
-        // ...etc
-    )
-
+    val busStops by busStationViewModel.busStops.collectAsState()
+    val isLoading by busStationViewModel.isLoading.collectAsState()
+    val error by busStationViewModel.error.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var hasLocationPermission by remember { mutableStateOf(false) }
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    var currentCenter by remember { mutableStateOf<GeoPoint?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasLocationPermission = isGranted
+    }
+
+    // Helper function to create zoom-responsive icons
+    fun createIconDrawable(iconRes: Int, zoomLevel: Double, baseSize: Int): Drawable? {
+        val drawable = ContextCompat.getDrawable(context, iconRes) ?: return null
+
+        val iconSize = when {
+            zoomLevel < 12 -> (baseSize * 0.7).toInt()  // Smaller for far zoom
+            zoomLevel < 15 -> baseSize                  // Normal size for medium zoom
+            zoomLevel < 18 -> (baseSize * 1.3).toInt()  // Larger for close zoom
+            else -> (baseSize * 1.6).toInt()            // Largest for very close zoom
+        }
+
+        drawable.setBounds(0, 0, iconSize, iconSize)
+        return drawable
+    }
+
+    // Helper function to determine if icons should be shown based on zoom and density
+    fun shouldShowBusStops(zoomLevel: Double, busStopCount: Int): Boolean {
+        return when {
+            zoomLevel < 13 -> false  // Don't show bus stops when zoomed out
+            zoomLevel < 15 -> busStopCount <= 20  // Limited bus stops for medium zoom
+            else -> true  // Show all bus stops when zoomed in
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -81,9 +123,30 @@ fun MapScreen(navController: NavController) {
         if (!hasLocationPermission) {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+
+        busStationViewModel.getBusStations()
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            CommonTopBar(navController, "Maps")
+        }
+    ) { paddingValues ->
+
+        // Show loading indicator if needed
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+
+        // Show error if needed
+        error?.let {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Error: $it")
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,10 +164,11 @@ fun MapScreen(navController: NavController) {
                     MapView(context).apply {
                         setTileSource(TileSourceFactory.MAPNIK)
                         setMultiTouchControls(true)
-                        controller.setZoom(15.0)
+                        controller.setZoom(14.0)
 
                         // Center the map on a default location
-                        val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
+                        //val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
+                        val startPoint = GeoPoint(10.800679710193421, 106.73543930053711) // Metro View
                         controller.setCenter(startPoint)
 
                         // Add a marker at the center
@@ -114,65 +178,150 @@ fun MapScreen(navController: NavController) {
                         marker.title = "Ho Chi Minh City"
                         overlays.add(marker)
 
-//                        // Create a polyline
-//                        val line = Polyline().apply {
-//                            // Add points to the line (varying longitude)
-//                            station.forEach { point ->
-//                                addPoint(point)
-//                            }
-//
-//                            // Customize line appearance
-//                            outlinePaint.strokeWidth = 10f
-//                            outlinePaint.color = Color.RED
-//                            outlinePaint.strokeCap = Paint.Cap.ROUND
-//                            outlinePaint.isAntiAlias = true
-//                        }
-//
-//                        // Add the line to map overlays
-//                        overlays.add(line)
+                        // Store reference for FAB
+                        mapView = this
+
+                        // Add map event listener to track current center
+                        addMapListener(object : MapListener {
+                            override fun onScroll(event: ScrollEvent?): Boolean {
+                                currentCenter = mapCenter as GeoPoint
+                                Log.d("MapScreen", "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}")
+                                return true
+                            }
+
+                            override fun onZoom(event: ZoomEvent?): Boolean {
+                                currentCenter = mapCenter as GeoPoint
+                                Log.d("MapScreen", "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}, Zoom: ${event?.zoomLevel}")
+                                return true
+                            }
+                        })
                     }
                 },
                 modifier = Modifier.fillMaxSize(),
                 update = { mapView ->
                     // This block will be called on recomposition
+                    val currentZoom = mapView.zoomLevelDouble
 
-                    // Xóa overlay cũ trước khi vẽ mới
+                    // Clear old overlays before drawing new ones
                     mapView.overlays.clear()
 
-                    // Vẽ metro stations
-                    station.forEach { stationPoint ->
-                        val metroMarker = Marker(mapView).apply {
-                            position = stationPoint
-                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            title = "Metro Station"
-                        }
-                        mapView.overlays.add(metroMarker)
-
-                        // Vẽ bus stop gần stationPoint
-                        val nearbyStops = getNearbyBusStops(stationPoint, allBusStops)
-                        nearbyStops.forEach { stop ->
-                            val stopMarker = Marker(mapView).apply {
-                                position = GeoPoint(stop.latitude, stop.longitude)
-                                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                title = stop.name
-                                icon = context.getDrawable(R.drawable.ic_bus) // optional
-                            }
-                            mapView.overlays.add(stopMarker)
-                        }
-                    }
-
-                    // Vẽ polyline metro line
+                    // Add metro line polyline first (so it appears under markers)
                     val polyline = Polyline().apply {
                         station.forEach { addPoint(it) }
-                        outlinePaint.strokeWidth = 10f
-                        outlinePaint.color = Color.RED
+                        outlinePaint.strokeWidth = when {
+                            currentZoom < 13 -> 8f
+                            currentZoom < 16 -> 12f
+                            else -> 16f
+                        }
+                        outlinePaint.color = Color.parseColor("#FF1976D2") // Material Blue
+                        outlinePaint.strokeCap = Paint.Cap.ROUND
+                        outlinePaint.isAntiAlias = true
                     }
                     mapView.overlays.add(polyline)
 
-                    // Refresh bản đồ
+                    // Add metro stations with larger, more prominent icons
+                    station.forEachIndexed { index, stationPoint ->
+                        val metroMarker = Marker(mapView).apply {
+                            position = stationPoint
+                            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                            title = "Metro Station ${index + 1}"
+
+                            // Use a prominent metro icon with zoom-responsive sizing
+                            icon = createIconDrawable(
+                                R.drawable.ic_metro, // Use a metro-specific icon
+                                currentZoom,
+                                128 // Base size 48dp * 2.67 for different densities
+                            )
+
+                            // Metro stations are always visible and clickable
+                            setOnMarkerClickListener { marker, mapView ->
+                                // Handle metro station click
+                                true
+                            }
+                        }
+                        mapView.overlays.add(metroMarker)
+
+                        // Get nearby bus stops for this metro station
+                        val nearbyStops = getNearbyBusStops(stationPoint, busStops)
+
+                        // Only show bus stops based on zoom level and density
+                        if (shouldShowBusStops(currentZoom, nearbyStops.size)) {
+                            nearbyStops.forEach { stop ->
+                                val stopMarker = Marker(mapView).apply {
+                                    position = GeoPoint(stop.latitude, stop.longitude)
+                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                                    title = stop.name
+
+                                    // Use smaller bus stop icons with zoom-responsive sizing
+                                    icon = createIconDrawable(
+                                        R.drawable.ic_bus,
+                                        currentZoom,
+                                        85 // Base size 32dp * 2.67 for different densities
+                                    )
+
+                                    // Different behavior for bus stops
+                                    setOnMarkerClickListener { marker, mapView ->
+                                        // Handle bus stop click
+                                        true
+                                    }
+                                }
+                                mapView.overlays.add(stopMarker)
+                            }
+                        }
+                    }
+
+                    // Add user location marker if permission is granted
+                    if (hasLocationPermission) {
+                        // You can add user location logic here
+                        // val userLocationMarker = ...
+                    }
+
+                    // Refresh the map
                     mapView.invalidate()
                 }
             )
+
+            // Floating Action Button to reset map to initial view
+            FloatingActionButton(
+                onClick = {
+                    mapView?.let { map ->
+                        val initialPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
+                        map.controller.animateTo(initialPoint, 15.0, 1000L)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = "Reset to initial view",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            // Debug FAB to log current location
+            FloatingActionButton(
+                onClick = {
+                    mapView?.let { map ->
+                        val center = map.mapCenter as GeoPoint
+                        val zoom = map.zoomLevelDouble
+                        Log.d("MapScreen", "Manual Log - Lat: ${center.latitude}, Lng: ${center.longitude}, Zoom: $zoom")
+                        // You can also show a toast or update UI with this info
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Log current location",
+                    tint = MaterialTheme.colorScheme.onSecondary
+                )
+            }
         }
     }
 
