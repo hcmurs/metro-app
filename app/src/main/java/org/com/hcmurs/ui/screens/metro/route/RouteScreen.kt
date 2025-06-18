@@ -8,15 +8,21 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,8 +36,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,6 +55,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -249,13 +257,13 @@ fun RouteScreen(
 
                                 // Use a bitmap-based approach for icon creation
                                 // Apply tint based on station type
-                                metroIcon?.setTint(
-                                    when (index) {
-                                        0 -> "#FFFF5722".toColorInt() // Orange for start
-                                        station.size - 1 -> "#FF4CAF50".toColorInt() // Green for end
-                                        else -> "#FF1976D2".toColorInt() // Blue for regular
-                                    }
-                                )
+//                                metroIcon?.setTint(
+//                                    when (index) {
+////                                        0 -> "#FFFF5722".toColorInt() // Orange for start
+////                                        station.size - 1 -> "#FF4CAF50".toColorInt() // Green for end
+//                                        else -> "#FF1976D2".toColorInt() // Blue for regular
+//                                    }
+//                                )
 
                                 metroIcon?.let { drawable ->
                                     // Determine size based on zoom
@@ -313,74 +321,111 @@ fun RouteScreen(
                 }
             )
 
-            // Route Selection Box
-            Card(
+            // Route Selection Box with floating swap button
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(300.dp)
+                    .align(Alignment.TopCenter)
                     .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                shape = RoundedCornerShape(8.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+                Card(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         // Start station selector
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Điểm đi", style = MaterialTheme.typography.labelMedium)
-                            FilledTonalButton(
-                                onClick = { showStartStationDialog = true },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(4.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    selectedStartStation?.name ?: "Chọn ga đi",
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_home_50),
+                                    contentDescription = "Điểm đi",
+                                    modifier = Modifier.size(24.dp)
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                FilledTonalButton(
+                                    onClick = { showStartStationDialog = true },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(35.dp), // Reduced height
+                                    shape = RoundedCornerShape(4.dp),
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        selectedStartStation?.name ?: "Chọn ga đi",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontWeight = FontWeight.Medium,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
-                        }
-
-                        // Reverse button
-                        IconButton(
-                            onClick = {
-                                val temp = selectedStartStation
-                                selectedStartStation = selectedEndStation
-                                selectedEndStation = temp
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.SwapVert,
-                                contentDescription = "Đảo ga"
-                            )
                         }
 
                         // End station selector
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Điểm đến", style = MaterialTheme.typography.labelMedium)
-                            FilledTonalButton(
-                                onClick = { showEndStationDialog = true },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(4.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    selectedEndStation?.name ?: "Chọn ga đến",
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_red_point_50),
+                                    contentDescription = "Điểm đến",
+                                    modifier = Modifier.size(24.dp)
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                FilledTonalButton(
+                                    onClick = { showEndStationDialog = true },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(35.dp), // Reduced height
+                                    shape = RoundedCornerShape(4.dp),
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        selectedEndStation?.name ?: "Chọn ga đến",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontWeight = FontWeight.Medium,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
                     }
+                }
+
+                // Floating swap button
+                FloatingActionButton(
+                    onClick = {
+                        val temp = selectedStartStation
+                        selectedStartStation = selectedEndStation
+                        selectedEndStation = temp
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .offset(x = 16.dp), // Offset to float outside the card
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SwapVert,
+                        contentDescription = "Đảo ga"
+                    )
                 }
             }
 
