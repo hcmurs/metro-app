@@ -1,6 +1,7 @@
 package org.com.hcmurs.repositories
 
 import org.com.hcmurs.model.BusStop
+import org.com.hcmurs.repositories.apis.BusStationApi
 import javax.inject.Inject
 
 class BusStationRepository @Inject constructor(

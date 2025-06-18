@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import org.com.hcmurs.oauth.OAuth2Service
-import org.com.hcmurs.repositories.AuthApi
+import org.com.hcmurs.repositories.apis.AuthApi
 import org.com.hcmurs.repositories.AuthRepository
 import retrofit2.Retrofit
 import javax.inject.Singleton

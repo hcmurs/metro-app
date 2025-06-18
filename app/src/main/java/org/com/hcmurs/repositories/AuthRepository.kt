@@ -9,8 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.constant.AuthConstants
 import org.com.hcmurs.oauth.OAuth2Service
+import org.com.hcmurs.repositories.apis.AuthApi
+import org.com.hcmurs.repositories.apis.OAuth2CodeRequest
+import org.com.hcmurs.repositories.apis.ProviderLoginRequest
 import org.json.JSONObject
-import retrofit2.Response
 import java.util.Base64
 import javax.inject.Inject
 import javax.inject.Singleton
