@@ -5,25 +5,13 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import javax.inject.Inject
 
 interface AuthApi {
-    @POST("api/auth/login")
-    suspend fun loginWithProvider(@Body request: ProviderLoginRequest): Response<LoginResponse>
-    @GET("api/auth/validate")
-    suspend fun validateToken(@Header("Authorization") token: String): Response<Unit>
-    @POST("api/oauth2/token")
-    suspend fun exchangeCodeForToken(@Body request: OAuth2CodeRequest): Response<LoginResponse>
+    @POST("api/v1/auth/oauth2/google")
+    suspend fun loginWithGoogle(@Body request: GoogleLoginRequest): TokenResponse
 }
 
-data class ProviderLoginRequest(
-    val provider: String // "google" or "facebook"
-)
 
-data class LoginResponse(
-    val token: String,
-    val expiresIn: Long
-)
-data class OAuth2CodeRequest(
-    val code: String,
-    val grant_type: String = "authorization_code"
-)
+data class GoogleLoginRequest(val idToken: String)
+data class TokenResponse(val accessToken: String)
