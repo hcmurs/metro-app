@@ -21,9 +21,6 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            installSplashScreen()
-        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
