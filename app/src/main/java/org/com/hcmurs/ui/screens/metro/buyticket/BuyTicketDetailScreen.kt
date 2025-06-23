@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.payment.PaymentMethod
 
 data class TicketDetailInfo(
     val type: String,
@@ -64,6 +67,7 @@ fun TicketDetailScreen(
     ticketType: String = "Vé 1 ngày",
     ticketPrice: String = "40.000 đ"
 ) {
+    val selectedPayment = remember { mutableStateOf(org.com.hcmurs.payment.PaymentMethod.MoMo) }
 
     // Create ticket detail based on type
     val ticketDetail = remember (ticketType) {
@@ -130,14 +134,52 @@ fun TicketDetailScreen(
             // Ticket Card
             TicketDetailCard(ticketDetail = ticketDetail)
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Chọn phương thức thanh toán:",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+
+            Row (
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                PaymentMethod.values().forEach { method ->
+                    OutlinedButton(
+                        onClick = { selectedPayment.value = method },
+                        border = ButtonDefaults.outlinedButtonBorder.takeIf { selectedPayment.value == method },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (selectedPayment.value == method) Color(0xFFBBDEFB) else Color.White,
+                            contentColor = Color(0xFF1976D2)
+                        )
+                    ) {
+                        Text(text = method.displayName)
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             // Buy Button
             Button (
                 onClick = {
-                    // Handle purchase logic
-                    // You can navigate to payment screen here
-                    // navController.navigate("payment_screen")
+                    when (selectedPayment.value) {
+                        org.com.hcmurs.payment.PaymentMethod.MoMo -> {
+                            // Gọi API hoặc điều hướng tới MoMo Payment
+                            navController.navigate("momo_payment_screen")
+                        }
+                        PaymentMethod.VNPay   -> {
+                            // Gọi API hoặc điều hướng tới VNPay Payment
+                            navController.navigate("vnpay_payment_screen")
+                        }
+                    }
+
                 },
                 modifier = Modifier
                     .fillMaxWidth()
