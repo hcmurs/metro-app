@@ -1,5 +1,6 @@
 package org.com.hcmurs.repositories
 
+
 import android.util.Log // Import Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
-    private val api: AuthApi,
-    private val tokenStorage: TokenStorage
+    private val authApi: AuthApi,
+    private val tokenStorage: TokenStorage,
 ) {
     suspend fun loginWithGoogle(idToken: String): String = withContext(Dispatchers.IO) {
         try {
@@ -91,6 +92,7 @@ class AuthRepository @Inject constructor(
         } catch (e: Exception) {
             Log.e("AuthRepository", "Error during logout: ${e.message}", e)
             // Có thể re-throw ngoại lệ hoặc xử lý tùy theo yêu cầu
+
         }
     }
 

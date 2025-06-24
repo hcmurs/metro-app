@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
+import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
@@ -120,7 +121,20 @@ class NetworkModule {
         }
     }
 
+    //metro station api
+    @Provides
+    @Singleton
+    fun provideMetroStationApi(
+        @Named("mockyRetrofit") retrofit: Retrofit
+    ): MetroStationApi {
+        return retrofit.create(MetroStationApi::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideMetroStationRepository(api: MetroStationApi): MetroStationRepository {
+        return MetroStationRepository(api)
+    }
 
     //mock bus station api
     @Provides

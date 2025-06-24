@@ -51,20 +51,25 @@ class LoginViewModel @Inject constructor(
     // Initiate Google Sign-In process
     fun initiateGoogleSignIn() {
         viewModelScope.launch {
+            Log.d("LoginFlow", "Starting Google sign-in process")
             _isLoading.value = true
             _errorMessage.value = null
 
             try {
                 val result = googleAuthManager.signIn()
+                Log.d("LoginFlow", "Google sign-in preparation result: $result")
                 result.fold(
                     onSuccess = { intent ->
+                        Log.d("LoginFlow", "Google sign-in intent created successfully")
                         _signInIntent.value = intent
                     },
                     onFailure = { error ->
+                        Log.e("LoginFlow", "Failed to initialize sign-in", error)
                         _errorMessage.value = "Failed to initialize sign-in: ${error.message}"
                     }
                 )
             } catch (e: Exception) {
+                Log.e("LoginFlow", "Exception during sign-in initialization", e)
                 _errorMessage.value = "Error: ${e.message}"
             } finally {
                 _isLoading.value = false
@@ -74,28 +79,43 @@ class LoginViewModel @Inject constructor(
 
     // Handle the result from Google Sign-In
     fun handleGoogleSignInResult(data: Intent?) {
+        Log.d("LoginFlow", "Handling Google sign-in result: ${data != null}")
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
 
             try {
+                if (data == null) {
+                    Log.w("LoginFlow", "Received null intent from Google sign-in")
+                    _errorMessage.value = "Sign-in canceled or failed"
+                    return@launch
+                }
+
+                Log.d("LoginFlow", "Extracting ID token from Google sign-in result")
                 val idTokenResult = googleAuthManager.getGoogleIdToken(data)
                 idTokenResult.fold(
                     onSuccess = { idToken ->
+                        Log.d("LoginFlow", "Successfully obtained Google ID token, length: ${idToken.length}")
                         // Send ID token to backend
-                        Log.d("GoogleSignIn", "Google ID Token: $idToken")
+                        Log.d("LoginFlow", "Sending ID token to backend server")
                         val jwtToken = authRepository.loginWithGoogle(idToken)
+                        Log.d("LoginFlow", "Backend authentication complete, token received: ${jwtToken.isNotEmpty()}")
+
                         if (jwtToken.isNotEmpty()) {
+                            Log.d("LoginFlow", "Authentication successful, proceeding to home")
                             _isAuthenticated.value = true
                         } else {
+                            Log.e("LoginFlow", "Empty JWT token received from server")
                             _errorMessage.value = "Failed to get JWT token from server"
                         }
                     },
                     onFailure = { error ->
+                        Log.e("LoginFlow", "Failed to get Google ID token", error)
                         _errorMessage.value = "Google Sign-In failed: ${error.message}"
                     }
                 )
             } catch (e: Exception) {
+                Log.e("LoginFlow", "Exception during Google sign-in handling", e)
                 _errorMessage.value = "Error: ${e.message}"
             } finally {
                 _isLoading.value = false
