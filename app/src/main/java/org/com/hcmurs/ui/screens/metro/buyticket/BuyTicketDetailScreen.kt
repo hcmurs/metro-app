@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.com.hcmurs.payment.PaymentMethod
 
 data class TicketDetailInfo(
     val type: String,
@@ -67,7 +66,7 @@ fun TicketDetailScreen(
     ticketType: String = "Vé 1 ngày",
     ticketPrice: String = "40.000 đ"
 ) {
-    val selectedPayment = remember { mutableStateOf(org.com.hcmurs.payment.PaymentMethod.MoMo) }
+   // val selectedPayment = remember { mutableStateOf(org.com.hcmurs.payment.PaymentMethod.MoMo) }
 
     // Create ticket detail based on type
     val ticketDetail = remember (ticketType) {
@@ -136,66 +135,66 @@ fun TicketDetailScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "Chọn phương thức thanh toán:",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-
-            Row (
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                PaymentMethod.values().forEach { method ->
-                    OutlinedButton(
-                        onClick = { selectedPayment.value = method },
-                        border = ButtonDefaults.outlinedButtonBorder.takeIf { selectedPayment.value == method },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (selectedPayment.value == method) Color(0xFFBBDEFB) else Color.White,
-                            contentColor = Color(0xFF1976D2)
-                        )
-                    ) {
-                        Text(text = method.displayName)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Buy Button
-            Button (
-                onClick = {
-                    when (selectedPayment.value) {
-                        org.com.hcmurs.payment.PaymentMethod.MoMo -> {
-                            // Gọi API hoặc điều hướng tới MoMo Payment
-                            navController.navigate("momo_payment_screen")
-                        }
-                        PaymentMethod.VNPay   -> {
-                            // Gọi API hoặc điều hướng tới VNPay Payment
-                            navController.navigate("vnpay_payment_screen")
-                        }
-                    }
-
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1976D2)
-                )
-            ) {
-                Text(
-                    text = "Mua ngay: ${ticketDetail.price}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
+//            Text(
+//                text = "Chọn phương thức thanh toán:",
+//                fontSize = 14.sp,
+//                fontWeight = FontWeight.SemiBold,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(bottom = 8.dp)
+//            )
+//
+//            Row (
+//                horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                PaymentMethod.values().forEach { method ->
+//                    OutlinedButton(
+//                        onClick = { selectedPayment.value = method },
+//                        border = ButtonDefaults.outlinedButtonBorder.takeIf { selectedPayment.value == method },
+//                        modifier = Modifier.weight(1f),
+//                        colors = ButtonDefaults.outlinedButtonColors(
+//                            containerColor = if (selectedPayment.value == method) Color(0xFFBBDEFB) else Color.White,
+//                            contentColor = Color(0xFF1976D2)
+//                        )
+//                    ) {
+//                        Text(text = method.displayName)
+//                    }
+//                }
+//            }
+//
+//            Spacer(modifier = Modifier.height(32.dp))
+//
+//            // Buy Button
+//            Button (
+//                onClick = {
+//                    when (selectedPayment.value) {
+//                        org.com.hcmurs.payment.PaymentMethod.MoMo -> {
+//                            // Gọi API hoặc điều hướng tới MoMo Payment
+//                            navController.navigate("momo_payment_screen")
+//                        }
+//                        PaymentMethod.VNPay   -> {
+//                            // Gọi API hoặc điều hướng tới VNPay Payment
+//                            navController.navigate("vnpay_payment_screen")
+//                        }
+//                    }
+//
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(56.dp),
+//                shape = RoundedCornerShape(16.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color(0xFF1976D2)
+//                )
+//            ) {
+//                Text(
+//                    text = "Mua ngay: ${ticketDetail.price}",
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.White
+//                )
+//            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

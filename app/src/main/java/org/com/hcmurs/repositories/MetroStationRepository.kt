@@ -5,7 +5,7 @@ import org.com.hcmurs.repositories.apis.MetroStation
 import org.com.hcmurs.repositories.apis.MetroStationApi
 import javax.inject.Inject
 
-class MetroStationRepository @Inject constructor(
+class   MetroStationRepository @Inject constructor(
     private val api: MetroStationApi
 ) {
     suspend fun getMetroStations(): List<MetroStation> {
