@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.common.enum.LoadStatus
 import org.com.hcmurs.oauth.GoogleAuthManager
 import org.com.hcmurs.repositories.AuthRepository
+import org.com.hcmurs.repositories.apis.UserProfileData
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +31,22 @@ class LoginViewModel @Inject constructor(
 
     private val _signInIntent = MutableStateFlow<Intent?>(null)
     val signInIntent: StateFlow<Intent?> = _signInIntent
+
+    init {
+        checkAuthenticationStatus()
+    }
+
+    // THÊM: Kiểm tra trạng thái đăng nhập và load profile
+    private fun checkAuthenticationStatus() {
+        viewModelScope.launch {
+            if (authRepository.isAuthenticated()) {
+                _isAuthenticated.value = true
+                // Load profile nếu user đã đăng nhập
+                authRepository.fetchUserProfile()
+            }
+        }
+    }
+
 
     // Initiate Google Sign-In process
     fun initiateGoogleSignIn() {
@@ -94,18 +111,30 @@ class LoginViewModel @Inject constructor(
             _isLoading.value = true
 
             try {
+                // Gọi hàm logout từ AuthRepository để xóa token và profile
+                authRepository.logout()
+
+                // Thực hiện signOut từ Google
                 val result = googleAuthManager.signOut()
                 result.fold(
                     onSuccess = {
-                        authRepository.clearToken()
-                        _isAuthenticated.value = false
+                        Log.d("LoginViewModel", "Google signOut successful")
                     },
                     onFailure = { error ->
-                        _errorMessage.value = "Failed to sign out: ${error.message}"
+                        Log.w("LoginViewModel", "Google signOut failed: ${error.message}")
+                        // Không hiển thị lỗi cho user vì đã xóa token local
                     }
                 )
+
+                // Cập nhật trạng thái authenticated
+                _isAuthenticated.value = false
+                _errorMessage.value = null
+
+                Log.d("LoginViewModel", "Logout completed successfully")
+
             } catch (e: Exception) {
-                _errorMessage.value = "Error: ${e.message}"
+                Log.e("LoginViewModel", "Error during logout: ${e.message}", e)
+                _errorMessage.value = "Error during logout: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -120,5 +149,12 @@ class LoginViewModel @Inject constructor(
         _errorMessage.value = errorMessage
         _isLoading.value = false
     }
+    // HÀM MỚI: LẤY STATEFLOW CỦA USER PROFILE TỪ REPOSITORY
+    val userProfile: StateFlow<UserProfileData?> = authRepository.userProfile
 
+    fun refreshUserProfile() {
+        viewModelScope.launch {
+            authRepository.fetchUserProfile()
+        }
+    }
 }

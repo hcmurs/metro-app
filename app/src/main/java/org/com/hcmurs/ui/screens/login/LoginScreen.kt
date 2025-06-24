@@ -80,7 +80,7 @@ fun LoginScreen(
         Log.d("LoginFlow", "Authentication state changed: $isAuthenticated")
         if (isAuthenticated) {
             Log.d("LoginFlow", "User authenticated, navigating to home screen")
-            navController.navigate("homeMetro") {
+            navController.navigate("account") {
                 popUpTo("login") { inclusive = true }
             }
         }
