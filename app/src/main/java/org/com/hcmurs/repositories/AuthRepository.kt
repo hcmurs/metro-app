@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
-    private val authApi: AuthApi,
+    private val api: AuthApi,
     private val tokenStorage: TokenStorage,
 ) {
     suspend fun loginWithGoogle(idToken: String): String = withContext(Dispatchers.IO) {

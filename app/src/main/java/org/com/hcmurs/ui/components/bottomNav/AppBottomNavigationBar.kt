@@ -33,10 +33,10 @@ fun AppBottomNavigationBar(
     currentRoute: String?
 ) {
     val navItems = listOf(
-        BottomNavItem(Icons.Default.Home, "Home", Screen.HomeMetro.route),
+        BottomNavItem(Icons.Default.Home, "Home", Screen.Home.route),
         BottomNavItem(Icons.Default.Search, "Search", Screen.BuyTicket.route),
-        BottomNavItem(Icons.Default.QrCodeScanner, "My Ticket", Screen.HomeMetro.route),
-        BottomNavItem(Icons.Default.Settings, "Account", Screen.HomeMetro.route)
+        BottomNavItem(Icons.Default.QrCodeScanner, "My Ticket", Screen.Home.route),
+        BottomNavItem(Icons.Default.Settings, "Account", Screen.Home.route)
     )
 
     val selectedColor = Color(0xFF4A6FA5)
@@ -94,6 +94,6 @@ fun AppBottomNavigationBar(
 fun AppBottomNavigationBarPreview() {
     AppBottomNavigationBar(
         navController = rememberNavController(),
-        currentRoute = Screen.HomeMetro.route
+        currentRoute = Screen.Home.route
     )
 }

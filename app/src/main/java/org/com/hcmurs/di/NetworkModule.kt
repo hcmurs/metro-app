@@ -11,13 +11,13 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.JavaNetCookieJar
+import org.com.hcmurs.repositories.BusStationRepository
+import org.com.hcmurs.repositories.MetroStationRepository
+import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.AuthApi
 import org.com.hcmurs.repositories.apis.BusStationApi
-import org.com.hcmurs.repositories.BusStationRepository
-import org.com.hcmurs.repositories.apis.ProfileApi
-import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.MetroStationApi
+import org.com.hcmurs.repositories.apis.ProfileApi
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -161,10 +161,6 @@ class NetworkModule {
     fun provideBusStationRepository(api: BusStationApi): BusStationRepository {
         return BusStationRepository(api)
     }
-    @Provides
-    @Singleton
-    fun provideMetroStationApi(retrofit: Retrofit): MetroStationApi {
-        return retrofit.create(MetroStationApi::class.java)
-    }
+
 
 }

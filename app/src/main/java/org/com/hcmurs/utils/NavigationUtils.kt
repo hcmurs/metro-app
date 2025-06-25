@@ -25,7 +25,7 @@ fun getNavigationRoute(screenTitle: ScreenTitle): String {
 }
 
 fun navigateToHome(navController: androidx.navigation.NavController) {
-    navController.navigate(Screen.HomeMetro.route)
+    navController.navigate(Screen.Home.route)
 //    {
 //        popUpTo(navController.graph.findStartDestination().id) {
 //            saveState = true

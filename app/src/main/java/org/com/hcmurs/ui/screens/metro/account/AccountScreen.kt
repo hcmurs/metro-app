@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
 import androidx.compose.material3.Divider as HorizontalDivider
 import androidx.hilt.navigation.compose.hiltViewModel // Import hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.com.hcmurs.ui.screens.login.LoginViewModel // Import LoginViewModel
 
 
@@ -64,6 +65,7 @@ data class MenuItem(
     val hasArrow: Boolean = true,
     val isDestructive: Boolean = false
 )
+
 @Composable
 fun HurcLogo(modifier: Modifier = Modifier) {
     Image(
@@ -72,6 +74,7 @@ fun HurcLogo(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
 @Composable
 fun MenuItemRow(
     item: MenuItem,
@@ -138,7 +141,7 @@ fun MenuItemRow(
 fun LogoutButton(
     onClick: () -> Unit
 ) {
-    Button (
+    Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
@@ -168,12 +171,22 @@ fun LogoutButton(
         }
     }
 }
+
 @Composable
 fun AccountScreen(
     navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {},
-    viewModel: LoginViewModel = hiltViewModel() // Lấy LoginViewModel
+    viewModel: LoginViewModel? = hiltViewModel() // Lấy LoginViewModel
 ) {
+
+    if (viewModel == null) {
+        // Simple placeholder UI when no viewModel is provided
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Account information unavailable")
+        }
+        return
+    }
+
     // Lắng nghe userProfile từ ViewModel
     val userProfile by viewModel.userProfile.collectAsState()
     val isAuthenticated by viewModel.isAuthenticated.collectAsState()
@@ -217,7 +230,8 @@ fun AccountScreen(
     )
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -234,13 +248,14 @@ fun AccountScreen(
             Spacer(modifier = Modifier.height(24.dp))
             //header
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    navController.navigate(Screen.HomeMetro.route)
+                    navController.navigate(Screen.Home.route)
                 })
                 {
                     Icon(
@@ -261,20 +276,23 @@ fun AccountScreen(
 
             // Profile Section
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
                 // Avatar
                 Box(
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier
+                        .size(80.dp)
                         .background(Color.White, CircleShape)
                         .padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Box(
-                        modifier = Modifier.size(64.dp)
+                        modifier = Modifier
+                            .size(64.dp)
                             .background(Color(0xFFE0E0E0), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -295,30 +313,12 @@ fun AccountScreen(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // HURC logo đúng chuẩn
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset(y = (28).dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Surface(
-                        modifier = Modifier.size(56.dp),
-                        shape = CircleShape,
-                        color = Color.White,
-                        shadowElevation = 6.dp
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            HurcLogo(modifier = Modifier.size(40.dp))
-                        }
-                    }
-                }
             }
             // Content Card
             Surface(
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                 color = Color.White,
                 shadowElevation = 8.dp
@@ -369,6 +369,9 @@ fun AccountScreen(
 @Composable
 fun AccountInfoScreenPreview() {
     MaterialTheme {
-        AccountScreen(navController = rememberNavController())
+        AccountScreen(
+            navController = rememberNavController(),
+            viewModel = null,
+        )
     }
 }

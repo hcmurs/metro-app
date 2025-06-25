@@ -1,12 +1,25 @@
 package org.com.hcmurs.ui.screens.metro.home
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,13 +30,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -33,23 +50,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.com.hcmurs.constant.ScreenTitle
-import org.com.hcmurs.Screen
-import org.com.hcmurs.utils.getNavigationRoute
+import coil3.compose.AsyncImage
 import org.com.hcmurs.R
-import org.com.hcmurs.ui.components.WeatherDisplay
+import org.com.hcmurs.constant.ScreenTitle
+import org.com.hcmurs.ui.components.floatingButton.FloatingButton
+import org.com.hcmurs.ui.components.topbar.HomeTopBar
+import org.com.hcmurs.utils.getNavigationRoute
+import org.com.hcmurs.utils.screenTitleIconMap
 
 // Fake news data
 data class NewsItem(
@@ -72,7 +92,7 @@ val fakeNewsData = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeMetroScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController) {
     val listState = rememberLazyListState()
     val isScrolled by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset > 0 }
@@ -83,14 +103,13 @@ fun HomeMetroScreen(navController: NavHostController) {
             HomeTopBar(isScrolled = isScrolled)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* TODO: Handle emergency call */ },
-                containerColor = Color(0xFF4CAF50),
-                contentColor = Color.White,
-                modifier = Modifier.shadow(8.dp, CircleShape)
-            ) {
-                Icon(Icons.Default.Phone, contentDescription = "Gọi khẩn cấp")
-            }
+            FloatingButton(
+                onClick = {
+                    Log.d("FloatingButton", "Clicked!")
+                },
+                icon = Icons.Default.Phone,
+                contentDescription = "Phone Icon",
+            )
         }
     ) { padding ->
         LazyColumn(
@@ -122,20 +141,16 @@ fun HomeMetroScreen(navController: NavHostController) {
                             )
                         )
                 ) {
-                    Column(
+                    // Background Image
+                    AsyncImage(
+                        model = R.drawable.login_banner,
+                        contentDescription = "Social link",
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        WelcomeSection()
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Quản lý hệ thống Metro thông minh",
-                            color = Color.White.copy(alpha = 0.9f),
-                            fontSize = 14.sp
-                        )
-                    }
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .align(Alignment.TopCenter),
+                        contentScale = ContentScale.Crop
+                    )
                 }
             }
 
@@ -155,55 +170,10 @@ fun HomeMetroScreen(navController: NavHostController) {
             }
 
             item {
-                Spacer(modifier = Modifier.height(100.dp)) // Space for FAB
+                Spacer(modifier = Modifier.height(30.dp)) // Space for FAB
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeTopBar(isScrolled: Boolean) {
-    var selectedLanguage by remember { mutableStateOf("Vietnamese") }
-    // Weather data - would come from ViewModel in real app
-    val temperature = remember { mutableStateOf(27.5) }
-//    val windSpeed = remember { mutableStateOf(3.2) }
-
-    TopAppBar(
-        title = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                WeatherDisplay(
-                    temperature = temperature.value,
-                    isScrolled = isScrolled
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    IconButton(onClick = { /* TODO: Notifications */ }) {
-                        Icon(
-                            Icons.Default.Notifications,
-                            contentDescription = "Thông báo",
-                            tint = if (isScrolled) Color(0xFF4CAF50) else Color(0xFF4CAF50)
-                        )
-                    }
-                    LanguageDropdown(
-                        selectedLanguage,
-                        onLanguageChange = { selectedLanguage = it },
-                        isScrolled = isScrolled
-                    )
-                }
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = if (isScrolled) Color(0xFF4CAF50) else Color.Transparent
-        ),
-        modifier = if (isScrolled) Modifier.shadow(4.dp) else Modifier
-    )
 }
 
 @Composable
@@ -248,23 +218,6 @@ fun LanguageDropdown(selected: String, onLanguageChange: (String) -> Unit, isScr
     }
 }
 
-@Composable
-fun WelcomeSection() {
-    Column {
-        Text(
-            text = "Chào mừng trở lại!",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Text(
-            text = "Hôm nay là ${getCurrentDate()}",
-            fontSize = 14.sp,
-            color = Color.White.copy(alpha = 0.8f)
-        )
-    }
-}
-
 // Helper function for current date
 @Composable
 fun getCurrentDate(): String {
@@ -288,7 +241,8 @@ fun QuickActionsSection(navController: NavHostController) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(280.dp),
+
+                .height(200.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -298,16 +252,17 @@ fun QuickActionsSection(navController: NavHostController) {
             ) { page ->
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(4),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp),
                     modifier = Modifier.fillMaxSize(),
 
                 ) {
                     items(pages[page].size) { index ->
                         val item = pages[page][index]
+                        val iconRes = screenTitleIconMap[item] ?: R.drawable.btn_5 // fallback
+                        val painter = painterResource(id = iconRes)
                         QuickActionItem(
                             title = item.title,
+                            icon = painter,
                             onClick = {
                                 val route = getNavigationRoute(item)
                                 try {
@@ -347,69 +302,83 @@ fun QuickActionsSection(navController: NavHostController) {
 }
 
 @Composable
-fun QuickActionItem(title: String, onClick: () -> Unit) {
+fun QuickActionItem(
+    title: String,
+    icon: Painter,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
-            .aspectRatio(1f)
+//            .aspectRatio(1f)
+            .padding(10.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
-        ),
-        shape = RoundedCornerShape(12.dp)
+//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Default.ShoppingCart,
-                contentDescription = title,
-                modifier = Modifier.size(24.dp),
-                tint = Color(0xFF4CAF50)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF4CAF50).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = icon,
+                    contentDescription = title,
+                    modifier = Modifier.size(20.dp),
+                    tint = Color(0xFF4CAF50)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f)) // chiếm khoảng trống đẩy text xuống
+
             Text(
                 text = title,
-                fontSize = 10.sp,
+                fontSize = 11.sp,
+                color = Color.Black,
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
 }
 
+
 @Composable
 fun ManagementSection() {
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = "Quản lý hệ thống",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
-
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ManagementTile(
-                title = "Quản lý Node",
-                subtitle = "Giám sát thiết bị",
+                title = "GO!METRO với đa dạng hình thức đi tàu",
+                thumbnail = painterResource(id = R.drawable.home_guide_1),
+                subtitle = "Nhấn để xem ngay bạn nhé",
                 color = Color(0xFF2196F3),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(300.dp)
             ) {
                 // TODO: Navigation
             }
             ManagementTile(
-                title = "Giám sát",
-                subtitle = "Theo dõi realtime",
+                title = "Hướng dẫn sử dụng tài khoản",
+                thumbnail = painterResource(id = R.drawable.home_guide_2),
+                subtitle = "Nhấn để xem ngay bạn nhé",
                 color = Color(0xFF4CAF50),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.width(300.dp)
             ) {
                 // TODO: Navigation
             }
@@ -420,6 +389,7 @@ fun ManagementSection() {
 @Composable
 fun ManagementTile(
     title: String,
+    thumbnail: Painter = painterResource(id = R.drawable.hurc),
     subtitle: String,
     color: Color,
     modifier: Modifier = Modifier,
@@ -437,11 +407,11 @@ fun ManagementTile(
         Column {
             // Large image on top
             Image(
-                painter = painterResource(id = R.drawable.hurc),
+                painter = thumbnail,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .height(170.dp),
                 contentScale = ContentScale.Crop
             )
 
@@ -480,8 +450,8 @@ fun NewsSection() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Tin tức mới nhất",
-                fontSize = 18.sp,
+                text = "Tin tức",
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             TextButton(onClick = { /* TODO: See all news */ }) {
@@ -577,5 +547,5 @@ fun NewsTile(news: NewsItem) {
 @Composable
 fun HomeMetroScreenPreview() {
     val navController = rememberNavController()
-    HomeMetroScreen(navController = navController)
+    HomeScreen(navController = navController)
 }

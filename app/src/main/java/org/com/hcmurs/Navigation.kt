@@ -20,7 +20,7 @@ import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
-import org.com.hcmurs.ui.screens.metro.home.HomeMetroScreen
+import org.com.hcmurs.ui.screens.metro.home.HomeScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
@@ -32,7 +32,7 @@ import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
-    object HomeMetro : Screen("homeMetro")
+    object Home : Screen("home")
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
@@ -106,8 +106,8 @@ fun Navigation(
             FeedbackScreen(navController)
         }
 
-        composable(Screen.HomeMetro.route) {
-            HomeMetroScreen(navController)
+        composable(Screen.Home.route) {
+            HomeScreen(navController)
         }
 
         // Add placeholder screens for the new routes
