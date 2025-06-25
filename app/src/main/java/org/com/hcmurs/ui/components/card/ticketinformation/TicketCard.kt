@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.com.hcmurs.model.TicketInformation
-import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.GreenPrimary
 
 @Composable
 fun TicketInformationCard(event: TicketInformation) {
@@ -39,7 +39,7 @@ fun TicketInformationCard(event: TicketInformation) {
             containerColor = Color.White,
             contentColor = Color.Black
         ),
-        border = BorderStroke(1.dp, PrimaryGreen)
+        border = BorderStroke(1.dp, GreenPrimary)
     ) {
         Row(
             modifier = Modifier
@@ -51,13 +51,13 @@ fun TicketInformationCard(event: TicketInformation) {
                 modifier = Modifier
                     .size(80.dp)
                     .background(Color(0xFFE8F5E9), shape = RoundedCornerShape(4.dp))
-                    .border(1.dp, PrimaryGreen, RoundedCornerShape(4.dp)),
+                    .border(1.dp, GreenPrimary, RoundedCornerShape(4.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Train,
                     contentDescription = null,
-                    tint = PrimaryGreen,
+                    tint = GreenPrimary,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -70,7 +70,7 @@ fun TicketInformationCard(event: TicketInformation) {
                     text = event.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryGreen
+                    color = GreenPrimary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

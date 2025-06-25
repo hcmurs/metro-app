@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">hcmurs</string>
+    <string name="intro_title">
+        Welcome to <font color="#39c7a5">Digital Store</font>\n
+        a <font color="#39c7a5">Gateway</font> to the Latest Tech
+    </string>
+    <string name="intro_sub_title">Sign in to explore a wide range of cutting-edge
+ digital products. Don’t have an account yet?
+ Register now and enjoy a seamless
+and secure shopping experience</string>
+    <string name="letgo">"Let's Get Started"</string>
+    <string name="auth_navigation">Already have an account?</string>
+    <string name="sign">"Sign in"</string>
+
+  <!-- Screen Titles -->
+    <string name="buy_ticket">Mua vé</string>
+    <string name="route">Tuyến đường</string>
+    <string name="my_ticket">Vé của tôi</string>
+    <string name="maps">Bản đồ</string>
+    <string name="redeem_code_for_ticket">Đổi mã lấy vé</string>
+    <string name="virtual_tour">Thăm quan ảo</string>
+    <string name="ticket_information">Thông tin vé</string>
+    <string name="account">Tài khoản</string>
+    <string name="feedback">Phản hồi</string>
+    <string name="event">Sự kiện</string>
+    <string name="construction_image">Hình ảnh xây dựng</string>
+    <string name="setting">Cài đặt</string>
+    <string name="cooperation_link">Liên kết hợp tác</string>
+    <string name="introduction">Giới thiệu</string>
+
+        <!-- Home Screen -->
+    <string name="news">Tin tức</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="english">English</string>
+    <string name="metro_upgrade_title">Hệ thống Metro mới được nâng cấp</string>
+    <string name="metro_guide_title">GO!METRO với đa dạng hình thức đi tàu</string>
+    <string name="account_guide_title">Hướng dẫn sử dụng tài khoản</string>
+    <string name="tap_to_view">Nhấn để xem ngay bạn nhé</string>
+
+</resources>

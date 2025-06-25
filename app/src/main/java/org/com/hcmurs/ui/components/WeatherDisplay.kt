@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -31,12 +32,12 @@ fun WeatherDisplay(
         Icon(
             imageVector = Icons.Default.CloudQueue, // Replace with weather icon when available
             contentDescription = "Temperature",
-            tint = if (isScrolled) Color.White else Color.Black,
+            tint = if (isScrolled) Color.White else Color.White,
             modifier = Modifier.size(16.dp)
         )
         Text(
             text = "$temperature°C",
-            color = if (isScrolled) Color.White else Color.Black,
+            color = if (isScrolled) Color.White else Color.White,
             fontSize = 14.sp
         )
 
@@ -55,4 +56,14 @@ fun WeatherDisplay(
             fontSize = 14.sp
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WeatherDisplayPreview() {
+    WeatherDisplay(
+        temperature = 30.0,
+        windSpeed = 5.0,
+        isScrolled = false
+    )
 }

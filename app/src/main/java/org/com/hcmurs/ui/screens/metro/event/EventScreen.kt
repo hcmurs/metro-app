@@ -39,7 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.model.Event
 import org.com.hcmurs.ui.components.card.event.EventCard
 import org.com.hcmurs.ui.components.topbar.EventTopBar
-import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.GreenPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,8 +92,8 @@ fun EventScreen(navController: NavHostController) {
 //                        colors = TextFieldDefaults.colors(
 //                            unfocusedContainerColor = Color.White,
 //                            focusedContainerColor = Color.White,
-//                            unfocusedIndicatorColor = PrimaryGreen,
-//                            focusedIndicatorColor = PrimaryGreen
+//                            unfocusedIndicatorColor = GreenPrimary,
+//                            focusedIndicatorColor = GreenPrimary
 //                        )
                     )
                 }
@@ -107,7 +107,7 @@ fun EventScreen(navController: NavHostController) {
                         descriptionInput = ""
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryGreen, // Background color
+                        containerColor = GreenPrimary, // Background color
                         contentColor = Color.White  // Text color
                     )
                 ) {

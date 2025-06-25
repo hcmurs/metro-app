@@ -11,6 +11,5 @@ fun CooperationLinkTopBar(navController: NavController) {
     CommonTopBar(
         navController = navController,
         title = "Liên kết hợp tác",
-        showSearchBar = false
     )
 }

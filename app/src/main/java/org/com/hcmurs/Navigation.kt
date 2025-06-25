@@ -27,8 +27,6 @@ import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketSc
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
-import org.com.hcmurs.ui.screens.userprofile.ProfileScreen
-import org.com.hcmurs.ui.screens.userprofile.ProfileViewModel
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -52,7 +50,6 @@ sealed class Screen(val route: String) {
     object Introduction : Screen("introduction")
 
     // Test
-    object UserProfile : Screen("userProfile")
     object OsmdroidMap : Screen("osmdroidMap")
 }
 
@@ -75,15 +72,10 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
-        }
-
-        composable(Screen.UserProfile.route) {
-            val profileViewModel = hiltViewModel<ProfileViewModel>()
-            ProfileScreen(navController = navController, viewModel = profileViewModel)
         }
 
         composable(Screen.Login.route) {

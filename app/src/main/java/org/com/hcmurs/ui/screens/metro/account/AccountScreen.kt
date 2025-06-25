@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
@@ -50,13 +48,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.screens.login.LoginViewModel
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PaleYellow
 import androidx.compose.material3.Divider as HorizontalDivider
-import androidx.hilt.navigation.compose.hiltViewModel // Import hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import org.com.hcmurs.ui.screens.login.LoginViewModel // Import LoginViewModel
 
 
 data class MenuItem(
@@ -235,9 +235,9 @@ fun AccountScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF00BCD4), // Cyan
-                        Color(0xFF2196F3), // Blue
-                        Color(0xFF1976D2)  // Dark Blue
+                        GreenPrimary,
+                        PaleYellow,
+                        DarkGreen
                     )
                 )
             )
