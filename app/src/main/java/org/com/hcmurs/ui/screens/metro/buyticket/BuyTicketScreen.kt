@@ -48,6 +48,7 @@ import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.TicketType
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.com.hcmurs.FareMatrix
 
 data class TicketOption(
     val title: String,
@@ -62,29 +63,30 @@ data class RouteInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-    fun BuyTicketScreen(
+fun BuyTicketScreen(
     navController: NavHostController,
-    viewModel: BuyTicketViewModel = hiltViewModel()
+    buyTicketViewModel: BuyTicketViewModel = hiltViewModel(), // Renamed for clarity
+    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel() // NEW: Inject FareMatrixViewModel
 ) {
 
-    Scaffold (
+    Scaffold(
         topBar = {
             BuyTicketTopBar(
                 onBackClick = { navController.popBackStack() }
             )
         }
     ) { padding ->
-        Column (
+        Column(
             modifier = Modifier.fillMaxSize()
                 .padding(padding)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE3F2FD), Color(0xFFFFFFFF))
+                        colors = listOf(Color(0xFFE8F5E8), Color(0xFFFFFFFF)) // Light green to white
                     )
                 )
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
-        ){
+        ) {
             // Welcome section
             WelcomeCard()
 
@@ -96,7 +98,7 @@ data class RouteInfo(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Regular tickets
-            TicketOptionsSection(navController,viewModel)
+            TicketOptionsSection(navController, buyTicketViewModel)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -106,16 +108,17 @@ data class RouteInfo(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Routes section
-            RoutesSection()
+            RoutesSection(fareMatrixViewModel)
             Spacer(modifier = Modifier.height(24.dp))
             LongTermTicketSection()
             Spacer(modifier = Modifier.height(24.dp))
-            TicketOptionsSection(navController,viewModel)
+            TicketOptionsSection(navController, buyTicketViewModel)
             Spacer(modifier = Modifier.height(80.dp)) // Space for bottom navigation
         }
 
     }
-    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuyTicketTopBar(onBackClick: () -> Unit) {
@@ -127,7 +130,7 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
             ) {
                 Text(
                     text = "Mua vé",
-                    color = Color(0xFF1565C0),
+                    color = Color(0xFF1A237E), // Changed to Deep Indigo
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -138,7 +141,7 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "Home",
-                    tint = Color(0xFF1565C0)
+                    tint = Color(0xFF1A237E) // Changed to Deep Indigo
                 )
             }
         },
@@ -147,15 +150,16 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
         )
     )
 }
+
 @Composable
 fun WelcomeCard() {
-    Card (
+    Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -171,9 +175,9 @@ fun WelcomeCard() {
             Column {
                 Text(
                     text = "Chào mừng!",
+                    color = Color(0xFF1A237E), // Changed to Deep Indigo
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1565C0)
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Bắt đầu các trải nghiệm mới cùng Metro nhé!",
@@ -184,6 +188,7 @@ fun WelcomeCard() {
         }
     }
 }
+
 @Composable
 fun HotSection() {
     Row(
@@ -194,18 +199,19 @@ fun HotSection() {
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = "Nổi bật",
+            color = Color(0xFF1A237E), // Changed to Deep Indigo
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1565C0)
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = "🔥", fontSize = 20.sp)
     }
 }
+
 @Composable
 fun TicketOptionsSection(
     navController: NavHostController,
-    viewModel: BuyTicketViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: BuyTicketViewModel // Keep this as BuyTicketViewModel
 ) {
     val ticketOptions by viewModel.ticketTypes.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -226,7 +232,7 @@ fun TicketOptionsSection(
                     .height(100.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color(0xFF1565C0))
+                CircularProgressIndicator(color = Color(0xFF4CAF50)) // Changed to Primary Green
             }
         } else if (errorMessage != null) {
             Text(
@@ -249,8 +255,9 @@ fun TicketOptionsSection(
 }
 
 @Composable
-fun TicketCard(ticket: TicketType,
-               navController: NavHostController
+fun TicketCard(
+    ticket: TicketType,
+    navController: NavHostController
 ) {
     Card(
         modifier = Modifier
@@ -272,7 +279,7 @@ fun TicketCard(ticket: TicketType,
             Icon(
                 imageVector = Icons.Default.ConfirmationNumber,
                 contentDescription = ticket.description,
-                tint = Color(0xFF4A90E2),
+                tint = Color(0xFF4CAF50), // Changed to Primary Green
                 modifier = Modifier.size(32.dp)
             )
 
@@ -294,6 +301,7 @@ fun TicketCard(ticket: TicketType,
         }
     }
 }
+
 @Composable
 fun StudentSection(navController: NavHostController) {
     Row(
@@ -302,24 +310,24 @@ fun StudentSection(navController: NavHostController) {
     ) {
         Text(
             text = "Ưu đãi",
+            color = Color(0xFF1A237E), // Changed to Deep Indigo
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1565C0)
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = "Học sinh",
+            color = Color(0xFF1A237E), // Changed to Deep Indigo
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1565C0)
+            fontWeight = FontWeight.Bold
         )
         Text(text = "🎒", fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = "Sinh viên",
+            color = Color(0xFF1A237E), // Changed to Deep Indigo
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1565C0)
+            fontWeight = FontWeight.Bold
         )
         Text(text = "🎓", fontSize = 20.sp, modifier = Modifier.padding(start = 4.dp))
     }
@@ -342,18 +350,18 @@ fun StudentSection(navController: NavHostController) {
 }
 
 @Composable()
-fun LongTermTicketSection(){
+fun LongTermTicketSection() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 8.dp)
-    ){
+    ) {
         Text(text = "🔥", fontSize = 20.sp)
 
         Text(
             text = " Đừng quên mua vé dài hạn",
+            color = Color(0xFF1A237E), // Changed to Deep Indigo
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1565C0)
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -363,22 +371,49 @@ fun LongTermTicketSection(){
     }
 
 }
-@Composable
-fun RoutesSection() {
-    val routes = listOf(
-        RouteInfo("Đi từ ga Bến Thành", ""),
-        RouteInfo("Đi từ ga Ba Son", "")
-    )
 
+@Composable
+fun RoutesSection(
+    viewModel: FareMatrixViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if (uiState.fareMatrices.isEmpty() && !uiState.isLoading && uiState.errorMessage == null) {
+            viewModel.fetchFareMatrices() // Trigger data fetch
+        }
+    }
     Column {
-        routes.forEach { route ->
-            RouteCard(route = route)
-            Spacer(modifier = Modifier.height(12.dp))
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxWidth().height(100.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color(0xFF4CAF50)) // Changed to Primary Green
+            }
+        } else if (uiState.errorMessage != null) {
+            Text(
+                text = "Lỗi tải tuyến đường: ${uiState.errorMessage}",
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else if (uiState.fareMatrices.isEmpty()) {
+            Text(
+                text = "Không có tuyến đường nào khả dụng.",
+                color = Color.Gray,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            uiState.fareMatrices.forEach { fareMatrix ->
+                RouteCard(fareMatrix = fareMatrix)
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }
+
 @Composable
-fun RouteCard(route: RouteInfo) {
+fun RouteCard(fareMatrix: FareMatrix) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -396,29 +431,28 @@ fun RouteCard(route: RouteInfo) {
         ) {
             Column {
                 Text(
-                    text = route.from,
+                    text = "Tuyến: ${fareMatrix.name}",
+                    color = Color(0xFF1A237E), // Changed to Deep Indigo
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1565C0)
+                    fontWeight = FontWeight.Medium
                 )
-                if (route.to.isNotEmpty()) {
-                    Text(
-                        text = route.to,
-                        fontSize = 14.sp,
-                        color = Color(0xFF666666)
-                    )
-                }
+                Text(
+                    text = "Giá: ${fareMatrix.price} đ",
+                    fontSize = 14.sp,
+                    color = Color(0xFF666666)
+                )
             }
 
             Text(
                 text = "Xem chi tiết",
+                color = Color(0xFF4CAF50), // Changed to Primary Green
                 fontSize = 14.sp,
-                color = Color(0xFF4A90E2),
                 modifier = Modifier.clickable { /* Handle details */ }
             )
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun BuyTicketScreenPreview() {

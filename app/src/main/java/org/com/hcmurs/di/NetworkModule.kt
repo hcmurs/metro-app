@@ -12,11 +12,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import org.com.hcmurs.repositories.BusStationRepository
+import org.com.hcmurs.repositories.FareMatrixRepository
 import org.com.hcmurs.repositories.MetroStationRepository
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.TicketRepository
 import org.com.hcmurs.repositories.apis.AuthApi
 import org.com.hcmurs.repositories.apis.BusStationApi
+import org.com.hcmurs.repositories.apis.FareMatrixApi
 import org.com.hcmurs.repositories.apis.MetroStationApi
 import org.com.hcmurs.repositories.apis.ProfileApi
 import org.com.hcmurs.repositories.apis.TicketApi
@@ -180,5 +182,18 @@ class NetworkModule {
         return TicketRepository(api)
     }
 
+    @Provides
+    @Singleton
+    fun provideFareMatrixApi(
+        retrofit: Retrofit // Reusing the main Retrofit instance
+    ): FareMatrixApi {
+        return retrofit.create(FareMatrixApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository {
+        return FareMatrixRepository(api)
+    }
 
 }
