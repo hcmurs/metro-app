@@ -27,6 +27,7 @@ and secure shopping experience</string>
     <string name="setting">Setting</string>
     <string name="cooperation_link">Link</string>
     <string name="introduction">About us</string>
+    <string name="scan_qr_code">Scan QR</string>
     
     <!-- Home Screen -->
     <string name="news">News</string>

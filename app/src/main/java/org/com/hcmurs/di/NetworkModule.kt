@@ -35,6 +35,7 @@ import javax.inject.Singleton
 class NetworkModule {
     private val BASE_URL = "http://10.0.2.2:4003/"
     private val MOCKY_BASE_URL = "https://run.mocky.io/"
+    private val BASE_BLOG = "http://10.0.2.2:4007/"
 
     @Provides
     @Singleton

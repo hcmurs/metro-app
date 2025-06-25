@@ -17,5 +17,6 @@ val screenTitleIconMap = mapOf<ScreenTitle, Int>(
     ScreenTitle.CONSTRUCTION_IMAGE to R.drawable.ic_construction,
     ScreenTitle.SETTING to R.drawable.ic_setting,
     ScreenTitle.COOPERATION_LINK to R.drawable.ic_connect,
-    ScreenTitle.INTRODUCTION to R.drawable.ic_info
+    ScreenTitle.INTRODUCTION to R.drawable.ic_info,
+    ScreenTitle.SCAN_QR_CODE to R.drawable.ic_qr
 )

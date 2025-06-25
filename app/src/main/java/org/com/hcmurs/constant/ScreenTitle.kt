@@ -18,4 +18,5 @@ enum class ScreenTitle(@StringRes val titleRes: Int) {
     SETTING(R.string.setting),
     COOPERATION_LINK(R.string.cooperation_link),
     INTRODUCTION(R.string.introduction),
+    SCAN_QR_CODE(R.string.scan_qr_code),
 }
