@@ -162,13 +162,18 @@ fun QuickActionsSection(navController: NavHostController) {
         pageCount = { pages.size }
     )
 
-    Column(
-        modifier = Modifier.padding(horizontal = 10.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(210.dp) // đủ để chứa cả Card và indicator
+            .padding(horizontal = 10.dp)
     ) {
+        // Card chứa grid
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp),
+                .height(190.dp)
+                .align(Alignment.TopCenter), // đảm bảo nó nằm trên
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -178,22 +183,18 @@ fun QuickActionsSection(navController: NavHostController) {
             ) {
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Transparent)
+                    modifier = Modifier.fillMaxSize()
                 ) { page ->
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(4),
                         contentPadding = PaddingValues(horizontal = 8.dp),
-                        modifier = Modifier.fillMaxSize(),
-
-                        ) {
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         items(pages[page].size) { index ->
                             val item = pages[page][index]
-                            val iconRes = screenTitleIconMap[item] ?: R.drawable.btn_5 // fallback
+                            val iconRes = screenTitleIconMap[item] ?: R.drawable.btn_5
                             val painter = painterResource(id = iconRes)
-                            val localizedTitle =
-                                stringResource(id = item.titleRes) // Use string resource
+                            val localizedTitle = stringResource(id = item.titleRes)
 
                             QuickActionItem(
                                 title = localizedTitle,
@@ -213,12 +214,12 @@ fun QuickActionsSection(navController: NavHostController) {
             }
         }
 
-        // Page indicator
+        // ✅ Page indicator floating ở đáy
         if (pages.size > 1) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .align(Alignment.BottomCenter) // ✅ Bảo đảm nằm ở đáy của Box
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pages.size) { index ->
@@ -226,9 +227,7 @@ fun QuickActionsSection(navController: NavHostController) {
                         modifier = Modifier
                             .size(8.dp)
                             .background(
-                                if (index == pagerState.currentPage) LightOrange else Color.Gray.copy(
-                                    alpha = 0.3f
-                                ),
+                                if (index == pagerState.currentPage) LightOrange else Color.Gray.copy(alpha = 0.3f),
                                 CircleShape
                             )
                             .padding(horizontal = 2.dp)
