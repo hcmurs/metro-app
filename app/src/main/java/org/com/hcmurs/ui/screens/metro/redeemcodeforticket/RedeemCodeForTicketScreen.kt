@@ -22,8 +22,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.theme.DarkGreen
 import org.com.hcmurs.ui.theme.ErrorRed
-import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.GreenPrimary
 import org.com.hcmurs.utils.navigateToHome
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +72,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.Filled.QrCodeScanner,
                             contentDescription = "Scan QR",
-                            tint = PrimaryGreen
+                            tint = DarkGreen
                         )
                     }
                 },
@@ -100,7 +101,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary)
             ) {
                 Text("Redeem Code", color = Color.White)
             }
@@ -142,7 +143,7 @@ fun TopBar(navController: NavController) {
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PrimaryGreen
+            containerColor = GreenPrimary
         )
     )
 }

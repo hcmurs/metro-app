@@ -22,15 +22,18 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.com.hcmurs.ui.components.WeatherDisplay
-import org.com.hcmurs.ui.screens.metro.home.LanguageDropdown
+import org.com.hcmurs.ui.components.dropdown.LanguageDropdown
+import org.com.hcmurs.ui.theme.GreenPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar(isScrolled: Boolean) {
+fun HomeTopBar(
+    isScrolled: Boolean,
+    modifier: Modifier = Modifier // Add modifier parameter
+) {
     var selectedLanguage by remember { mutableStateOf("Vietnamese") }
     // Weather data - would come from ViewModel in real app
     val temperature = remember { mutableDoubleStateOf(27.5) }
-//    val windSpeed = remember { mutableStateOf(3.2) }
 
     TopAppBar(
         title = {
@@ -51,7 +54,8 @@ fun HomeTopBar(isScrolled: Boolean) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Thông báo",
-                            tint = if (isScrolled) Color(0xFF4CAF50) else Color.Transparent
+                            // Show notification icon in white when not scrolled for better visibility over image
+                            tint = Color.White
                         )
                     }
                     LanguageDropdown(
@@ -63,8 +67,15 @@ fun HomeTopBar(isScrolled: Boolean) {
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = if (isScrolled) Color(0xFF4CAF50) else Color.Transparent
+            // Use semi-transparent background when not scrolled for floating effect
+            containerColor = if (isScrolled) {
+                GreenPrimary
+            } else {
+                Color.Black.copy(alpha = 0.3f) // Semi-transparent overlay
+            }
         ),
-        modifier = if (isScrolled) Modifier.shadow(4.dp) else Modifier
+        modifier = modifier.then(
+            if (isScrolled) Modifier.shadow(4.dp) else Modifier
+        )
     )
 }

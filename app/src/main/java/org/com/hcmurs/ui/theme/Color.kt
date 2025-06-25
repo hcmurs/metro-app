@@ -4,36 +4,32 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-// Light theme colors (Pastel Green Tones)
-val Green80 = Color(0xFFC8E6C9)      // Light Green 80%
-val GreenGrey80 = Color(0xFFA5D6A7)  // Soft Green Grey
-val Lime80 = Color(0xFFDCEDC8)       // Lime Green 80%
-
-// Dark theme colors (Deep Green Tones)
-val Green40 = Color(0xFF388E3C)      // Dark Green
-val GreenGrey40 = Color(0xFF4CAF50)  // Medium Green
-val Lime40 = Color(0xFF689F38)       // Lime Darker Green
-
-val PrimaryGreen = Color(0xFF2E7D32)
-val SecondaryBlue = Color(0xFF2D1E66)
-val NeutralGray = Color.Gray
-val DarkGray = Color.DarkGray
+val GreenPrimary = Color(0xFF347433)
+val LightOrange = Color(0xFFFF6F3C)
+val LightYellow = Color(0xFFFFC107)
+val LightBeige = Color(0xFFB4D2BA)
+val PaleYellow = Color(0xFFDCE2AA)
+val EarthBrown = Color(0xFFB57F50)
+val DarkGreen = Color(0xFF4B543B)
 val ErrorRed = Color(0xFFD32F2F)
 
+
 val LightColorScheme = lightColorScheme(
-    primary = Green40,
+    primary = GreenPrimary,
     onPrimary = Color.White,
-    secondary = GreenGrey40,
-    onSecondary = Color.White,
-    background = Green80,
-    surface = Lime80,
+    background = Color.White,
+    onBackground = DarkGreen,
+    surface = LightBeige,
+    onSurface = DarkGreen,
+    secondary = EarthBrown,
+    onSecondary = Color.White
 )
 
 val DarkColorScheme = darkColorScheme(
-    primary = Green80,
+    primary = GreenPrimary,
     onPrimary = Color.Black,
-    secondary = Lime40,
+    secondary = EarthBrown,
     onSecondary = Color.White,
-    background = Color(0xFF1B5E20),
-    surface = Color(0xFF2E7D32),
+    background = Color.White,
+    surface = LightBeige,
 )

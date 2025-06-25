@@ -40,6 +40,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.LightBeige
 import org.com.hcmurs.utils.navigateToHome
 
 
@@ -191,7 +194,7 @@ fun TabButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier // Add this parameter with default value
 ) {
-    val backgroundColor = if (selected) Color(0xFF0052A0) else Color.White
+    val backgroundColor = if (selected) GreenPrimary else Color.White
     val textColor = if (selected) Color.White else Color(0xFF2D1E66)
 
     Button(

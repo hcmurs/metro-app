@@ -5,15 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-    import androidx.activity.viewModels
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import dagger.hilt.android.AndroidEntryPoint
 import org.com.hcmurs.ui.screens.login.LoginViewModel
-import org.com.hcmurs.ui.theme.hcmursTheme
-import kotlin.text.compareTo
+import org.com.hcmurs.ui.theme.AppTheme
+import org.com.hcmurs.utils.LanguageManager
 
-@AndroidEntryPoint
+@dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -23,6 +21,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+         // Apply saved language
+        val currentLang = LanguageManager.getLocale(this)
+        LanguageManager.setLocale(this, currentLang)
 
         // Handle OAuth success from redirect activity
         intent?.let { intent ->
@@ -39,7 +41,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            hcmursTheme {
+            AppTheme {
                 Navigation()
             }
         }
