@@ -17,6 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
+import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
+import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
@@ -37,7 +39,10 @@ sealed class Screen(val route: String) {
 
     // Add new screen routes for the grid items
     object BuyTicket : Screen("buyTicket")
-    object BuyTicketDetail : Screen("buyTicketDetail")
+    object BuyTicketDetail : Screen("buyTicketDetail/{ticketId}")
+    {
+        fun createRoute(ticketId: Int) = "buyTicketDetail/$ticketId"
+    }
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -105,10 +110,10 @@ fun Navigation(
         // Add placeholder screens for the new routes
         // Replace these with your actual screen implementations
         composable(Screen.BuyTicket.route) {
-            PlaceholderScreen(navController, "Buy Ticket Screen")
+            BuyTicketScreen(navController)
         }
         composable(Screen.BuyTicketDetail.route) {
-            PlaceholderScreen(navController, "Buy Ticket Detail Screen")
+            TicketDetailScreen(navController)
         }
         composable(Screen.Route.route) {
             RouteScreen(navController)

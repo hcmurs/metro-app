@@ -12,12 +12,16 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import org.com.hcmurs.repositories.BusStationRepository
+import org.com.hcmurs.repositories.FareMatrixRepository
 import org.com.hcmurs.repositories.MetroStationRepository
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
+import org.com.hcmurs.repositories.TicketRepository
 import org.com.hcmurs.repositories.apis.AuthApi
 import org.com.hcmurs.repositories.apis.BusStationApi
+import org.com.hcmurs.repositories.apis.FareMatrixApi
 import org.com.hcmurs.repositories.apis.MetroStationApi
 import org.com.hcmurs.repositories.apis.ProfileApi
+import org.com.hcmurs.repositories.apis.TicketApi
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,7 +33,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-    private val BASE_URL = "http://10.0.2.2:4006/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
     private val MOCKY_BASE_URL = "https://run.mocky.io/"
 
     @Provides
@@ -162,5 +166,34 @@ class NetworkModule {
         return BusStationRepository(api)
     }
 
+    @Provides
+    @Singleton
+    fun provideTicketApi(
+
+         retrofit: Retrofit // Inject the specific Retrofit instance
+    ): TicketApi {
+        return retrofit.create(TicketApi::class.java)
+    }
+
+    // Provide the TicketRepository
+    @Provides
+    @Singleton
+    fun provideTicketRepository(api: TicketApi): TicketRepository {
+        return TicketRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFareMatrixApi(
+        retrofit: Retrofit // Reusing the main Retrofit instance
+    ): FareMatrixApi {
+        return retrofit.create(FareMatrixApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository {
+        return FareMatrixRepository(api)
+    }
 
 }
