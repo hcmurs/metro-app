@@ -48,6 +48,7 @@ sealed class Screen(val route: String) {
     object Setting : Screen("setting")
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
+    object ScanQrCode : Screen("scanQrCode")
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
@@ -96,6 +97,10 @@ fun Navigation(
 
         composable(Screen.Feedback.route) {
             FeedbackScreen(navController)
+        }
+
+        composable(Screen.ScanQrCode.route){
+            PlaceholderScreen(navController, "Scan QR Code")
         }
 
         composable(Screen.Home.route) {

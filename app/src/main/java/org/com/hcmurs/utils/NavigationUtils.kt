@@ -21,6 +21,7 @@ fun getNavigationRoute(screenTitle: ScreenTitle): String {
         ScreenTitle.SETTING -> Screen.Setting.route
         ScreenTitle.COOPERATION_LINK -> Screen.CooperationLink.route
         ScreenTitle.INTRODUCTION -> Screen.Introduction.route
+        ScreenTitle.SCAN_QR_CODE -> Screen.ScanQrCode.route
     }
 }
 
