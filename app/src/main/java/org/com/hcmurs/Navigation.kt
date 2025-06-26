@@ -36,6 +36,7 @@ import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
+import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 
 sealed class Screen(val route: String) {
@@ -54,7 +55,9 @@ sealed class Screen(val route: String) {
     object OrderInfo : Screen("orderInfo/{ticketId}") {
         fun createRoute(ticketId: Int) = "orderInfo/$ticketId"
     }
-
+    object CalculatedFare : Screen("calculatedFare/{entryStationId}/{exitStationId}") {
+        fun createRoute(entryStationId: Int, exitStationId: Int) = "calculatedFare/$entryStationId/$exitStationId"
+    }
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -123,9 +126,24 @@ fun Navigation(
             FeedbackScreen(navController)
         }
 
-        composable(Screen.StationSelection.route) {
-            StationSelectionScreen(navController)
+        composable(
+            route = Screen.CalculatedFare.route,
+            arguments = listOf(
+                navArgument("entryStationId") { type = NavType.IntType },
+                navArgument("exitStationId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val entryId = backStackEntry.arguments?.getInt("entryStationId") ?: 0
+            val exitId = backStackEntry.arguments?.getInt("exitStationId") ?: 0
+
+            CalculatedFareScreen(
+                navController = navController,
+                entryStationId = entryId,
+                exitStationId = exitId
+            )
         }
+
+
 
         composable(
             Screen.ScanQrCode.route,
@@ -166,6 +184,9 @@ fun Navigation(
         }
         composable(Screen.Route.route) {
             RouteScreen(navController)
+        }
+        composable  (Screen.StationSelection.route) {
+            StationSelectionScreen(navController)
         }
 
         composable(Screen.Maps.route) {

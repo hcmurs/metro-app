@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +58,7 @@ import org.com.hcmurs.ui.theme.GreenPrimary
 import org.osmdroid.util.GeoPoint
 import androidx.hilt.navigation.compose.hiltViewModel // NEW: Import hiltViewModel
 import org.com.hcmurs.Station // NEW: Import Station data class
+import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 
 
 // Remove the hardcoded MetroStation data class here.
@@ -66,24 +68,50 @@ import org.com.hcmurs.Station // NEW: Import Station data class
 @Composable
 fun StationSelectionScreen(
     navController: NavController,
-    viewModel: StationSelectionViewModel = hiltViewModel() // Inject ViewModel
+    stationViewModel: StationSelectionViewModel = hiltViewModel(),
+    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState() // Collect UI state
+    val uiState by stationViewModel.uiState.collectAsState()
 
-    var selectedStation by remember { mutableStateOf<Station?>(null) } // Use Station from API
-    var selectedAction by remember { mutableStateOf<String>("Entry") } // Default to Entry
+    // THAY ĐỔI: Sử dụng 2 state để lưu ga Entry và Exit
+    var selectedEntryStation by remember { mutableStateOf<Station?>(null) }
+    var selectedExitStation by remember { mutableStateOf<Station?>(null) }
+    val fareMatrixUiState by fareMatrixViewModel.uiState.collectAsState() // Thêm state cho fare matrix
 
-    // Trigger data fetch when the screen is first composed
-    LaunchedEffect(Unit) {
-        if (uiState.stations.isEmpty() && !uiState.isLoading && uiState.errorMessage == null) {
-            viewModel.fetchStations()
+    var selectedAction by remember { mutableStateOf("Entry") }
+
+    var isNavigationTriggered by remember { mutableStateOf(false) }
+
+    LaunchedEffect(fareMatrixUiState.calculatedFare) {
+        if (isNavigationTriggered && fareMatrixUiState.calculatedFare != null) {
+            val entryStation = selectedEntryStation
+            val exitStation = selectedExitStation
+
+            if (entryStation != null && exitStation != null) {
+                navController.navigate(
+                    Screen.CalculatedFare.createRoute(
+                        entryStationId = entryStation.stationId,
+                        exitStationId = exitStation.stationId
+                    )
+                )
+            }
+            isNavigationTriggered = false
         }
     }
+
+    // MỚI: Xử lý khi có lỗi tính giá vé
+    LaunchedEffect(fareMatrixUiState.errorMessage) {
+        if(isNavigationTriggered && fareMatrixUiState.errorMessage != null) {
+            // TODO: Hiển thị Snackbar hoặc Toast thông báo lỗi
+            isNavigationTriggered = false // Reset trigger
+        }
+    }
+
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Select Your Station") },
+                title = { Text("Select Entry & Exit Stations") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -100,24 +128,22 @@ fun StationSelectionScreen(
             )
         },
         floatingActionButton = {
-            if (selectedStation != null) {
+
+            if (selectedEntryStation != null && selectedExitStation != null) {
                 FloatingActionButton(
                     onClick = {
-                        // Navigate to QR scan screen with selected station data
-                        navController.navigate(
-                            // Ensure Screen.ScanQrCode.createRoute expects stationId, name, action
-                            Screen.ScanQrCode.createRoute(
-                                selectedStation!!.stationId, // Use stationId from API
-                                selectedStation!!.name,
-                                selectedAction
-                            )
+                        fareMatrixViewModel.getFareForStations(
+                            selectedEntryStation!!.stationId,
+                            selectedExitStation!!.stationId
                         )
+                        // TODO: Thêm logic điều hướng tới màn hình hiển thị giá vé
+                        // Ví dụ: navController.navigate(...)
                     },
                     containerColor = GreenPrimary
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "Continue",
+                        contentDescription = "Get Fare",
                         tint = Color.White
                     )
                 }
@@ -131,102 +157,71 @@ fun StationSelectionScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = if (selectedAction == "Entry") "Please select your ENTRY station" else "Please select your EXIT station",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = GreenPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             SwitchEntryExit(
                 selectedAction = selectedAction,
-                onActionSelected = { selectedAction = it }
+                onActionSelected = { newAction -> selectedAction = newAction }
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Display loading, error, or station list based on UI state
+            // MỚI: Component hiển thị thông tin các ga đã chọn
+            SelectedStationsSummary(entryStation = selectedEntryStation, exitStation = selectedExitStation)
+
+
             when {
                 uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = GreenPrimary)
                     }
                 }
                 uiState.errorMessage != null -> {
-                    Text(
-                        text = "Error: ${uiState.errorMessage}",
-                        color = Color.Red,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                uiState.stations.isEmpty() -> {
-                    Text(
-                        text = "No stations available.",
-                        color = Color.Gray,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Text(text = "Error: ${uiState.errorMessage}", color = Color.Red)
                 }
                 else -> {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .weight(1f) // Cho phép grid co giãn
                             .padding(top = 16.dp),
                         contentPadding = PaddingValues(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(uiState.stations) { station -> // Use uiState.stations
+                        items(uiState.stations) { station ->
+                            // THAY ĐỔI: Logic chọn và vô hiệu hóa card
+                            val isSelected = when (selectedAction) {
+                                "Entry" -> station == selectedEntryStation
+                                "Exit" -> station == selectedExitStation
+                                else -> false
+                            }
+                            // Ga Exit không được trùng với ga Entry
+                            val isEnabled = !(selectedAction == "Exit" && station == selectedEntryStation)
+
                             StationCard(
-                                station = station, // Pass Station object
-                                isSelected = station == selectedStation,
-                                onClick = { selectedStation = station }
+                                station = station,
+                                isSelected = isSelected,
+                                isEnabled = isEnabled,
+                                onClick = {
+                                    if (isEnabled) {
+                                        if (selectedAction == "Entry") {
+                                            selectedEntryStation = station
+                                            // Tự động chuyển sang chọn Exit nếu chưa có
+                                            if (selectedExitStation == null) {
+                                                selectedAction = "Exit"
+                                            }
+                                        } else { // "Exit"
+                                            selectedExitStation = station
+                                        }
+                                    }
+                                }
                             )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Selected station card
-            if (selectedStation != null) {
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFFF5F5F5)
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Selected Station",
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                        Text(
-                            text = selectedStation!!.name,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = GreenPrimary
-                        )
-                        Button(
-                            onClick = {
-                                // Ensure ScanQrCode route is updated in Screen.kt to accept these parameters
-                                navController.navigate(
-                                    Screen.ScanQrCode.createRoute(
-                                        selectedStation!!.stationId, // Use stationId from API
-                                        selectedStation!!.name,
-                                        selectedAction
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = GreenPrimary
-                            )
-                        ) {
-                            Text("Continue to Scan QR")
                         }
                     }
                 }
@@ -236,23 +231,68 @@ fun StationSelectionScreen(
 }
 
 @Composable
+fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFF5F5F5))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                Text("ENTRY", fontSize = 14.sp, color = Color.Gray)
+                Text(
+                    text = entryStation?.name ?: "Not Selected",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (entryStation != null) GreenPrimary else Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                Text("EXIT", fontSize = 14.sp, color = Color.Gray)
+                Text(
+                    text = exitStation?.name ?: "Not Selected",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (exitStation != null) LightOrange else Color.Gray, // Giả sử LightOrange đã được định nghĩa
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
 fun StationCard(
-    station: Station, // Changed to Station data class
+    station: Station,
     isSelected: Boolean,
+    isEnabled: Boolean, // MỚI: Thêm tham số isEnabled
     onClick: () -> Unit
 ) {
+    val backgroundColor = when {
+        isSelected -> GreenPrimary.copy(alpha = 0.2f)
+        !isEnabled -> Color.LightGray.copy(alpha = 0.5f) // Màu cho card bị vô hiệu hóa
+        else -> Color.White
+    }
+    val contentColor = when {
+        isSelected -> GreenPrimary
+        !isEnabled -> Color.Gray
+        else -> Color.Black
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) GreenPrimary.copy(alpha = 0.1f) else Color.White
-        ),
+            .clickable(enabled = isEnabled, onClick = onClick),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = if (isSelected) BorderStroke(2.dp, GreenPrimary) else null,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 8.dp else 2.dp
-        )
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
     ) {
         Box(
             modifier = Modifier
@@ -260,11 +300,9 @@ fun StationCard(
                 .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Station ${station.sequenceOrder}", // Use sequenceOrder
+                    text = "Station ${station.sequenceOrder}",
                     fontSize = 12.sp,
                     color = if (isSelected) GreenPrimary else Color.Gray
                 )
@@ -273,7 +311,7 @@ fun StationCard(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    color = if (isSelected) GreenPrimary else Color.Black,
+                    color = contentColor,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -282,9 +320,10 @@ fun StationCard(
     }
 }
 
+val LightOrange = Color(0xFFFFA726)
+
 @Preview(showBackground = true)
 @Composable
-fun StationSelectionScreenPreview1() {
-    val navController = rememberNavController()
-    StationSelectionScreen(navController)
+fun StationSelectionScreenPreview() {
+    StationSelectionScreen(navController = rememberNavController())
 }

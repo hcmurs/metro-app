@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 data class FareMatrixUiState(
     val fareMatrices: List<FareMatrix> = emptyList(),
+    val calculatedFare: FareMatrix? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -43,4 +44,17 @@ class FareMatrixViewModel @Inject constructor(
 
         }
     }
+
+    fun getFareForStations(entryStationId: Int, exitStationId: Int) {
+        viewModelScope.launch {
+            _uiState.value = FareMatrixUiState(isLoading = true) // Reset state và hiển thị loading
+            val result = fareMatrixRepository.getFareForRoute(entryStationId, exitStationId)
+            result.onSuccess { matrix ->
+                _uiState.value = FareMatrixUiState(calculatedFare = matrix, isLoading = false)
+            }.onFailure { throwable ->
+                _uiState.value = FareMatrixUiState(errorMessage = throwable.localizedMessage ?: "Unknown error", isLoading = false)
+            }
+        }
+    }
+
 }

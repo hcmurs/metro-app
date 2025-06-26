@@ -1,6 +1,7 @@
 package org.com.hcmurs.di
 
 import android.content.Context
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,6 +42,11 @@ class NetworkModule {
     private val BASE_PHONE = "http://192.168.1.14:4003/"
     private val BASE_STATION_ = "http://10.0.2.2:4004/"
 
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
+    }
 
     @Provides
     @Singleton
@@ -209,8 +215,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository {
-        return FareMatrixRepository(api)
+    fun provideFareMatrixRepository(api: FareMatrixApi, gson: Gson): FareMatrixRepository {
+        return FareMatrixRepository(api, gson)
     }
 
     // Stations
