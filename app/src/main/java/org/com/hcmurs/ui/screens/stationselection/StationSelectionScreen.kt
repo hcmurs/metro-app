@@ -1,6 +1,7 @@
 package org.com.hcmurs.ui.screens.stationselection
 
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,11 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
 import org.com.hcmurs.ui.theme.GreenPrimary
@@ -55,6 +58,7 @@ data class MetroStation(
     val id: Int,
     val name: String,
     val location: GeoPoint,
+    @DrawableRes val imageRes: Int = R.drawable.login_banner // Default image resource
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +91,6 @@ fun StationSelectionScreen(navController: NavController) {
 
     var selectedStation by remember { mutableStateOf<MetroStation?>(null) }
     var selectedAction by remember { mutableStateOf<String>("Entry") } // Default to Entry
-    var showActionDropdown by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -226,8 +229,21 @@ fun StationCard(
             defaultElevation = if (isSelected) 8.dp else 2.dp
         )
     ) {
+
+//        Image(
+//            painter = painterResource(id = station.imageRes),
+//            contentDescription = station.name,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(70.dp)
+//                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+//            contentScale = ContentScale.Crop
+//        )
+
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -240,20 +256,13 @@ fun StationCard(
                 )
                 Text(
                     text = station.name,
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     color = if (isSelected) GreenPrimary else Color.Black,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
-                if (isSelected) {
-                    Text(
-                        text = "✓ Selected",
-                        fontSize = 12.sp,
-                        color = GreenPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
         }
     }
