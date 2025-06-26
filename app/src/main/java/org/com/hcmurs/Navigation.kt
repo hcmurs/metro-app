@@ -54,6 +54,7 @@ sealed class Screen(val route: String) {
     object OrderInfo : Screen("orderInfo/{ticketId}") {
         fun createRoute(ticketId: Int) = "orderInfo/$ticketId"
     }
+
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -122,7 +123,7 @@ fun Navigation(
             FeedbackScreen(navController)
         }
 
-        composable("stationSelect") {
+        composable(Screen.StationSelection.route) {
             StationSelectionScreen(navController)
         }
 

@@ -64,8 +64,8 @@ data class RouteInfo(
 @Composable
 fun BuyTicketScreen(
     navController: NavHostController,
-    buyTicketViewModel: BuyTicketViewModel = hiltViewModel(), // Renamed for clarity
-    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel() // NEW: Inject FareMatrixViewModel
+    buyTicketViewModel: BuyTicketViewModel = hiltViewModel(),
+    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel()
 ) {
 
     Scaffold(
@@ -262,8 +262,11 @@ fun TicketCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable() {
-                navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
-
+                if (ticket.name == "Single") {
+                    navController.navigate(Screen.StationSelection.route)
+                } else {
+                    navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
+                }
             },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

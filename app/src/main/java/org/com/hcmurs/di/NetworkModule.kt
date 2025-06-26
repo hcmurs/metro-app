@@ -20,6 +20,8 @@ import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.station.BusStationApi
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
 import org.com.hcmurs.repositories.apis.station.MetroStationApi
+import org.com.hcmurs.repositories.apis.station.StationApi
+import org.com.hcmurs.repositories.apis.station.StationRepository
 import org.com.hcmurs.repositories.apis.user.ProfileApi
 import org.com.hcmurs.repositories.apis.ticket.TicketApi
 import org.com.hcmurs.security.TokenProvider
@@ -37,6 +39,8 @@ class NetworkModule {
     private val BASE_BLOG = "http://10.0.2.2:4007/"
     private val BASE_STATION = "http://192.168.88.172:4004/"
     private val BASE_PHONE = "http://192.168.1.14:4003/"
+    private val BASE_STATION_ = "http://10.0.2.2:4004/"
+
 
     @Provides
     @Singleton
@@ -141,7 +145,7 @@ class NetworkModule {
     @Singleton
     fun provideStationRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_STATION)
+            .baseUrl(BASE_STATION_)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -209,4 +213,18 @@ class NetworkModule {
         return FareMatrixRepository(api)
     }
 
+    // Stations
+    @Provides
+    @Singleton
+    fun provideStationApi(
+        retrofit: Retrofit // Reusing the main Retrofit instance
+    ): StationApi {
+        return retrofit.create(StationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStationRepository(api: StationApi): StationRepository {
+        return StationRepository(api)
+    }
 }
