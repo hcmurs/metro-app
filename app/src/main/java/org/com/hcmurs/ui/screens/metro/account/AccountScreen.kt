@@ -23,8 +23,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -63,7 +65,8 @@ data class MenuItem(
     val icon: ImageVector,
     val title: String,
     val hasArrow: Boolean = true,
-    val isDestructive: Boolean = false
+    val isDestructive: Boolean = false,
+    val onClickAction: (() -> Unit)? = null
 )
 
 @Composable
@@ -217,6 +220,13 @@ fun AccountScreen(
         ),
 
         MenuItem(
+            icon = Icons.Default.Info,
+            title = "Xác thực tài khoản",
+            hasArrow = true,
+            onClickAction = { navController.navigate(Screen.CCCD.route) }
+        ),
+
+        MenuItem(
             icon = Icons.Default.ShoppingCart,
             title = "Quản lý phương thức thanh toán",
             hasArrow = true
@@ -333,7 +343,7 @@ fun AccountScreen(
                     menuItem.forEach { item ->
                         MenuItemRow(
                             item = item,
-                            onClick = { onMenuItemClick(item) }
+                            onClick = { item.onClickAction?.invoke()  }
                         )
                     }
 

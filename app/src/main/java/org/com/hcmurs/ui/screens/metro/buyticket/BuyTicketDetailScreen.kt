@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
+import android.widget.Button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import org.com.hcmurs.Screen
 
 data class TicketDetailInfo(
     val type: String,
@@ -124,7 +126,7 @@ fun TicketDetailScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Buy Button - Now navigates to OrderInfoScreen
-                    Button(
+                    androidx.compose.material3.Button(
                         onClick = {
                             // Navigate to OrderInfoScreen, passing the ticket ID
 
