@@ -18,6 +18,7 @@ import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
+import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
@@ -42,6 +43,9 @@ sealed class Screen(val route: String) {
     object BuyTicketDetail : Screen("buyTicketDetail/{ticketId}")
     {
         fun createRoute(ticketId: Int) = "buyTicketDetail/$ticketId"
+    }
+    object OrderInfo : Screen("orderInfo/{ticketId}") {
+        fun createRoute(ticketId: Int) = "orderInfo/$ticketId"
     }
     object Route : Screen("route")
     object Maps : Screen("maps")
@@ -114,6 +118,9 @@ fun Navigation(
         }
         composable(Screen.BuyTicketDetail.route) {
             TicketDetailScreen(navController)
+        }
+        composable(Screen.OrderInfo.route) {
+            OrderInfoScreen(navController)
         }
         composable(Screen.Route.route) {
             RouteScreen(navController)

@@ -128,6 +128,31 @@ fun TicketDetailScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
+                    // Buy Button - Now navigates to OrderInfoScreen
+                    Button(
+                        onClick = {
+                            // Navigate to OrderInfoScreen, passing the ticket ID
+
+                            uiState.ticketDetail!!.id.let { id ->
+                                navController.navigate(Screen.OrderInfo.createRoute(id))
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50) // Consistent with main theme
+                        )
+                    ) {
+                        Text(
+                            text = "Tiếp tục", // Changed text
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+
                     // TODO: Re-enable payment methods if needed
                     // For now, these are commented out as in your provided code
                     // Payment selection section (commented out in your original code)
