@@ -1,6 +1,7 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import android.widget.Button
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,7 +46,16 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import org.com.hcmurs.Screen
+import androidx.compose.material3.*
+
+private val PrimaryGreen = Color(0xFF4CAF50)
+private val DarkGreen = Color(0xFF388E3C)
+private val LightGreenBackground = Color(0xFFE8F5E9)
+private val TextPrimaryColor = Color(0xFF212121)
+private val TextSecondaryColor = Color(0xFF757575)
+private val ErrorColor = Color(0xFFD32F2F)
 
 data class TicketDetailInfo(
     val type: String,
@@ -60,7 +71,6 @@ data class TicketDetailUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
-
 @Composable
 fun HurcLogo(modifier: Modifier = Modifier) {
     Image(
@@ -69,186 +79,7 @@ fun HurcLogo(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TicketDetailScreen(
-    navController: NavHostController,
-    viewModel: TicketDetailViewModel = hiltViewModel()
-) {
-   // val selectedPayment = remember { mutableStateOf(org.com.hcmurs.payment.PaymentMethod.MoMo) }
 
-    val uiState by viewModel.uiState.collectAsState()
-
-    Scaffold(
-        topBar = {
-            TicketDetailTopBar(
-                title = uiState.ticketDetail?.description ?: "Chi tiết vé", // Use ticket description as title
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE3F2FD), Color(0xFFFFFFFF))
-                    )
-                )
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            when {
-                uiState.isLoading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = Color(0xFF1565C0))
-                    }
-                }
-                uiState.errorMessage != null -> {
-                    Text(
-                        text = "Lỗi tải chi tiết vé: ${uiState.errorMessage}",
-                        color = Color.Red,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                uiState.ticketDetail != null -> {
-                    // Ticket Card
-                    val ticketDetail = uiState.ticketDetail!!
-
-                    TicketDetailCard(ticketDetail = ticketDetail)
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Buy Button - Now navigates to OrderInfoScreen
-                    androidx.compose.material3.Button(
-                        onClick = {
-                            // Navigate to OrderInfoScreen, passing the ticket ID
-
-                            uiState.ticketDetail!!.id.let { id ->
-                                navController.navigate(Screen.OrderInfo.createRoute(id))
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50) // Consistent with main theme
-                        )
-                    ) {
-                        Text(
-                            text = "Tiếp tục", // Changed text
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-
-                    // TODO: Re-enable payment methods if needed
-                    // For now, these are commented out as in your provided code
-                    // Payment selection section (commented out in your original code)
-                    /*
-                    Text(
-                        text = "Chọn phương thức thanh toán:",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-
-                    Row (
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        PaymentMethod.values().forEach { method ->
-                            OutlinedButton(
-                                onClick = { selectedPayment.value = method },
-                                border = ButtonDefaults.outlinedButtonBorder.takeIf { selectedPayment.value == method },
-                                modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = if (selectedPayment.value == method) Color(0xFFBBDEFB) else Color.White,
-                                    contentColor = Color(0xFF1976D2)
-                                )
-                            ) {
-                                Text(text = method.displayName)
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Buy Button
-                    Button (
-                        onClick = {
-                            when (selectedPayment.value) {
-                                org.com.hcmurs.payment.PaymentMethod.MoMo -> {
-                                    // Gọi API hoặc điều hướng tới MoMo Payment
-                                    navController.navigate("momo_payment_screen")
-                                }
-                                PaymentMethod.VNPay   -> {
-                                    // Gọi API hoặc điều hướng tới VNPay Payment
-                                    navController.navigate("vnpay_payment_screen")
-                                }
-                            }
-
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF1976D2)
-                        )
-                    ) {
-                        Text(
-                            text = "Mua ngay: ${uiState.ticketDetail.price} đ", // Use price from fetched data
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-                    */
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Cancel Button
-                    OutlinedButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF1976D2)
-                        )
-                    ) {
-                        Text(
-                            text = "Hủy",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-                else -> {
-                    Text(
-                        text = "Không tìm thấy thông tin vé.",
-                        color = Color.Gray,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketDetailTopBar(
@@ -259,58 +90,92 @@ fun TicketDetailTopBar(
         title = {
             Text(
                 text = title,
-                color = Color(0xFF1565C0),
+                color = DarkGreen,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
         },
         navigationIcon = {
-            IconButton (onClick = onBackClick) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color(0xFF1565C0)
+                    tint = DarkGreen
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent // Nền trong suốt để hòa vào gradient
         )
     )
 }
+
+@Composable
+fun TicketInfoRow(label: String, value: String, valueColor: Color = TextPrimaryColor) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = TextSecondaryColor
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            color = valueColor,
+            lineHeight = 22.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
 @Composable
 fun TicketDetailCard(ticketDetail: TicketType) {
-    Card (
+    Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // HURC Logo Area
-                HurcLogo(modifier = Modifier.size(80.dp))
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Ticket Information
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Header của Card
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(LightGreenBackground, Color(0xFFF1F8E9))
+                        )
+                    )
+                    .padding(vertical = 24.dp),
+                contentAlignment = Alignment.Center
             ) {
-                // Ticket Type
-                TicketInfoRow(
-                    label = "Loại vé:",
-                    value = ticketDetail.description,
-                    valueColor = Color(0xFF333333)
+                HurcLogo(modifier = Modifier.size(72.dp))
+            }
+
+            // Phần thông tin chi tiết
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                // Tên vé
+                Text(
+                    text = ticketDetail.description,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimaryColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                        // Validity (Mapping from validityDuration string)
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Các thông tin chi tiết
                 val validityText = when (ticketDetail.validityDuration) {
                     "ONE_DAY" -> "24h kể từ thời điểm kích hoạt"
                     "THREE_DAYS" -> "72h kể từ thời điểm kích hoạt"
@@ -319,111 +184,175 @@ fun TicketDetailCard(ticketDetail: TicketType) {
                     "SINGLE" -> "Sử dụng một lần"
                     else -> "Theo quy định"
                 }
-                // Validity
-                TicketInfoRow(
-                    label = "HSD:",
-                    value = validityText,
-                    valueColor = Color(0xFF333333)
-                )
-                // Note - This might need to come from the API if available,
-                // otherwise keep it static or derived from ticket type name
+                TicketInfoRow(label = "Hạn sử dụng:", value = validityText)
+                Divider(color = Color.Black.copy(alpha = 0.08f))
+
                 val noteText = when (ticketDetail.name) {
-                    "One Day", "Three Days", "One Week", "One Month" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
-                    "Student Monthly" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé. Chỉ dành cho học sinh, sinh viên có thẻ hợp lệ"
-                    else -> "Vui lòng xem chi tiết tại quầy vé"
+                    "One Day", "Three Days", "One Week", "One Month" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua."
+                    "Student Monthly" -> "Tự động kích hoạt sau 30 ngày. Chỉ dành cho HSSV có thẻ hợp lệ."
+                    else -> "Vui lòng xem chi tiết tại quầy vé."
                 }
-                // Note
-                TicketInfoRow(
-                    label = "Lưu ý:",
-                    value = noteText,
-                    valueColor = Color(0xFFE53935)
-                )
+                TicketInfoRow(label = "Lưu ý:", value = noteText, valueColor = ErrorColor)
+                Divider(color = Color.Black.copy(alpha = 0.08f))
 
-                // Description (Mapping from ticket.name or description from API)
                 val detailedDescription = when (ticketDetail.name) {
-                    "One Day" -> "Vé cho phép sử dụng tất cả các tuyến Metro trong 24 giờ"
-                    "Three Days" -> "Vé cho phép sử dụng tất cả các tuyến Metro trong 3 ngày liên tiếp"
-                    "One Week" -> "Vé cho phép sử dụng không giới hạn tất cả các tuyến Metro trong 7 ngày"
-                    "One Month" -> "Vé cho phép sử dụng không giới hạn tất cả các tuyến Metro trong 1 tháng"
-                    "Student Monthly" -> "Vé ưu đãi cho học sinh, sinh viên sử dụng trong 1 tháng"
-                    "Single" -> "Vé sử dụng một lần cho một lượt đi"
-                    else -> "Thông tin chi tiết về vé" // Default or if API provides a dedicated field
+                    "One Day" -> "Vé cho phép sử dụng tất cả các tuyến Metro trong 24 giờ."
+                    "Three Days" -> "Vé cho phép sử dụng tất cả các tuyến Metro trong 3 ngày."
+                    "One Week" -> "Sử dụng không giới hạn tất cả các tuyến Metro trong 7 ngày."
+                    "One Month" -> "Sử dụng không giới hạn tất cả các tuyến Metro trong 1 tháng."
+                    "Student Monthly" -> "Vé ưu đãi cho học sinh, sinh viên sử dụng trong 1 tháng."
+                    else -> "Thông tin chi tiết về vé."
                 }
+                TicketInfoRow(label = "Mô tả:", value = detailedDescription)
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // Description if available
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF5F5F5)
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = detailedDescription,
-                        fontSize = 14.sp,
-                        color = Color(0xFF666666),
-                        modifier = Modifier.padding(12.dp),
-                        lineHeight = 20.sp
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Price Highlight
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1976D2).copy(alpha = 0.1f)
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "Giá: ${ticketDetail.price} đ",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1976D2),
-                    textAlign = TextAlign.Center,
+                // Phần giá vé
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(LightGreenBackground)
                         .padding(16.dp)
-                )
+                ) {
+                    Text(
+                        text = "Giá: ${ticketDetail.price} đ",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = DarkGreen,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
 }
-@Composable
-fun TicketInfoRow(
-    label: String,
-    value: String,
-    valueColor: Color = Color(0xFF333333)
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color(0xFF1976D2),
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
 
-        Text(
-            text = value,
-            fontSize = 16.sp,
-            color = valueColor,
-            lineHeight = 22.sp
-        )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TicketDetailScreen(
+    navController: NavHostController,
+    viewModel: TicketDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    Scaffold(
+        topBar = {
+            TicketDetailTopBar(
+                title = uiState.ticketDetail?.description ?: "Chi tiết vé",
+                onBackClick = { navController.popBackStack() }
+            )
+        },
+        containerColor = Color.Transparent
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.White, LightGreenBackground),
+                        startY = 0f,
+                        endY = 1500f
+                    )
+                )
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // LOGIC GỐC: Hiển thị UI dựa trên state
+            when {
+                uiState.isLoading -> {
+                    Box(Modifier.fillMaxSize(), Alignment.Center) {
+                        CircularProgressIndicator(color = PrimaryGreen)
+                    }
+                }
+                uiState.errorMessage != null -> {
+                    Text(
+                        text = "Lỗi tải chi tiết vé: ${uiState.errorMessage}",
+                        color = ErrorColor,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                uiState.ticketDetail != null -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        TicketDetailCard(ticketDetail = uiState.ticketDetail!!)
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Button(
+                            onClick = {
+
+                                uiState.ticketDetail!!.id.let { id ->
+                                    navController.navigate(Screen.OrderInfo.createRoute(id))
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                        ) {
+                            Text(
+                                text = "Tiếp tục",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Nút Hủy
+                        OutlinedButton(
+                            onClick = { navController.popBackStack() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(1.dp, PrimaryGreen.copy(alpha = 0.5f)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryGreen)
+                        ) {
+                            Text(
+                                text = "Hủy",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+
+                        }
+
+                        /* LOGIC GỐC: Giữ lại phần code đã được comment
+                        // Payment selection section...
+                        */
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+                else -> {
+                    Text(
+                        text = "Không tìm thấy thông tin vé.",
+                        color = TextSecondaryColor,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun TicketDetailScreenPreview() {
     val navController = rememberNavController()
-    TicketDetailScreen(
-        navController = navController
-    )
+    TicketDetailScreen(navController = navController)
 }
+
+
+
+
+
+
+
