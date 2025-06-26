@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -44,9 +45,10 @@ data class PaymentMethod(
 @Composable
 fun OrderInfoScreen(
     navController: NavHostController,
-    ticketType: String = "Vé 1 ngày",
-    ticketPrice: String = "40.000đ"
+    viewModel: OrderInfoViewModel  = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(null) }
 
     // Available payment methods
@@ -90,48 +92,40 @@ fun OrderInfoScreen(
             )
         )
     }
-    // Create order info based on ticket
-    val orderInfo = remember(ticketType) {
-        when (ticketType) {
-            "Vé 1 ngày" -> OrderInfo(
-                ticketType = "Vé 1 ngày",
-                unitPrice = "40.000đ",
-                quantity = 1,
-                totalPrice = "40.000đ",
-                validity = "24h kể từ thời điểm kích hoạt",
-                note = "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
+    // Derive OrderInfo from fetched TicketType
+    val orderInfo = remember(uiState.ticketType) {
+        val ticket = uiState.ticketType
+        if (ticket != null) {
+            val validityText = when (ticket.validityDuration) {
+                "ONE_DAY" -> "24h kể từ thời điểm kích hoạt"
+                "THREE_DAYS" -> "72h kể từ thời điểm kích hoạt"
+                "ONE_WEEK" -> "7 ngày kể từ thời điểm kích hoạt"
+                "ONE_MONTH" -> "30 ngày kể từ thời điểm kích hoạt"
+                "SINGLE" -> "Sử dụng một lần"
+                else -> "Theo quy định"
+            }
+            val noteText = when (ticket.name) {
+                "One Day", "Three Days", "One Week", "One Month" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
+                "Student Monthly" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé. Chỉ dành cho học sinh, sinh viên có thẻ hợp lệ"
+                else -> "Vui lòng xem chi tiết tại quầy vé"
+            }
+            OrderInfo(
+                ticketType = ticket.description,
+                unitPrice = "${ticket.price}đ",
+                quantity = 1, // Assuming quantity is always 1 for now
+                totalPrice = "${ticket.price}đ",
+                validity = validityText,
+                note = noteText
             )
-            "Vé 3 ngày" -> OrderInfo(
-                ticketType = "Vé 3 ngày",
-                unitPrice = "90.000đ",
-                quantity = 1,
-                totalPrice = "90.000đ",
-                validity = "72h kể từ thời điểm kích hoạt",
-                note = "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
-            )
-            "Vé tháng" -> OrderInfo(
-                ticketType = "Vé tháng",
-                unitPrice = "300.000đ",
-                quantity = 1,
-                totalPrice = "300.000đ",
-                validity = "30 ngày kể từ thời điểm kích hoạt",
-                note = "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
-            )
-            "Vé tháng HSSV" -> OrderInfo(
-                ticketType = "Vé tháng HSSV",
-                unitPrice = "150.000đ",
-                quantity = 1,
-                totalPrice = "150.000đ",
-                validity = "30 ngày kể từ thời điểm kích hoạt",
-                note = "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
-            )
-            else -> OrderInfo(
-                ticketType = ticketType,
-                unitPrice = ticketPrice,
-                quantity = 1,
-                totalPrice = ticketPrice,
-                validity = "Theo quy định",
-                note = "Vui lòng xem chi tiết tại quầy vé"
+        } else {
+            // Default or loading state for OrderInfo
+            OrderInfo(
+                ticketType = "Đang tải...",
+                unitPrice = "0đ",
+                quantity = 0,
+                totalPrice = "0đ",
+                validity = "Đang tải...",
+                note = "Đang tải..."
             )
         }
     }
@@ -181,7 +175,7 @@ fun OrderInfoScreen(
             Text(
                 text = "Bằng việc bấm thanh toán, bạn đồng ý với điều khoản của Metro",
                 fontSize = 12.sp,
-                color = Color(0xFF4A90E2),
+                color = Color(0xFF4CAF50),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -236,7 +230,7 @@ fun OrderInfoTopBar(
         title = {
             Text(
                 text = title,
-                color = Color(0xFF1565C0),
+                color = Color(0xFF1A237E),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -246,7 +240,7 @@ fun OrderInfoTopBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color(0xFF1565C0)
+                    tint = Color(0xFF1A237E)
                 )
             }
         },
@@ -277,7 +271,7 @@ fun PaymentMethodSection(
                 text = "Phương thức thanh toán",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1565C0)
+                color = Color(0xFF1A237E)
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -302,7 +296,7 @@ fun PaymentMethodSection(
                         Icon(
                             imageVector = Icons.Default.CreditCard,
                             contentDescription = "Payment Method",
-                            tint = Color(0xFF4A90E2),
+                            tint = Color(0xFF4CAF50),
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
@@ -388,7 +382,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
                 text = "Thông tin thanh toán",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1565C0)
+                color = Color(0xFF1A237E)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -502,12 +496,12 @@ fun TicketInfoSection(
                     text = "Thông tin ${orderInfo.ticketType}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1565C0)
+                    color = Color(0xFF1A237E)
                 )
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
                     contentDescription = if (isExpanded) "Collapse" else "Expand",
-                    tint = Color(0xFF1565C0),
+                    tint = Color(0xFF1A237E),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -574,7 +568,5 @@ fun OrderInfoScreenPreview() {
     val navController = rememberNavController()
     OrderInfoScreen(
         navController = navController,
-        ticketType = "Vé 1 ngày",
-        ticketPrice = "40.000đ"
     )
 }
