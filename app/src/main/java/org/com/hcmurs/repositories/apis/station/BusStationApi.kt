@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 //https://run.mocky.io/v3/3beaec3a-9775-4baf-a424-bfd15cfbb320
 interface BusStationApi {
-    @GET("v3/3beaec3a-9775-4baf-a424-bfd15cfbb320")
+    @GET("api/stations/static-bus-stations")
     suspend fun getBusStations(): Response<List<BusStation>>
 }
 

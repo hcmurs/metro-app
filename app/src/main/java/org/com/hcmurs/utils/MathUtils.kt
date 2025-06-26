@@ -35,7 +35,7 @@ fun getNearbyBusStops(
 fun getNearbyBusStopsForStations(
     stations: List<GeoPoint>,
     allBusStops: List<BusStop>,
-    radiusMeters: Double = 1000.0
+    radiusMeters: Double = 2000.0
 ): List<BusStop> {
     return allBusStops.filter { busStop ->
         val busGeo = GeoPoint(busStop.latitude, busStop.longitude)

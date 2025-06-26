@@ -2,7 +2,6 @@ package org.com.hcmurs.ui.screens.metro.maps
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.preference.PreferenceManager
@@ -12,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MyLocation
@@ -37,13 +35,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.components.common.CommonTopBar
-import org.com.hcmurs.utils.getNearbyBusStops
+import org.com.hcmurs.ui.screens.metro.route.MetroStationViewModel
+import org.com.hcmurs.utils.getNearbyBusStopsForStations
+import org.com.hcmurs.utils.initialView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -53,15 +56,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import kotlin.compareTo
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.toColorInt
-import org.com.hcmurs.ui.screens.metro.route.MetroStationViewModel
-import org.com.hcmurs.utils.getNearbyBusStopsForStations
-import org.com.hcmurs.utils.initialView
-import kotlin.compareTo
-import kotlin.text.get
 
 @Composable
 fun MapScreen(
@@ -107,7 +101,7 @@ fun MapScreen(
     fun shouldShowBusStops(zoomLevel: Double, busStopCount: Int): Boolean {
         return when {
             zoomLevel < 13 -> false  // Don't show bus stops when zoomed out
-            zoomLevel < 15 -> busStopCount <= 20  // Limited bus stops for medium zoom
+//            zoomLevel < 15 -> busStopCount <= 20  // Limited bus stops for medium zoom
             else -> true  // Show all bus stops when zoomed in
         }
     }
@@ -219,6 +213,13 @@ fun MapScreen(
                     }
                     mapView.overlays.add(polyline)
 
+                    // Get nearby bus stops for this metro station
+                    Log.d("MapScreen", "Bus stops total: ${busStops.size}")
+                    Log.d("MapScreen", "Current zoom: $currentZoom")
+                    val nearbyStops = getNearbyBusStopsForStations(stationPoints, busStops)
+                    Log.d("MapScreen", "Should show bus stops: ${shouldShowBusStops(currentZoom, nearbyStops.size)}")
+                    Log.d("MapScreen", "Nearby bus stops found: ${nearbyStops.size}")
+
                     // Add metro stations with larger, more prominent icons
                     stations.forEachIndexed { index, stationPoint ->
                         val metroMarker = Marker(mapView).apply {
@@ -257,12 +258,13 @@ fun MapScreen(
                         }
                         mapView.overlays.add(metroMarker)
 
-                        // Get nearby bus stops for this metro station
-                        val nearbyStops = getNearbyBusStopsForStations(stationPoints, busStops)
+
 
                         // Only show bus stops based on zoom level and density
                         if (shouldShowBusStops(currentZoom, nearbyStops.size)) {
-                            nearbyStops.forEach { stop ->
+                            val limitedStops = if (currentZoom < 15) nearbyStops.take(25) else nearbyStops
+
+                            limitedStops.forEach { stop ->
                                 val stopMarker = Marker(mapView).apply {
                                     position = GeoPoint(stop.latitude, stop.longitude)
                                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -272,7 +274,7 @@ fun MapScreen(
                                     icon = createIconDrawable(
                                         R.drawable.ic_bus,
                                         currentZoom,
-                                        85 // Base size 32dp * 2.67 for different densities
+                                        48 // Base size 32dp * 2.67 for different densities
                                     )
 
                                     // Different behavior for bus stops

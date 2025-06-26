@@ -34,7 +34,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     private val BASE_URL = "http://10.0.2.2:4003/"
-    private val MOCKY_BASE_URL = "https://run.mocky.io/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
     private val BASE_STATION = "http://192.168.88.172:4004/"
 
@@ -157,17 +156,17 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideBusStationApi(
-        @Named("mockyRetrofit") retrofit: Retrofit
+        @Named("busRetrofit") retrofit: Retrofit
     ): BusStationApi {
         return retrofit.create(BusStationApi::class.java)
     }
 
     @Provides
-    @Named("mockyRetrofit")
+    @Named("busRetrofit")
     @Singleton
     fun provideMockyRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(MOCKY_BASE_URL)
+            .baseUrl(BASE_STATION)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
