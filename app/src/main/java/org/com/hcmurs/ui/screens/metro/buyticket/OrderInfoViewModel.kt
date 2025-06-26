@@ -7,8 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.com.hcmurs.repositories.TicketRepository
-import org.com.hcmurs.repositories.apis.TicketType
+import org.com.hcmurs.repositories.apis.ticket.TicketRepository
+import org.com.hcmurs.repositories.apis.ticket.TicketType
 import javax.inject.Inject
 
 

@@ -19,6 +19,9 @@ import androidx.navigation.navArgument
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
+import org.com.hcmurs.ui.screens.metro.account.CCCDScreen
+import org.com.hcmurs.ui.screens.metro.account.LinkCCCDScreen
+import org.com.hcmurs.ui.screens.metro.account.RegisterFormScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
@@ -56,6 +59,9 @@ sealed class Screen(val route: String) {
     object VirtualTour : Screen("virtualTour")
     object TicketInformation : Screen("ticketInformation")
     object Account : Screen("account")
+    object CCCD : Screen("cccd")
+    object RegisterCCCD : Screen("registerCCCD")
+    object LinkCCCD : Screen("linkCCCD")
     object Event : Screen("event")
     object ConstructionImage : Screen("constructionImage")
     object Setting : Screen("setting")
@@ -177,6 +183,16 @@ fun Navigation(
             AccountScreen(navController)
         }
 
+        composable(Screen.CCCD.route) {
+            CCCDScreen(navController)
+        }
+        composable(Screen.RegisterCCCD.route) {
+            RegisterFormScreen(navController)
+        }
+
+        composable(Screen.LinkCCCD.route) {
+            LinkCCCDScreen(navController)
+        }
         composable(Screen.Event.route) {
             EventScreen(navController)
         }
