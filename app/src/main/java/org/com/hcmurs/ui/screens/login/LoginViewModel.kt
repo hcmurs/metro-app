@@ -8,10 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.com.hcmurs.common.enum.LoadStatus
 import org.com.hcmurs.oauth.GoogleAuthManager
-import org.com.hcmurs.repositories.AuthRepository
-import org.com.hcmurs.repositories.apis.UserProfileData
+import org.com.hcmurs.repositories.apis.auth.AuthRepository
+import org.com.hcmurs.repositories.apis.auth.UserProfileData
 import javax.inject.Inject
 
 @HiltViewModel

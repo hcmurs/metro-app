@@ -86,7 +86,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.ScanQrCode.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)

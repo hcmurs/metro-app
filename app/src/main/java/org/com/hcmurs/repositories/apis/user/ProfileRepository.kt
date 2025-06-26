@@ -1,7 +1,6 @@
-package org.com.hcmurs.repositories
+package org.com.hcmurs.repositories.apis.user
 
 import org.com.hcmurs.model.UserProfile
-import org.com.hcmurs.repositories.apis.ProfileApi
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(

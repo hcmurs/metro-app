@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.screens.metro.route
 
+import androidx.compose.foundation.lazy.items
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Paint
@@ -24,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
@@ -69,8 +69,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
-import org.com.hcmurs.model.station
-import org.com.hcmurs.repositories.apis.MetroStation
+import org.com.hcmurs.model.Station
 import org.com.hcmurs.ui.components.common.CommonTopBar
 import org.com.hcmurs.utils.initialView
 import org.osmdroid.config.Configuration
@@ -88,7 +87,9 @@ fun RouteScreen(
     navController: NavController,
     metroStationViewModel: MetroStationViewModel = hiltViewModel<MetroStationViewModel>()
 ) {
-    val metroStations by metroStationViewModel.metroStations.collectAsState()
+    val metroStations by metroStationViewModel.stations.collectAsState()
+    val stationPoints by metroStationViewModel.stationGeoPoints.collectAsState()
+
     val isLoading by metroStationViewModel.isLoading.collectAsState()
     var isCalculatingRoute by remember { mutableStateOf(false) }
     val error by metroStationViewModel.error.collectAsState()
@@ -99,11 +100,10 @@ fun RouteScreen(
     var currentCenter by remember { mutableStateOf<GeoPoint?>(null) }
 
     var isBottomCardExpanded by remember { mutableStateOf(false) }
-
     var showStartStationDialog by remember { mutableStateOf(false) }
     var showEndStationDialog by remember { mutableStateOf(false) }
-    var selectedStartStation by remember { mutableStateOf<MetroStation?>(null) }
-    var selectedEndStation by remember { mutableStateOf<MetroStation?>(null) }
+    var selectedStartStation by remember { mutableStateOf<Station?>(null) }
+    var selectedEndStation by remember { mutableStateOf<Station?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -113,6 +113,9 @@ fun RouteScreen(
 
     LaunchedEffect(metroStations) {
         if (metroStations.isNotEmpty()) {
+
+            Log.d("RouteScreen", "Metro stations loaded: ${metroStations.size}")
+
             // Only set values if they haven't been set by the user
             if (selectedStartStation == null) {
                 selectedStartStation = metroStations.first()
@@ -133,7 +136,7 @@ fun RouteScreen(
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        metroStationViewModel.getMetroStations()
+        metroStationViewModel.stations
     }
 
     Scaffold(
@@ -226,7 +229,7 @@ fun RouteScreen(
 
                         // Add metro line polyline first (so it appears under markers)
                         val polyline = Polyline().apply {
-                            station.forEach { addPoint(it) }
+                            stationPoints.forEach { addPoint(it) }
                             outlinePaint.strokeWidth = when {
                                 currentZoom < 13 -> 8f
                                 currentZoom < 16 -> 12f
@@ -239,7 +242,7 @@ fun RouteScreen(
                         mapView.overlays.add(polyline)
 
                         // Add metro stations with larger, more prominent icons
-                        station.forEachIndexed { index, stationPoint ->
+                        stationPoints.forEachIndexed { index, stationPoint ->
 
                             // Find corresponding MetroStation for this GeoPoint
                             val metroStationAtPoint = metroStations.find { it.location.distanceToAsDouble(stationPoint) < 100 }

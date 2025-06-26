@@ -1,8 +1,8 @@
-package org.com.hcmurs.repositories.apis
+package org.com.hcmurs.repositories.apis.ticket
+
 import org.com.hcmurs.FareMatrixResponse
 import retrofit2.Response
 import retrofit2.http.GET
-
 
 interface FareMatrixApi{
 

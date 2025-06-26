@@ -1,7 +1,5 @@
-package org.com.hcmurs.repositories
+package org.com.hcmurs.repositories.apis.ticket
 
-import org.com.hcmurs.repositories.apis.TicketApi
-import org.com.hcmurs.repositories.apis.TicketType
 import javax.inject.Inject
 import javax.inject.Singleton
 

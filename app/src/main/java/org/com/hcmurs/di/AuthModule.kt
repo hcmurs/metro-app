@@ -8,7 +8,7 @@
 //import dagger.hilt.components.SingletonComponent
 //import org.com.hcmurs.oauth.OAuth2Service
 //import org.com.hcmurs.repositories.AuthApi
-//import org.com.hcmurs.repositories.AuthRepository
+//import org.com.hcmurs.repositories.apis.auth.AuthRepository
 //import retrofit2.Retrofit
 //import javax.inject.Singleton
 //

@@ -11,17 +11,17 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
-import org.com.hcmurs.repositories.BusStationRepository
-import org.com.hcmurs.repositories.FareMatrixRepository
-import org.com.hcmurs.repositories.MetroStationRepository
+import org.com.hcmurs.repositories.apis.station.BusStationRepository
+import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
+import org.com.hcmurs.repositories.apis.station.MetroStationRepository
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
-import org.com.hcmurs.repositories.TicketRepository
-import org.com.hcmurs.repositories.apis.AuthApi
-import org.com.hcmurs.repositories.apis.BusStationApi
-import org.com.hcmurs.repositories.apis.FareMatrixApi
-import org.com.hcmurs.repositories.apis.MetroStationApi
-import org.com.hcmurs.repositories.apis.ProfileApi
-import org.com.hcmurs.repositories.apis.TicketApi
+import org.com.hcmurs.repositories.apis.ticket.TicketRepository
+import org.com.hcmurs.repositories.apis.auth.AuthApi
+import org.com.hcmurs.repositories.apis.station.BusStationApi
+import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
+import org.com.hcmurs.repositories.apis.station.MetroStationApi
+import org.com.hcmurs.repositories.apis.user.ProfileApi
+import org.com.hcmurs.repositories.apis.ticket.TicketApi
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -36,6 +36,7 @@ class NetworkModule {
     private val BASE_URL = "http://10.0.2.2:4003/"
     private val MOCKY_BASE_URL = "https://run.mocky.io/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
+    private val BASE_STATION = "http://192.168.88.172:4004/"
 
     @Provides
     @Singleton
@@ -130,9 +131,20 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideMetroStationApi(
-        @Named("mockyRetrofit") retrofit: Retrofit
+        @Named("stationRetrofit") retrofit: Retrofit
     ): MetroStationApi {
         return retrofit.create(MetroStationApi::class.java)
+    }
+
+    @Provides
+    @Named("stationRetrofit")
+    @Singleton
+    fun provideStationRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_STATION)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
 
     @Provides

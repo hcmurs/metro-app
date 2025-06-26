@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.FareMatrix
-import org.com.hcmurs.repositories.FareMatrixRepository
+import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
 import javax.inject.Inject
 
 

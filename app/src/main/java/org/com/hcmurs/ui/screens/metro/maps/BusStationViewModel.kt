@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.model.BusStop
-import org.com.hcmurs.repositories.BusStationRepository
+import org.com.hcmurs.repositories.apis.station.BusStationRepository
 import javax.inject.Inject
 
 @HiltViewModel

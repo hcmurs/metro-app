@@ -2,6 +2,7 @@ package org.com.hcmurs.utils
 
 import org.com.hcmurs.model.BusStop
 import org.osmdroid.util.GeoPoint
+import kotlin.compareTo
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -28,5 +29,18 @@ fun getNearbyBusStops(
     return allBusStops.filter {
         val busGeo = GeoPoint(it.latitude, it.longitude)
         distanceBetween(station, busGeo) <= radiusMeters
+    }
+}
+
+fun getNearbyBusStopsForStations(
+    stations: List<GeoPoint>,
+    allBusStops: List<BusStop>,
+    radiusMeters: Double = 1000.0
+): List<BusStop> {
+    return allBusStops.filter { busStop ->
+        val busGeo = GeoPoint(busStop.latitude, busStop.longitude)
+        stations.any { station ->
+            distanceBetween(station, busGeo) <= radiusMeters
+        }
     }
 }

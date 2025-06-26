@@ -1,7 +1,6 @@
-package org.com.hcmurs.repositories
+package org.com.hcmurs.repositories.apis.ticket
 
 import org.com.hcmurs.FareMatrix
-import org.com.hcmurs.repositories.apis.FareMatrixApi
 import javax.inject.Inject
 import javax.inject.Singleton
 

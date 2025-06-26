@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MyLocation
@@ -41,7 +42,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import org.com.hcmurs.R
-import org.com.hcmurs.model.station
 import org.com.hcmurs.ui.components.common.CommonTopBar
 import org.com.hcmurs.utils.getNearbyBusStops
 import org.osmdroid.config.Configuration
@@ -57,13 +57,21 @@ import kotlin.compareTo
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.toColorInt
+import org.com.hcmurs.ui.screens.metro.route.MetroStationViewModel
+import org.com.hcmurs.utils.getNearbyBusStopsForStations
 import org.com.hcmurs.utils.initialView
+import kotlin.compareTo
+import kotlin.text.get
 
 @Composable
 fun MapScreen(
     navController: NavController,
+    metroStationViewModel: MetroStationViewModel = hiltViewModel(),
     busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>()
 ) {
+
+    val stations by metroStationViewModel.stations.collectAsState()
+    val stationPoints by metroStationViewModel.stationGeoPoints.collectAsState()
 
     val busStops by busStationViewModel.busStops.collectAsState()
     val isLoading by busStationViewModel.isLoading.collectAsState()
@@ -114,7 +122,10 @@ fun MapScreen(
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
+
         busStationViewModel.getBusStations()
+
+        Log.d("MapScreen", "Bus stops loaded: ${busStops.size}")
     }
 
     Scaffold(
@@ -196,7 +207,7 @@ fun MapScreen(
 
                     // Add metro line polyline first (so it appears under markers)
                     val polyline = Polyline().apply {
-                        station.forEach { addPoint(it) }
+                        stationPoints.forEach { addPoint(it) }
                         outlinePaint.strokeWidth = when {
                             currentZoom < 13 -> 8f
                             currentZoom < 16 -> 12f
@@ -209,9 +220,9 @@ fun MapScreen(
                     mapView.overlays.add(polyline)
 
                     // Add metro stations with larger, more prominent icons
-                    station.forEachIndexed { index, stationPoint ->
+                    stations.forEachIndexed { index, stationPoint ->
                         val metroMarker = Marker(mapView).apply {
-                            position = stationPoint
+                            position = stationPoints[index]  // Use individual point from the list
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                             title = "Metro Station ${index + 1}"
 
@@ -247,7 +258,7 @@ fun MapScreen(
                         mapView.overlays.add(metroMarker)
 
                         // Get nearby bus stops for this metro station
-                        val nearbyStops = getNearbyBusStops(stationPoint, busStops)
+                        val nearbyStops = getNearbyBusStopsForStations(stationPoints, busStops)
 
                         // Only show bus stops based on zoom level and density
                         if (shouldShowBusStops(currentZoom, nearbyStops.size)) {

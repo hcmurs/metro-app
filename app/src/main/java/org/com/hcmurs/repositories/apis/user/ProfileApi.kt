@@ -1,4 +1,4 @@
-package org.com.hcmurs.repositories.apis
+package org.com.hcmurs.repositories.apis.user
 
 import org.com.hcmurs.model.UserProfile
 import retrofit2.Response

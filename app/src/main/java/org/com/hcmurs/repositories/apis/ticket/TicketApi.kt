@@ -1,4 +1,4 @@
-package org.com.hcmurs.repositories.apis
+package org.com.hcmurs.repositories.apis.ticket
 
 import retrofit2.Response
 import retrofit2.http.GET

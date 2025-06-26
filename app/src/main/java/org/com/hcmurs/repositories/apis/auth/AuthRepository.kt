@@ -1,16 +1,11 @@
-package org.com.hcmurs.repositories
+package org.com.hcmurs.repositories.apis.auth
 
-
-import android.util.Log // Import Log
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.oauth.TokenStorage
-import org.com.hcmurs.repositories.apis.AuthApi
-import org.com.hcmurs.repositories.apis.GoogleLoginRequest
-import org.com.hcmurs.repositories.apis.UserProfileData
-import org.com.hcmurs.repositories.apis.UserProfileResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +28,10 @@ class AuthRepository @Inject constructor(
                 accessToken
             } else {
                 // Sử dụng Log.e (error) và in toàn bộ đối tượng apiResponse để kiểm tra
-                Log.e("AuthRepository", "Received success response from backend, but access token is missing or empty. Full apiResponse object: $apiResponse")
+                Log.e(
+                    "AuthRepository",
+                    "Received success response from backend, but access token is missing or empty. Full apiResponse object: $apiResponse"
+                )
                 "" // Trả về chuỗi rỗng để báo hiệu thất bại cho ViewModel
             }
         } catch (e: Exception) {
