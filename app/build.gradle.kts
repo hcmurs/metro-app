@@ -92,6 +92,13 @@ dependencies {
 
     implementation(libs.coil.network.okhttp)
 
+    // QR Code Scanning
+    implementation(libs.androidx.camera.view)
+    implementation (libs.androidx.camera.camera2)
+    implementation (libs.androidx.camera.lifecycle)
+    implementation (libs.androidx.camera.view.v131)
+    implementation (libs.barcode.scanning)
+
     implementation(libs.osmdroid.android)
 
     implementation(libs.appauth)

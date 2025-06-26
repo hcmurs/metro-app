@@ -3,7 +3,10 @@ accompanistPager = "0.36.0"
 agp = "8.9.0"
 animation = "1.6.7"
 appauth = "0.11.1"
+barcodeScanning = "17.3.0"
 browser = "1.8.0"
+cameraView = "1.4.2"
+cameraViewVersion = "1.3.1"
 coilCompose = "3.0.4"
 coilNetworkOkhttp = "3.0.4"
 converterGson = "2.9.0"
@@ -36,6 +39,10 @@ composeIcons = "1.1.1"
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "browser" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraView" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraView" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }
+androidx-camera-view-v131 = { module = "androidx.camera:camera-view", version.ref = "cameraViewVersion" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
@@ -53,6 +60,7 @@ androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 
+barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 

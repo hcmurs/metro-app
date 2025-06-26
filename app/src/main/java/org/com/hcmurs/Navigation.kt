@@ -11,9 +11,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
@@ -29,6 +31,8 @@ import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketSc
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
+import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
+import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -53,7 +57,11 @@ sealed class Screen(val route: String) {
     object Setting : Screen("setting")
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
-    object ScanQrCode : Screen("scanQrCode")
+    object StationSelection : Screen("stationSelect")
+    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}/{actionType}") {
+        fun createRoute(stationId: Int, stationName: String, actionType: String) = "scanQR/$stationId/$stationName/$actionType"
+        const val defaultRoute = "scanQR/0/None"
+    }
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
@@ -78,7 +86,7 @@ fun Navigation(
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = Screen.ScanQrCode.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
@@ -104,8 +112,30 @@ fun Navigation(
             FeedbackScreen(navController)
         }
 
-        composable(Screen.ScanQrCode.route){
-            PlaceholderScreen(navController, "Scan QR Code")
+        composable("stationSelect") {
+            StationSelectionScreen(navController)
+        }
+
+        composable(
+            Screen.ScanQrCode.route,
+            arguments = listOf(
+                navArgument("stationId") { type = NavType.IntType },
+                navArgument("stationName") { type = NavType.StringType },  // Added comma here
+                navArgument("actionType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val stationId = backStackEntry.arguments?.getInt("stationId") ?: 0
+            val stationName = backStackEntry.arguments?.getString("stationName") ?: ""
+            val actionType = backStackEntry.arguments?.getString("actionType") ?: "Entry"
+
+            // If no station selected, redirect to station selection
+            if (stationId == 0 || stationName == "None") {
+                LaunchedEffect(Unit) {
+                    navController.navigate("stationSelect")
+                }
+            } else {
+                ScanQRScreen(navController, stationId, stationName, actionType)  // Added actionType parameter
+            }
         }
 
         composable(Screen.Home.route) {
