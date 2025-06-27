@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -16,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navigation
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
@@ -23,6 +25,7 @@ import org.com.hcmurs.ui.screens.metro.account.CCCDScreen
 import org.com.hcmurs.ui.screens.metro.account.LinkCCCDScreen
 import org.com.hcmurs.ui.screens.metro.account.RegisterFormScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
+import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
@@ -58,6 +61,8 @@ sealed class Screen(val route: String) {
     object CalculatedFare : Screen("calculatedFare/{entryStationId}/{exitStationId}") {
         fun createRoute(entryStationId: Int, exitStationId: Int) = "calculatedFare/$entryStationId/$exitStationId"
     }
+    object TicketFlow : Screen("ticket_flow")
+
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -125,24 +130,52 @@ fun Navigation(
         composable(Screen.Feedback.route) {
             FeedbackScreen(navController)
         }
+        navigation(
+            route = Screen.TicketFlow.route, // Route cho cả graph
+            startDestination = Screen.StationSelection.route // Màn hình bắt đầu của graph
+        ) {
+            // Khai báo màn hình Chọn ga
+            composable(route = Screen.StationSelection.route) { backStackEntry ->
+                // Lấy NavBackStackEntry của graph cha (ticket_flow)
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.TicketFlow.route)
+                }
+                // Khởi tạo ViewModel với scope là graph cha
+                // Hilt sẽ cung cấp cùng một thực thể ViewModel cho mọi màn hình trong graph này
+                val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
 
-        composable(
-            route = Screen.CalculatedFare.route,
-            arguments = listOf(
-                navArgument("entryStationId") { type = NavType.IntType },
-                navArgument("exitStationId") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
-            val entryId = backStackEntry.arguments?.getInt("entryStationId") ?: 0
-            val exitId = backStackEntry.arguments?.getInt("exitStationId") ?: 0
+                StationSelectionScreen(
+                    navController = navController,
+                    fareMatrixViewModel = fareMatrixViewModel
+                )
+            }
 
-            CalculatedFareScreen(
-                navController = navController,
-                entryStationId = entryId,
-                exitStationId = exitId
-            )
+            // Khai báo màn hình Tính giá vé
+            composable(
+                route = Screen.CalculatedFare.route,
+                arguments = listOf(
+                    navArgument("entryStationId") { type = NavType.IntType },
+                    navArgument("exitStationId") { type = NavType.IntType }
+                )
+            ) { backStackEntry ->
+                // Tương tự, lấy NavBackStackEntry của graph cha
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.TicketFlow.route)
+                }
+                // Lấy cùng một thực thể ViewModel đã được chia sẻ
+                val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
+
+                val entryId = backStackEntry.arguments?.getInt("entryStationId") ?: 0
+                val exitId = backStackEntry.arguments?.getInt("exitStationId") ?: 0
+
+                CalculatedFareScreen(
+                    navController = navController,
+                    entryStationId = entryId,
+                    exitStationId = exitId,
+                    viewModel = fareMatrixViewModel
+                )
+            }
         }
-
 
 
         composable(
@@ -185,9 +218,8 @@ fun Navigation(
         composable(Screen.Route.route) {
             RouteScreen(navController)
         }
-        composable  (Screen.StationSelection.route) {
-            StationSelectionScreen(navController)
-        }
+
+
 
         composable(Screen.Maps.route) {
             MapScreen(navController)

@@ -215,8 +215,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideFareMatrixRepository(api: FareMatrixApi, gson: Gson): FareMatrixRepository {
-        return FareMatrixRepository(api, gson)
+    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository {
+        return FareMatrixRepository(api)
     }
 
     // Stations

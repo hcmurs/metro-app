@@ -1,6 +1,8 @@
 package org.com.hcmurs.ui.screens.stationselection
 
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -69,7 +72,7 @@ import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 fun StationSelectionScreen(
     navController: NavController,
     stationViewModel: StationSelectionViewModel = hiltViewModel(),
-    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel()
+    fareMatrixViewModel: FareMatrixViewModel
 ) {
     val uiState by stationViewModel.uiState.collectAsState()
 
@@ -82,25 +85,38 @@ fun StationSelectionScreen(
 
     var isNavigationTriggered by remember { mutableStateOf(false) }
 
-    LaunchedEffect(fareMatrixUiState.calculatedFare) {
-        if (isNavigationTriggered && fareMatrixUiState.calculatedFare != null) {
+    LaunchedEffect(fareMatrixUiState) {
+        Log.d(TAG, "Fare calculated changed. Value: ${fareMatrixUiState.calculatedFare}. Triggered: $isNavigationTriggered")
+        if (!isNavigationTriggered) {
+            return@LaunchedEffect
+        }
+
+        // Không xử lý khi đang trong trạng thái loading
+        if (fareMatrixUiState.isLoading) {
+            return@LaunchedEffect
+        }
+        if (fareMatrixUiState.calculatedFare != null) {
             val entryStation = selectedEntryStation
             val exitStation = selectedExitStation
-
             if (entryStation != null && exitStation != null) {
+                Log.d(TAG, "Navigating to CalculatedFareScreen...")
                 navController.navigate(
                     Screen.CalculatedFare.createRoute(
                         entryStationId = entryStation.stationId,
                         exitStationId = exitStation.stationId
                     )
-                )
-            }
-            isNavigationTriggered = false
+                )            }
+        } else if (fareMatrixUiState.errorMessage != null) {
+            Log.e(TAG, "Fare calculation failed: ${fareMatrixUiState.errorMessage}")
+            isNavigationTriggered = false // Reset trigger
         }
+        isNavigationTriggered = false
+
     }
 
     // MỚI: Xử lý khi có lỗi tính giá vé
     LaunchedEffect(fareMatrixUiState.errorMessage) {
+        Log.d(TAG, "Error message changed. Value: ${fareMatrixUiState.errorMessage}. Triggered: $isNavigationTriggered")
         if(isNavigationTriggered && fareMatrixUiState.errorMessage != null) {
             // TODO: Hiển thị Snackbar hoặc Toast thông báo lỗi
             isNavigationTriggered = false // Reset trigger
@@ -132,20 +148,31 @@ fun StationSelectionScreen(
             if (selectedEntryStation != null && selectedExitStation != null) {
                 FloatingActionButton(
                     onClick = {
-                        fareMatrixViewModel.getFareForStations(
-                            selectedEntryStation!!.stationId,
-                            selectedExitStation!!.stationId
-                        )
-                        // TODO: Thêm logic điều hướng tới màn hình hiển thị giá vé
-                        // Ví dụ: navController.navigate(...)
+
+                        if (!fareMatrixUiState.isLoading) {
+                            isNavigationTriggered = true
+                            fareMatrixViewModel.getFareForStations(
+                                selectedEntryStation!!.stationId,
+                                selectedExitStation!!.stationId
+                            )
+                        }
                     },
                     containerColor = GreenPrimary
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = "Get Fare",
-                        tint = Color.White
-                    )
+                    // Thêm logic hiển thị loading
+                    if (fareMatrixUiState.isLoading && isNavigationTriggered) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "Get Fare",
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         }
@@ -321,9 +348,10 @@ fun StationCard(
 }
 
 val LightOrange = Color(0xFFFFA726)
-
-@Preview(showBackground = true)
-@Composable
-fun StationSelectionScreenPreview() {
-    StationSelectionScreen(navController = rememberNavController())
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun StationSelectionScreenPreview() {
+//    StationSelectionScreen(navController = rememberNavController(),
+//        )
+//}

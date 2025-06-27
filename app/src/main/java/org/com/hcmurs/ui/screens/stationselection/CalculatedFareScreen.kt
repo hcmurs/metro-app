@@ -66,14 +66,13 @@ fun CalculatedFareScreen(
     navController: NavHostController,
     entryStationId: Int,
     exitStationId: Int,
-    viewModel: FareMatrixViewModel = hiltViewModel(),
+    viewModel: FareMatrixViewModel,
     stationViewModel: StationSelectionViewModel = hiltViewModel()
 
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val fare = uiState.calculatedFare
     val stationUiState by stationViewModel.uiState.collectAsState()
-
 
     val entryStation = stationUiState.stations.find { it.stationId == entryStationId }
     val exitStation = stationUiState.stations.find { it.stationId == exitStationId }
@@ -108,13 +107,13 @@ fun CalculatedFareScreen(
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(color = PrimaryGreen)
-            } else if (fare != null) {
+            }else if (uiState.calculatedFare != null && entryStation != null && exitStation != null) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Spacer(modifier = Modifier.height(16.dp))
                     FareDetailCard(
-                        entryStationName = entryStation!!.name,
-                        exitStationName = exitStation!!.name,
-                        price = fare.price
+                        entryStationName = entryStation.name,
+                        exitStationName = exitStation.name,
+                        price = fare!!.data.price
                     )
                 }
             } else {
@@ -235,12 +234,12 @@ fun StationDisplay(name: String, isEntry: Boolean) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CalculatedFareScreenPreview() {
-    CalculatedFareScreen(
-        navController = rememberNavController(),
-        entryStationId = 1,
-        exitStationId = 2
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CalculatedFareScreenPreview() {
+//    CalculatedFareScreen(
+//        navController = rememberNavController(),
+//        entryStationId = 1,
+//        exitStationId = 2
+//    )
+//}
