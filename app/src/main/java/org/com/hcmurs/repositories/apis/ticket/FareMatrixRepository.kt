@@ -9,7 +9,6 @@ import javax.inject.Singleton
 @Singleton
 class FareMatrixRepository @Inject constructor(
     private val fareMatrixApi: FareMatrixApi,
-    private val gson: Gson
 ) {
 
     suspend fun getFareMatrices(): Result<List<FareMatrix>> {
@@ -26,27 +25,28 @@ class FareMatrixRepository @Inject constructor(
 
     }
 
-    suspend fun getFareForRoute(entryId: Int, exitId: Int): Result<FareMatrix> {
+    suspend fun getFareForRoute(entryId: Int, exitId: Int): Result<FareMatrixResponse> {
         return try {
+            // 1. Tạo object request
             val fareRequestObject = FareRequest(
                 startStationId = entryId,
                 endStationId = exitId
             )
 
-            val fareRequestJsonString = gson.toJson(fareRequestObject)
-
-            val response = fareMatrixApi.getFareForRoute(fareRequestJsonString)
+            // 2. Gọi API và truyền thẳng object vào
+            val response = fareMatrixApi.getFareForRoute(fareRequestObject)
 
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
                 val errorBody = response.errorBody()?.string()
-                val message = if (errorBody != null) "Server response: $errorBody" else "Failed to fetch fare: ${response.message()}"
+                val message = if (!errorBody.isNullOrEmpty()) "Server response: $errorBody" else "Failed to fetch fare: ${response.message()}"
                 Result.failure(Exception(message))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+
 
 }

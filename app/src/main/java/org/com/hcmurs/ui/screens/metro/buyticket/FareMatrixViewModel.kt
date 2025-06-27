@@ -7,13 +7,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.FareMatrix
+import org.com.hcmurs.FareMatrixResponse
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
 import javax.inject.Inject
 
 
 data class FareMatrixUiState(
     val fareMatrices: List<FareMatrix> = emptyList(),
-    val calculatedFare: FareMatrix? = null,
+    val calculatedFare: FareMatrixResponse? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

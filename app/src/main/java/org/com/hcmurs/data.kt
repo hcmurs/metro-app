@@ -2,12 +2,17 @@ package org.com.hcmurs
 
 import org.osmdroid.util.GeoPoint
 
-data class FareMatrixResponse(
+data class FareMatricesResponse(
     val status: Int,
     val message: String,
     val data: List<FareMatrix>
 )
 
+data class FareMatrixResponse(
+    val status: Int,
+    val message: String,
+    val data: FareMatrix
+)
 // Represents a single fare matrix entry
 data class FareMatrix(
     val fareMatrixId: Int,

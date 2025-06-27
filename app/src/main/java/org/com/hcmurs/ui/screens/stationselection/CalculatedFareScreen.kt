@@ -50,6 +50,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import org.com.hcmurs.FareMatrix
+import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
 
@@ -58,6 +60,7 @@ private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFE8F5E9)
 private val TextPrimaryColor = Color(0xFF212121)
 private val TextSecondaryColor = Color(0xFF757575)
+private val WarningColor = Color(0xFFD32F2F)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,14 +69,13 @@ fun CalculatedFareScreen(
     navController: NavHostController,
     entryStationId: Int,
     exitStationId: Int,
-    viewModel: FareMatrixViewModel = hiltViewModel(),
+    viewModel: FareMatrixViewModel,
     stationViewModel: StationSelectionViewModel = hiltViewModel()
 
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val fare = uiState.calculatedFare
     val stationUiState by stationViewModel.uiState.collectAsState()
-
 
     val entryStation = stationUiState.stations.find { it.stationId == entryStationId }
     val exitStation = stationUiState.stations.find { it.stationId == exitStationId }
@@ -91,6 +93,7 @@ fun CalculatedFareScreen(
             )
         }
     ) { padding ->
+        val currentFareResponse = uiState.calculatedFare
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -108,13 +111,13 @@ fun CalculatedFareScreen(
         ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator(color = PrimaryGreen)
-            } else if (fare != null) {
+            }else if (currentFareResponse != null && entryStation != null && exitStation != null) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Spacer(modifier = Modifier.height(16.dp))
                     FareDetailCard(
-                        entryStationName = entryStation!!.name,
-                        exitStationName = exitStation!!.name,
-                        price = fare.price
+                        entryStationName = entryStation.name,
+                        exitStationName = exitStation.name,
+                        fare = currentFareResponse.data!!
                     )
                 }
             } else {
@@ -128,7 +131,16 @@ fun CalculatedFareScreen(
             // Các nút hành động
             Column {
                 Button (
-                    onClick = { /* TODO: Xử lý logic mua vé hoặc thanh toán */ },
+                    onClick = {
+                        if (entryStation != null && exitStation != null) {
+                            navController.navigate(
+                                Screen.OrderFareInfo.createRoute(
+                                        entryStationId = entryStation.stationId,
+                                    exitStationId = exitStation.stationId
+                                )
+                            )
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
@@ -151,7 +163,7 @@ fun CalculatedFareScreen(
 }
 
 @Composable
-fun FareDetailCard(entryStationName: String, exitStationName: String, price: Int) {
+fun FareDetailCard(entryStationName: String, exitStationName: String, fare: FareMatrix) {
     Card (
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -169,6 +181,22 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, price: Int
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(24.dp))
+
+            Divider(color = LightGreenBackground.copy(alpha=0.8f), thickness = 1.dp)
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                InfoRow(title = "Hạn sử dụng:", value = "Theo quy định")
+                InfoRow(title = "Lưu ý:", value = "Tự động kích hoạt sau 30 ngày kể từ ngày mua.", valueColor = WarningColor)
+                InfoRow(title = "Mô tả:", value = "Vé cho phép di chuyển một lượt giữa ${entryStationName} và ${exitStationName}.")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Divider(color = LightGreenBackground.copy(alpha=0.8f), thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
 
             // Hiển thị ga vào - ga ra
             Row (
@@ -196,7 +224,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, price: Int
             Text("TỔNG CỘNG", fontSize = 14.sp, color = TextSecondaryColor, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                "$price đ",
+                "${fare.price} đ",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = DarkGreen
@@ -235,12 +263,30 @@ fun StationDisplay(name: String, isEntry: Boolean) {
     }
 }
 
-@Preview(showBackground = true)
+
 @Composable
-fun CalculatedFareScreenPreview() {
-    CalculatedFareScreen(
-        navController = rememberNavController(),
-        entryStationId = 1,
-        exitStationId = 2
-    )
+private fun InfoRow(title: String, value: String, valueColor: Color = TextPrimaryColor) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = title,
+            color = TextSecondaryColor,
+            fontSize = 14.sp
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = value,
+            color = valueColor,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
 }
+//@Preview(showBackground = true)
+//@Composable
+//fun CalculatedFareScreenPreview() {
+//    CalculatedFareScreen(
+//        navController = rememberNavController(),
+//        entryStationId = 1,
+//        exitStationId = 2
+//    )
+//}
