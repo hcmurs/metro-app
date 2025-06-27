@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.screens.stationselection
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,6 +41,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -67,17 +70,20 @@ import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.Station
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import org.com.hcmurs.R
+import org.com.hcmurs.Screen
 
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFF1F8E9) // Một màu xanh lá rất nhạt
+private val LightGreenBackground = Color(0xFFF1F8E9)
 private val TextPrimaryColor = Color(0xFF212121)
 private val TextSecondaryColor = Color(0xFF757575)
 private val CardBackgroundColor = Color.White
 private val DividerColor = Color.Black.copy(alpha = 0.08f)
 
 data class LocalPaymentMethod(
+    val id: Int,
     val name: String,
     val iconRes: Int
 )
@@ -98,16 +104,38 @@ fun OrderFareInfoScreen(
     val entryStation = stationUiState.stations.find { it.stationId == entryStationId }
     val exitStation = stationUiState.stations.find { it.stationId == exitStationId }
 
-    // State cho các tính năng tương tác
+
     var showPaymentSheet by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
+
     val paymentMethods = listOf(
-        LocalPaymentMethod("VNPAY", R.drawable.ic_vnpay), // Thay thế bằng icon của bạn
-        LocalPaymentMethod("MoMo",   R.drawable.ic_momo)      // Thay thế bằng icon của bạn
+        LocalPaymentMethod(1,"VNPAY", R.drawable.ic_vnpay),
+        LocalPaymentMethod(2,"MoMo",   R.drawable.ic_momo)
     )
     var selectedPaymentMethod by remember { mutableStateOf(paymentMethods.first()) }
+    val context = LocalContext.current
 
-    // === HIỂN THỊ CÁC POPUP / BOTTOM SHEET ===
+    LaunchedEffect (key1 = fareMatrixUiState.createOrderResponse, key2 = fareMatrixUiState.createOrderError) {
+        val response = fareMatrixUiState.createOrderResponse
+        if (response != null) {
+            if (response.status == 200 && response.data != null) {
+                Toast.makeText(context, "Tạo đơn hàng thành công!", Toast.LENGTH_SHORT).show()
+
+                navController.navigate(Screen.MyTicket.route)
+            } else {
+                Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+            }
+            fareMatrixViewModel.clearCreateOrderStatus()
+        }
+
+        val error = fareMatrixUiState.createOrderError
+        if (error != null) {
+            // Lỗi mạng hoặc lỗi hệ thống
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+            fareMatrixViewModel.clearCreateOrderStatus()
+        }
+    }
+
     if (showPaymentSheet) {
         PaymentMethodBottomSheet(
             paymentMethods = paymentMethods,
@@ -140,6 +168,14 @@ fun OrderFareInfoScreen(
             if (fareInfo != null) {
                 PaymentBottomBar(
                     price = fareInfo.price,
+                    isLoading = fareMatrixUiState.isCreatingOrder,
+                    onPayClick = {
+                        // Gọi ViewModel để tạo đơn hàng
+                        fareMatrixViewModel.createSingleOrder(
+                            fareMatrixId = fareInfo.fareMatrixId,
+                            paymentMethodId = selectedPaymentMethod.id
+                        )
+                    },
                     onTermsClick = { showTermsDialog = true }
                 )
             }
@@ -281,7 +317,12 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun PaymentBottomBar(price: Int, onTermsClick: () -> Unit) {
+private fun PaymentBottomBar(
+    price: Int,
+    onTermsClick: () -> Unit,
+    onPayClick : () -> Unit,
+    isLoading: Boolean = false
+){
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -324,13 +365,17 @@ private fun PaymentBottomBar(price: Int, onTermsClick: () -> Unit) {
 
             Spacer(Modifier.height(8.dp))
             Button(
-                onClick = { /* TODO: Xử lý logic thanh toán cuối cùng */ },
+                onClick = onPayClick,
+                enabled = !isLoading,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
             ) {
-                Text("Thanh toán: ${price}đ", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
-            }
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
+                } else {
+                    Text("Thanh toán: ${price}đ", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                }            }
         }
     }
 }

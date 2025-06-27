@@ -179,7 +179,7 @@ fun LogoutButton(
 fun AccountScreen(
     navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {},
-    viewModel: LoginViewModel? = hiltViewModel() // Lấy LoginViewModel
+    viewModel: LoginViewModel // Lấy LoginViewModel
 ) {
 
     if (viewModel == null) {
@@ -195,8 +195,8 @@ fun AccountScreen(
     val isAuthenticated by viewModel.isAuthenticated.collectAsState()
     LaunchedEffect(isAuthenticated) {
         if (!isAuthenticated) {
-            navController.navigate("login") {
-                popUpTo(0) { inclusive = true } // Xóa toàn bộ back stack
+            navController.navigate(Screen.Login.route) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true } // Xóa toàn bộ back stack
             }
         }
     }
@@ -374,14 +374,14 @@ fun AccountScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun AccountInfoScreenPreview() {
-    MaterialTheme {
-        AccountScreen(
-            navController = rememberNavController(),
-            viewModel = null,
-        )
-    }
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun AccountInfoScreenPreview() {
+//    MaterialTheme {
+//        AccountScreen(
+//            navController = rememberNavController(),
+//            viewModel = null,
+//        )
+//    }
+//}

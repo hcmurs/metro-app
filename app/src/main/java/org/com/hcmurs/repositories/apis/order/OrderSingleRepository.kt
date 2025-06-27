@@ -1,0 +1,19 @@
+package org.com.hcmurs.repositories.apis.order
+
+import javax.inject.Inject
+import javax.inject.Singleton
+
+
+@Singleton
+class OrderRepository @Inject constructor(
+    private val orderApi: OrderSingleApi
+) {
+    suspend fun createSingleOrder(request: CreateOrderRequest): Result<CreateOrderResponse> {
+        return try {
+            val response = orderApi.createSingleOrder(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
