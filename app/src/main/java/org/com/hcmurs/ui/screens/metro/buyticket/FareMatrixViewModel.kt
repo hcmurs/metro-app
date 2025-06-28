@@ -5,9 +5,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.FareMatrixResponse
+import org.com.hcmurs.repositories.apis.order.CreateOrderRequest
+import org.com.hcmurs.repositories.apis.order.CreateOrderResponse
+import org.com.hcmurs.repositories.apis.order.FareMatrixIdObject
+import org.com.hcmurs.repositories.apis.order.OrderRepository
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
 import javax.inject.Inject
 
@@ -16,12 +21,16 @@ data class FareMatrixUiState(
     val fareMatrices: List<FareMatrix> = emptyList(),
     val calculatedFare: FareMatrixResponse? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isCreatingOrder: Boolean = false,
+    val createOrderResponse: CreateOrderResponse? = null,
+    val createOrderError: String? = null
 )
 
 @HiltViewModel
 class FareMatrixViewModel @Inject constructor(
-    private val fareMatrixRepository: FareMatrixRepository
+    private val fareMatrixRepository: FareMatrixRepository,
+    private val orderRepository: OrderRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FareMatrixUiState())
@@ -57,5 +66,40 @@ class FareMatrixViewModel @Inject constructor(
             }
         }
     }
+
+    fun createSingleOrder(fareMatrixId: Int, paymentMethodId: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCreatingOrder = true, createOrderError = null, createOrderResponse = null) }
+
+            val request = CreateOrderRequest(
+                fareMatrixId = FareMatrixIdObject(id = fareMatrixId),
+                paymentMethodId = paymentMethodId
+            )
+
+            val result = orderRepository.createSingleOrder(request)
+
+            result.onSuccess { response ->
+                _uiState.update {
+                    it.copy(
+                        isCreatingOrder = false,
+                        createOrderResponse = response
+                    )
+                }
+            }.onFailure { throwable ->
+                _uiState.update {
+                    it.copy(
+                        isCreatingOrder = false,
+                        createOrderError = throwable.localizedMessage ?: "An unexpected error occurred"
+                    )
+                }
+            }
+        }
+    }
+
+
+    fun clearCreateOrderStatus() {
+        _uiState.update { it.copy(createOrderResponse = null, createOrderError = null) }
+    }
+
 
 }

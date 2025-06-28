@@ -18,6 +18,7 @@ import org.com.hcmurs.repositories.apis.station.MetroStationRepository
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.auth.AuthApi
+import org.com.hcmurs.repositories.apis.order.OrderSingleApi
 import org.com.hcmurs.repositories.apis.station.BusStationApi
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
 import org.com.hcmurs.repositories.apis.station.MetroStationApi
@@ -232,5 +233,14 @@ class NetworkModule {
     @Singleton
     fun provideStationRepository(api: StationApi): StationRepository {
         return StationRepository(api)
+    }
+
+    //order
+    @Provides
+    @Singleton
+    fun provideOrderApi(
+        retrofit: Retrofit
+    ): OrderSingleApi {
+        return retrofit.create(OrderSingleApi::class.java)
     }
 }

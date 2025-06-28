@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.oauth.GoogleAuthManager
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
@@ -31,6 +32,9 @@ class LoginViewModel @Inject constructor(
     private val _signInIntent = MutableStateFlow<Intent?>(null)
     val signInIntent: StateFlow<Intent?> = _signInIntent
 
+    private val _userProfile = MutableStateFlow<UserProfileData?>(null)
+    val userProfile: StateFlow<UserProfileData?> = _userProfile.asStateFlow()
+
     init {
         checkAuthenticationStatus()
     }
@@ -38,11 +42,14 @@ class LoginViewModel @Inject constructor(
     // THÊM: Kiểm tra trạng thái đăng nhập và load profile
     private fun checkAuthenticationStatus() {
         viewModelScope.launch {
-            if (authRepository.isAuthenticated()) {
-                _isAuthenticated.value = true
-                // Load profile nếu user đã đăng nhập
-                authRepository.fetchUserProfile()
+            _isLoading.value = true
+            val authenticated = authRepository.isAuthenticated()
+            _isAuthenticated.value = authenticated
+            if (authenticated) {
+                // Nếu đã đăng nhập, tải thông tin người dùng
+                refreshUserProfile()
             }
+            _isLoading.value = false
         }
     }
 
@@ -103,9 +110,11 @@ class LoginViewModel @Inject constructor(
                         if (jwtToken.isNotEmpty()) {
                             Log.d("LoginFlow", "Authentication successful, proceeding to home")
                             _isAuthenticated.value = true
+                            refreshUserProfile()
                         } else {
                             Log.e("LoginFlow", "Empty JWT token received from server")
                             _errorMessage.value = "Failed to get JWT token from server"
+                            _isAuthenticated.value= false
                         }
                     },
                     onFailure = { error ->
@@ -130,8 +139,6 @@ class LoginViewModel @Inject constructor(
             _isLoading.value = true
 
             try {
-                // Gọi hàm logout từ AuthRepository để xóa token và profile
-                authRepository.logout()
 
                 // Thực hiện signOut từ Google
                 val result = googleAuthManager.signOut()
@@ -144,9 +151,13 @@ class LoginViewModel @Inject constructor(
                         // Không hiển thị lỗi cho user vì đã xóa token local
                     }
                 )
+                authRepository.logout()
 
                 // Cập nhật trạng thái authenticated
                 _isAuthenticated.value = false
+
+                _userProfile.value = null
+
                 _errorMessage.value = null
 
                 Log.d("LoginViewModel", "Logout completed successfully")
@@ -168,12 +179,13 @@ class LoginViewModel @Inject constructor(
         _errorMessage.value = errorMessage
         _isLoading.value = false
     }
-    // HÀM MỚI: LẤY STATEFLOW CỦA USER PROFILE TỪ REPOSITORY
-    val userProfile: StateFlow<UserProfileData?> = authRepository.userProfile
 
     fun refreshUserProfile() {
         viewModelScope.launch {
-            authRepository.fetchUserProfile()
-        }
+            if(authRepository.isAuthenticated()){
+                authRepository.fetchUserProfile()
+                // Cập nhật StateFlow trong ViewModel sau khi fetch
+                _userProfile.value = authRepository.userProfile.value
+            }        }
     }
 }

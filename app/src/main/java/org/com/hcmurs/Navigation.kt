@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import org.com.hcmurs.ui.screens.login.LoginScreen
+import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
 import org.com.hcmurs.ui.screens.metro.account.AccountScreen
 import org.com.hcmurs.ui.screens.metro.account.CCCDScreen
@@ -43,6 +44,9 @@ import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
 import org.com.hcmurs.ui.screens.stationselection.OrderFareInfoScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
+import androidx.compose.runtime.getValue
+import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
+
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -65,6 +69,9 @@ sealed class Screen(val route: String) {
     }
     object OrderFareInfo : Screen("orderFareInfo/{entryStationId}/{exitStationId}") {
         fun createRoute(entryStationId: Int, exitStationId: Int) = "orderFareInfo/$entryStationId/$exitStationId"
+    }
+    object TicketQRCode : Screen("ticket_qr_code/{ticketCode}") {
+        fun createRoute(ticketCode: String) = "ticket_qr_code/$ticketCode"
     }
     object TicketFlow : Screen("ticket_flow")
 
@@ -103,14 +110,17 @@ fun Navigation(
     val mainState = mainViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    val loginViewModel: LoginViewModel = hiltViewModel()
+    val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
     LaunchedEffect(mainState.value.error) {
         if (mainState.value.error.isNotEmpty()) {
             Toast.makeText(context, mainState.value.error, Toast.LENGTH_LONG).show()
             mainViewModel.setError("")
         }
     }
+    val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
@@ -119,7 +129,7 @@ fun Navigation(
         composable(Screen.Login.route) {
             LoginScreen(
                 navController = navController,
-                viewModel = hiltViewModel(),
+                viewModel = loginViewModel,
              //   mainViewModel = mainViewModel
             )
         }
@@ -198,7 +208,13 @@ fun Navigation(
                 )
             }
         }
-
+        composable(
+            route = Screen.TicketQRCode.route,
+            arguments = listOf(navArgument("ticketCode") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ticketCode = backStackEntry.arguments?.getString("ticketCode") ?: ""
+            TicketQRCodeScreen(navController = navController, ticketCode = ticketCode)
+        }
         composable(
             Screen.ScanQrCode.route,
             arguments = listOf(
@@ -255,7 +271,9 @@ fun Navigation(
         }
 
         composable(Screen.Account.route) {
-            AccountScreen(navController)
+            AccountScreen(
+                navController,
+                viewModel = loginViewModel)
         }
 
         composable(Screen.CCCD.route) {

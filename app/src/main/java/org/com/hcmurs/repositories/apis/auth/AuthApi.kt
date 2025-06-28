@@ -34,7 +34,7 @@ interface AuthApi {
     suspend fun loginWithGoogle(@Body request: GoogleLoginRequest): FullApiResponse
 
     @GET("api/v1/auth/profile")
-    suspend fun getUserProfile(@Header("Authorization") bearerToken: String): UserProfileResponse
+    suspend fun getUserProfile(): UserProfileResponse
 }
 
 data class GoogleLoginRequest(val idToken: String)

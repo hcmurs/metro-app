@@ -36,14 +36,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.CircularProgressIndicator // NEW: For loading state
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect // NEW: For initial data fetch
-import androidx.compose.runtime.collectAsState // NEW: To collect flow state
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,13 +59,12 @@ import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
 import org.com.hcmurs.ui.theme.GreenPrimary
 import org.osmdroid.util.GeoPoint
-import androidx.hilt.navigation.compose.hiltViewModel // NEW: Import hiltViewModel
-import org.com.hcmurs.Station // NEW: Import Station data class
+import androidx.hilt.navigation.compose.hiltViewModel
+import org.com.hcmurs.Station
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 
 
-// Remove the hardcoded MetroStation data class here.
-// Use the 'Station' data class from 'org.com.hcmurs.data.Station' which matches your API.
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +78,7 @@ fun StationSelectionScreen(
     // THAY ĐỔI: Sử dụng 2 state để lưu ga Entry và Exit
     var selectedEntryStation by remember { mutableStateOf<Station?>(null) }
     var selectedExitStation by remember { mutableStateOf<Station?>(null) }
-    val fareMatrixUiState by fareMatrixViewModel.uiState.collectAsState() // Thêm state cho fare matrix
+    val fareMatrixUiState by fareMatrixViewModel.uiState.collectAsState()
 
     var selectedAction by remember { mutableStateOf("Entry") }
 
@@ -91,7 +90,7 @@ fun StationSelectionScreen(
             return@LaunchedEffect
         }
 
-        // Không xử lý khi đang trong trạng thái loading
+
         if (fareMatrixUiState.isLoading) {
             return@LaunchedEffect
         }

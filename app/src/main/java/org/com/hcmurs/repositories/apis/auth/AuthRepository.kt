@@ -6,13 +6,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.oauth.TokenStorage
+import org.com.hcmurs.security.TokenProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepository @Inject constructor(
     private val api: AuthApi,
-    private val tokenStorage: TokenStorage,
+    private val tokenProvider: TokenProvider,
 ) {
     suspend fun loginWithGoogle(idToken: String): String = withContext(Dispatchers.IO) {
         try {
@@ -24,7 +25,7 @@ class AuthRepository @Inject constructor(
             Log.d("AuthRepository", "Giá trị accessToken trích xuất được: $accessToken")
 
             if (!accessToken.isNullOrEmpty()) {
-                tokenStorage.saveToken(accessToken)
+                tokenProvider.saveToken(accessToken)
                 accessToken
             } else {
                 // Sử dụng Log.e (error) và in toàn bộ đối tượng apiResponse để kiểm tra
@@ -45,64 +46,46 @@ class AuthRepository @Inject constructor(
     val userProfile: StateFlow<UserProfileData?> = _userProfile
 
     // THÊM HÀM ĐỂ LẤY THÔNG TIN PROFILE TỪ BACKEND
-    suspend fun fetchUserProfile() = withContext(Dispatchers.IO) {
-        try {
-            val token = getToken()
-            if (!token.isNullOrEmpty()) {
-                val response = api.getUserProfile("Bearer $token") // Gửi token dưới dạng Bearer
-                if (response.status == 200 && response.message == "Success" && response.data != null) {
-                    _userProfile.value = response.data // Cập nhật StateFlow với dữ liệu profile
-                    Log.d("AuthRepository", "User Profile fetched: ${response.data}")
-                } else {
-                    Log.e("AuthRepository", "Failed to fetch user profile: ${response.message}")
-                    _userProfile.value = null // Đặt lại profile nếu có lỗi
-                }
+
+    suspend fun fetchUserProfile(): UserProfileData? {
+        if (!isAuthenticated()) {
+            Log.w("AuthRepository", "No token found, skipping profile fetch.")
+            _userProfile.value = null
+            return null
+        }
+        return try {
+            // SỬA LẠI: Không cần truyền token thủ công nữa vì đã có Interceptor
+            val response = api.getUserProfile()
+            if (response.status == 200 && response.data != null) {
+                _userProfile.value = response.data
             } else {
-                Log.w("AuthRepository", "No token found to fetch user profile.")
+                Log.e("AuthRepository", "Failed to fetch user profile: ${response.message}")
                 _userProfile.value = null
             }
+            response.data
         } catch (e: Exception) {
-            Log.e("AuthRepository", "Error fetching user profile: ${e.message}", e)
+            Log.e("AuthRepository", "Error fetching user profile", e)
             _userProfile.value = null
+            null
         }
     }
-    fun clearUserProfile() {
+
+    suspend fun logout() {
+        tokenProvider.clearToken()
         _userProfile.value = null
-    }
-    suspend fun getUserProfile(bearerToken: String): UserProfileResponse {
-        return withContext(Dispatchers.IO) {
-            api.getUserProfile(bearerToken)
-        }
-    }
-    suspend fun logout() = withContext(Dispatchers.IO) {
-        try {
-            // Xóa token khỏi bộ nhớ cục bộ
-            clearToken()
-            // Xóa thông tin profile khỏi StateFlow
-            clearUserProfile()
-            Log.d("AuthRepository", "User logged out successfully.")
-
-            // TODO: Nếu backend của bạn có một API để vô hiệu hóa token từ phía client,
-            // bạn có thể gọi nó ở đây. Ví dụ: api.logout().
-            // Dựa trên AuthController.java đã cung cấp, bạn có thể đã có /auth/logout
-            // nhưng nó chủ yếu xử lý cookie/session trên server-side.
-            // Với JWT, việc xóa token client-side thường là đủ.
-        } catch (e: Exception) {
-            Log.e("AuthRepository", "Error during logout: ${e.message}", e)
-            // Có thể re-throw ngoại lệ hoặc xử lý tùy theo yêu cầu
-
-        }
-    }
-
-    fun clearToken() {
-        tokenStorage.saveToken("")
+        Log.d("AuthRepository", "User logged out and token cleared.")
     }
 
     fun isAuthenticated(): Boolean {
-        return !tokenStorage.getToken().isNullOrEmpty()
+        return !tokenProvider.getToken().isNullOrEmpty()
     }
 
+    // Các hàm khác giữ nguyên...
     fun getToken(): String? {
-        return tokenStorage.getToken()
+        return tokenProvider.getToken()
+    }
+
+    fun clearUserProfile() {
+        _userProfile.value = null
     }
 }

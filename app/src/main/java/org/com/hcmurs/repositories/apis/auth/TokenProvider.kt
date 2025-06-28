@@ -1,7 +1,7 @@
-package org.com.hcmurs.security
+package org.com.hcmurs.repositories.apis.auth
 
 interface TokenProvider {
-    fun getToken(): String?
     fun saveToken(token: String)
+    fun getToken(): String?
     fun clearToken()
 }

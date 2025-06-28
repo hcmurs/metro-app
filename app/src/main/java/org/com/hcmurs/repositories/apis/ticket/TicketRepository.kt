@@ -1,5 +1,7 @@
 package org.com.hcmurs.repositories.apis.ticket
 
+import retrofit2.Response
+import okhttp3.ResponseBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,4 +23,16 @@ class TicketRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+
+
+    suspend fun getTicketQRCode(ticketCode: String): Result<Response<ResponseBody>> {
+        return try {
+            val response = ticketApi.getTicketQRCode(ticketCode)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }
