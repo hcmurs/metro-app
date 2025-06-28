@@ -92,14 +92,14 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack, // CẬP NHẬT: Dùng icon back thay cho home
+                    imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Trở về",
                     tint = PrimaryGreen
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White, // CẬP NHẬT: Nền trắng cho top bar
+            containerColor = Color.White,
         )
     )
 }
@@ -393,7 +393,7 @@ fun BuyTicketScreen(
 
             SectionHeader(title = "Ưu đãi Học sinh - Sinh viên", icon = Icons.Default.School)
             Spacer(modifier = Modifier.height(12.dp))
-            // LOGIC GỐC: Dùng lại TicketCard với dữ liệu cứng
+
             TicketCard(
                 ticket = TicketType(
                     id = 0, name = "Student Monthly", description = "Vé tháng HSSV", price = 150000,
@@ -406,15 +406,15 @@ fun BuyTicketScreen(
 
             SectionHeader(title = "Các tuyến nổi bật", icon = Icons.Default.Star)
             Spacer(modifier = Modifier.height(12.dp))
-            RoutesSection(fareMatrixViewModel) // LOGIC GỐC
+            RoutesSection(fareMatrixViewModel)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             SectionHeader(title = "Vé dài hạn", icon = Icons.Default.DateRange)
             Spacer(modifier = Modifier.height(12.dp))
-            TicketOptionsSection(navController, buyTicketViewModel) // LOGIC GỐC: Gọi lại lần 2
+            TicketOptionsSection(navController, buyTicketViewModel)
 
-            Spacer(modifier = Modifier.height(80.dp)) // Dành không gian cho bottom navigation nếu có
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
