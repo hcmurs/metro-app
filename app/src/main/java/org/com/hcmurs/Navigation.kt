@@ -45,6 +45,7 @@ import org.com.hcmurs.ui.screens.stationselection.OrderFareInfoScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
 import androidx.compose.runtime.getValue
+import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
 
 
 sealed class Screen(val route: String) {
@@ -68,6 +69,9 @@ sealed class Screen(val route: String) {
     }
     object OrderFareInfo : Screen("orderFareInfo/{entryStationId}/{exitStationId}") {
         fun createRoute(entryStationId: Int, exitStationId: Int) = "orderFareInfo/$entryStationId/$exitStationId"
+    }
+    object TicketQRCode : Screen("ticket_qr_code/{ticketCode}") {
+        fun createRoute(ticketCode: String) = "ticket_qr_code/$ticketCode"
     }
     object TicketFlow : Screen("ticket_flow")
 
@@ -204,7 +208,13 @@ fun Navigation(
                 )
             }
         }
-
+        composable(
+            route = Screen.TicketQRCode.route,
+            arguments = listOf(navArgument("ticketCode") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val ticketCode = backStackEntry.arguments?.getString("ticketCode") ?: ""
+            TicketQRCodeScreen(navController = navController, ticketCode = ticketCode)
+        }
         composable(
             Screen.ScanQrCode.route,
             arguments = listOf(

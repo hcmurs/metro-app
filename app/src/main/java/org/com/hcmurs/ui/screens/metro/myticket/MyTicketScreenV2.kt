@@ -50,7 +50,17 @@ import org.com.hcmurs.utils.navigateToHome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import org.com.hcmurs.repositories.apis.order.OrderWithTicketDetails
+import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
 
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
@@ -127,7 +137,7 @@ fun MyTicketScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(filteredOrders) { order ->
-                            TicketCard(order = order)
+                            TicketCard(order = order,navController)
                         }
                     }
                 }
@@ -137,7 +147,9 @@ fun MyTicketScreen(
 }
 
 @Composable
-fun TicketCard(order: OrderData) {
+fun TicketCard(order: OrderWithTicketDetails,
+               navController: NavController) {
+    val ticket = order.ticket ?: return //
     Card (
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -163,21 +175,71 @@ fun TicketCard(order: OrderData) {
                     modifier = Modifier.weight(1f)
                 )
                 // Giá vé
-                Text(
-                    text = "${order.amount.toInt()}đ",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DarkGreen
-                )
+//                Text(
+//                    text = "${order.amount.toInt()}đ",
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = DarkGreen
+//                )
             }
             Divider(Modifier.padding(vertical = 12.dp), color = LightGreenBackground)
             // Thông tin chi tiết
-            InfoRow(label = "Mã đơn hàng:", value = "#${order.orderId}")
+            InfoRow(label = "Mã đơn hàng:",
+                    value = "#${order.orderId}")
+
             Spacer(Modifier.height(4.dp))
-            InfoRow(label = "Trạng thái:", value = order.status.replaceFirstChar { it.uppercase() }, valueColor = getStatusColor(order.status))
+
+            InfoRow(label = "Tuyến:", value = order.ticket.ticketCode)
             Spacer(Modifier.height(4.dp))
-            InfoRow(label = "Ngày tạo:", value = order.createdAt.take(10)) // Chỉ lấy phần ngày
+
+
+
+            InfoRow(label = "Trạng thái:",
+                    value = order.status.replaceFirstChar { it.uppercase() },
+                    valueColor = getStatusColor(order.status))
+
+            Spacer(Modifier.height(4.dp))
+
+            InfoRow(label ="Giá vé",
+                value = "${order.amount.toInt()}đ",)
+
+            Spacer(Modifier.height(4.dp))
+
+            InfoRow(label = "Hiệu lực:",
+                    value = "${formatDate(ticket.validFrom)} - ${formatDate(ticket.validUntil)}")
+
+            if (order.status.equals("PENDING", ignoreCase = true) || order.status.equals("ACTIVE", ignoreCase = true)) {
+                Spacer(Modifier.height(16.dp))
+                Button (
+                    onClick = {
+                        navController.navigate(Screen.TicketQRCode.createRoute(ticket.ticketCode))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                ) {
+                    Text("SỬ DỤNG VÉ", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
         }
+    }
+}
+
+private fun formatDate(dateString: String): String {
+    return try {
+
+        val cleanedDateString = dateString.replace(Regex("(\\+|\\-)\\d{2}:(\\d{2})")) {
+            "${it.groupValues[1]}${it.groupValues[2]}00"
+        }
+
+        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        val date: Date = parser.parse(cleanedDateString) ?: return dateString
+
+        val formatter = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
+        formatter.timeZone = TimeZone.getDefault()
+
+        formatter.format(date)
+    } catch (e: Exception) {
+        dateString.take(10)
     }
 }
 

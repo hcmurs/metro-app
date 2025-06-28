@@ -1,11 +1,16 @@
 package org.com.hcmurs.repositories.apis.ticket
 
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface TicketApi {
     @GET("api/ts/ticket-types")
     suspend fun getTicketTypes(): Response<TicketTypeResponse>
+
+    @GET("/api/ts/tickets/qr")
+    suspend fun getTicketQRCode(@Query("ticketCode") ticketCode: String): Response<ResponseBody>
 }
 data class TicketTypeResponse(
     val status: Int,

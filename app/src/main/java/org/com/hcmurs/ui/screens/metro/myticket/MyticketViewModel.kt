@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.order.OrderData
 import org.com.hcmurs.repositories.apis.order.OrderRepository
+import org.com.hcmurs.repositories.apis.order.OrderWithTicketDetails
 import javax.inject.Inject
 
 
 data class MyTicketUiState(
-    val orders: List<OrderData> = emptyList(),
+    val orders: List<OrderWithTicketDetails> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -36,7 +37,8 @@ class MyTicketViewModel @Inject constructor(
     fun fetchUserOrders() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val result = orderRepository.getUserOrders()
+
+            val result = orderRepository.getUserOrdersWithDetails()
             result.onSuccess { response ->
                 if (response.status == 200 || response.status == 0) {
                     _uiState.update { it.copy(orders = response.data ?: emptyList(), isLoading = false) }

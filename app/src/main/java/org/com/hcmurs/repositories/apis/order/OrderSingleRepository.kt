@@ -26,5 +26,13 @@ class OrderRepository @Inject constructor(
         }
     }
 
+    suspend fun getUserOrdersWithDetails(): Result<UserOrdersDetailsResponse> {
+        return try {
+            val response = orderApi.getUserOrdersWithDetails()
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }
