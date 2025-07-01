@@ -212,7 +212,7 @@ fun TicketCard(order: OrderWithTicketDetails,
                 Spacer(Modifier.height(16.dp))
                 Button (
                     onClick = {
-                        navController.navigate(Screen.TicketQRCode.createRoute(ticket.ticketCode))
+                        navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)

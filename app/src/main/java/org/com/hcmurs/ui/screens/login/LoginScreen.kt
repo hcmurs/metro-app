@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
+import org.com.hcmurs.Screen
 import org.com.hcmurs.common.enum.LoadStatus
 
 @Composable
@@ -76,12 +77,39 @@ fun LoginScreen(
     }
 
     // Navigate when authenticated
-    LaunchedEffect(isAuthenticated) {
-        Log.d("LoginFlow", "Authentication state changed: $isAuthenticated")
-        if (isAuthenticated) {
-            Log.d("LoginFlow", "User authenticated, navigating to home screen")
-            navController.navigate("account") {
-                popUpTo("login") { inclusive = true }
+//    LaunchedEffect(isAuthenticated) {
+//        Log.d("LoginFlow", "Authentication state changed: $isAuthenticated")
+//        if (isAuthenticated) {
+//            Log.d("LoginFlow", "User authenticated, navigating to home screen")
+//            navController.navigate("account") {
+//                popUpTo("login") { inclusive = true }
+//            }
+//        }
+//    }
+    val userProfile by viewModel.userProfile.collectAsState()
+
+    LaunchedEffect(isAuthenticated, userProfile) {
+        if (isAuthenticated && userProfile != null) {
+            val role = userProfile?.role ?: "unknown"
+            Log.d("LoginFlow", "User role: $role")
+
+            when (role) {
+                "ROLE_CUSTOMER" -> {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+                "ROLE_STAFF" -> {
+                    navController.navigate(Screen.StaffHomeScreen.route) {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+                else -> {
+                    Log.w("LoginFlow", "Unknown role, defaulting to account screen")
+                    navController.navigate("account") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             }
         }
     }

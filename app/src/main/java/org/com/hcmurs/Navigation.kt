@@ -46,15 +46,18 @@ import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
 import androidx.compose.runtime.getValue
 import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
+import org.com.hcmurs.ui.screens.staffhome.StaffAccountScreen
+import org.com.hcmurs.ui.screens.staffhome.StaffHomeScreen
 
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Home : Screen("home")
+    object StaffHomeScreen : Screen("staffHomeScreen")
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
-
+    object StaffAccount :Screen("staffAccount")
     // Add new screen routes for the grid items
     object BuyTicket : Screen("buyTicket")
     object BuyTicketDetail : Screen("buyTicketDetail/{ticketId}")
@@ -118,14 +121,24 @@ fun Navigation(
             mainViewModel.setError("")
         }
     }
-    val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
+    //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
         }
-
+        composable  (Screen.StaffHomeScreen.route)
+        {
+            // StaffHomeScreen(navController)
+            StaffHomeScreen(navController) // Temporarily using HomeScreen for staff
+        }
+        composable  (Screen.StaffAccount.route) {
+            StaffAccountScreen(
+                navController = navController,
+                viewModel = loginViewModel
+            )
+        }
         composable(Screen.Login.route) {
             LoginScreen(
                 navController = navController,
