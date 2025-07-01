@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.com.hcmurs.oauth.GoogleAuthManager
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
@@ -34,6 +37,12 @@ class LoginViewModel @Inject constructor(
 
     private val _userProfile = MutableStateFlow<UserProfileData?>(null)
     val userProfile: StateFlow<UserProfileData?> = _userProfile.asStateFlow()
+
+    val userRole: StateFlow<String?> = userProfile.map { it?.role }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        null
+    )
 
     init {
         checkAuthenticationStatus()
