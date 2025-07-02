@@ -1,6 +1,8 @@
 package org.com.hcmurs.ui.screens.staffhome
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +38,7 @@ import androidx.compose.runtime.getValue
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.components.quickaction.StaffAccountQuickAccess
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StaffHomeScreen(navController: NavHostController) {
     val listState = rememberLazyListState()
@@ -107,6 +110,7 @@ fun StaffHomeScreen(navController: NavHostController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun StaffHomeScreenPreview() {
