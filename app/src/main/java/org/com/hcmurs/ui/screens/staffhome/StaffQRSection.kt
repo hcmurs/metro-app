@@ -26,9 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.constant.ScreenTitle
@@ -106,4 +108,10 @@ fun StaffQRSection(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StaffQrSectionPreview(){
+    StaffQRSection(rememberNavController())
 }

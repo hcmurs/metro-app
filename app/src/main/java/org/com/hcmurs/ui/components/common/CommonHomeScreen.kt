@@ -1,6 +1,8 @@
 package org.com.hcmurs.ui.components.common
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +36,7 @@ import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppHomeScreen(
     navController: NavHostController,

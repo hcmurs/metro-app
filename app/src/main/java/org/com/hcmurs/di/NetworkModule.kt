@@ -26,6 +26,8 @@ import org.com.hcmurs.repositories.apis.station.StationApi
 import org.com.hcmurs.repositories.apis.station.StationRepository
 import org.com.hcmurs.repositories.apis.user.ProfileApi
 import org.com.hcmurs.repositories.apis.ticket.TicketApi
+import org.com.hcmurs.repositories.apis.weather.WeatherApi
+import org.com.hcmurs.repositories.apis.weather.WeatherRepository
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,6 +44,8 @@ class NetworkModule {
     private val BASE_STATION = "http://192.168.88.172:4004/"
     private val BASE_PHONE = "http://192.168.1.14:4003/"
     private val BASE_STATION_ = "http://10.0.2.2:4004/"
+    private val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
+
 
     @Provides
     @Singleton
@@ -243,4 +247,20 @@ class NetworkModule {
     ): OrderSingleApi {
         return retrofit.create(OrderSingleApi::class.java)
     }
+
+    // weather
+    @Provides
+    @Singleton
+    fun provideWeatherApi(
+        retrofit: Retrofit
+    ): WeatherApi {
+        return retrofit.create(WeatherApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
+        return WeatherRepository(api)
+    }
+
 }

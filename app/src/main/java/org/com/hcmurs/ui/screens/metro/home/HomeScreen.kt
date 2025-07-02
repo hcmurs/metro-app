@@ -1,5 +1,7 @@
 package org.com.hcmurs.ui.screens.metro.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,6 +17,7 @@ import org.com.hcmurs.ui.components.common.AppHomeScreen
 import org.com.hcmurs.ui.screens.guide.GuideSection
 import org.com.hcmurs.ui.screens.news.NewsSection
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(navController: NavHostController) {
     AppHomeScreen(
@@ -38,6 +41,7 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun HomeMetroScreenPreview() {
