@@ -42,7 +42,7 @@ data class FareMatrixIdObject(
 
 data class CreateOrderRequest(
     val fareMatrixId: FareMatrixIdObject,
-    val paymentMethodId: Int
+    val paymentMethodId: Int //1: VN_PAY, 2: Stripe
 )
 
 data class CreatedOrderData(

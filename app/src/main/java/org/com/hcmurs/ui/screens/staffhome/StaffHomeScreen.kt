@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,19 +37,33 @@ import org.com.hcmurs.ui.components.common.AppHomeScreen
 import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.components.quickaction.StaffAccountQuickAccess
+import org.com.hcmurs.ui.screens.login.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun StaffHomeScreen(navController: NavHostController) {
+fun StaffHomeScreen(
+    navController: NavHostController,
+) {
     val listState = rememberLazyListState()
-    val isScrolled by remember {
-        derivedStateOf { listState.firstVisibleItemScrollOffset > 0 }
+
+    val viewModel: LoginViewModel = hiltViewModel()
+    val userProfile by viewModel.userProfile.collectAsState()
+
+    if (viewModel == null) {
+        // Simple placeholder UI when no viewModel is provided
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Account information unavailable")
+        }
+        return
     }
 
+    val userName = userProfile?.name ?: "Chưa cập nhật"
+
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn (
+        LazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
@@ -82,7 +98,7 @@ fun StaffHomeScreen(navController: NavHostController) {
             item {
                 StaffAccountQuickAccess(
                     navController = navController,
-                    userName = "Nhân viên HCMURS"
+                    userName = userName
                 )
             }
             // Có thể thêm các content khác cho staff ở đây
@@ -92,7 +108,6 @@ fun StaffHomeScreen(navController: NavHostController) {
         }
 
         HomeTopBar(
-            isScrolled = isScrolled,
             modifier = Modifier.align(Alignment.TopCenter)
         )
 

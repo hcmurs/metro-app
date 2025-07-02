@@ -46,13 +46,15 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
+import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.theme.GreenPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StaffStationSelectionScreen(
     navController: NavController,
-    stationViewModel: StationSelectionViewModel = hiltViewModel()
+    stationViewModel: StationSelectionViewModel = hiltViewModel(),
+    actionType: ActionType
 ) {
     // Convert your GeoPoint list to MetroStation objects
     var selectedStation by remember { mutableStateOf<Station?>(null) }
@@ -62,7 +64,7 @@ fun StaffStationSelectionScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Select Your Station") },
+                title = { Text("Select Current Station") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -83,12 +85,7 @@ fun StaffStationSelectionScreen(
                 FloatingActionButton(
                     onClick = {
                         // Navigate to QR scan screen with selected station data
-                        navController.navigate(
-                            Screen.StaffScanQrCode.createRoute(
-                                selectedStation!!.stationId,
-                                selectedStation!!.name,
-                            )
-                        )
+                        navController.navigate("scanQR/${selectedStation!!.stationId}/${selectedStation!!.name}/${actionType.name}")
                     },
                     containerColor = GreenPrimary
                 ) {
@@ -153,7 +150,7 @@ fun StaffStationSelectionScreen(
                         )
                         Button(
                             onClick = {
-                                navController.navigate("scanQR/${selectedStation!!.stationId}/${selectedStation!!.name}")
+                                navController.navigate("scanQR/${selectedStation!!.stationId}/${selectedStation!!.name}/${actionType.name}")
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -169,11 +166,4 @@ fun StaffStationSelectionScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun StaffStationSelectionScreenPreview() {
-    val navController = rememberNavController()
-    StaffStationSelectionScreen(navController)
 }

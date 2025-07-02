@@ -35,4 +35,24 @@ class TicketRepository @Inject constructor(
         }
     }
 
+    suspend fun scanTicketEntry(request: ScanTicketRequest): Result<Response<ResponseBody>> {
+        return try {
+            val response = ticketApi.scanTicketEntry(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun scanTicketExit(request: ScanTicketRequest): Result<Response<ResponseBody>> {
+        return try {
+            val response = ticketApi.scanTicketExit(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+
 }

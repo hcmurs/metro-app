@@ -251,8 +251,20 @@ class NetworkModule {
     // weather
     @Provides
     @Singleton
+    @Named("weatherRetrofit")
+    fun provideWeatherRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_WEATHER_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+
+    @Provides
+    @Singleton
     fun provideWeatherApi(
-        retrofit: Retrofit
+        @Named("weatherRetrofit") retrofit: Retrofit
     ): WeatherApi {
         return retrofit.create(WeatherApi::class.java)
     }

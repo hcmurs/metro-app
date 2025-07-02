@@ -51,12 +51,12 @@ fun WeatherDisplay(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Wind speed",
-                tint = if (isScrolled) Color.White else Color.Black,
+                tint = if (isScrolled) Color.White else Color.White,
                 modifier = Modifier.size(16.dp)
             )
             Text(
                 text = "$windSpeed m/s",
-                color = if (isScrolled) Color.White else Color.Black,
+                color = if (isScrolled) Color.White else Color.White,
                 fontSize = 14.sp
             )
         }

@@ -33,7 +33,7 @@ import org.com.hcmurs.ui.theme.GreenPrimary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
-    isScrolled: Boolean,
+    isScrolled: Boolean = false,
     modifier: Modifier = Modifier // Add modifier parameter
 ) {
     var selectedLanguage by remember { mutableStateOf("Vietnamese") }

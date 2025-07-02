@@ -88,7 +88,7 @@ fun StaffAccountQuickAccess(
                     color = Color.Black
                 )
                 Text(
-                    text = "Nhân viên • Nhấn để xem thông tin",
+                    text = "Nhấn để xem thông tin",
                     fontSize = 12.sp,
                     color = Color(0xFF757575),
                     modifier = Modifier.padding(top = 2.dp)

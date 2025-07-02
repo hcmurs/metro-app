@@ -41,7 +41,9 @@ import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketSc
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
+import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
+import org.com.hcmurs.ui.screens.scanqr.ScanQRViewModel
 import org.com.hcmurs.ui.screens.staffhome.StaffAccountScreen
 import org.com.hcmurs.ui.screens.staffhome.StaffHomeScreen
 import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
@@ -55,7 +57,13 @@ sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Home : Screen("home")
     object StaffHomeScreen : Screen("staffHomeScreen")
-    object StaffStationSelectionScreen : Screen("staffStationSelectionScreen")
+
+    object StaffStationSelectionScreen : Screen("stationSelect/{actionType}") {
+        fun createRoute(actionType: ActionType): String {
+            return "stationSelect/${actionType.name}"
+        }
+    }
+
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
@@ -101,9 +109,9 @@ sealed class Screen(val route: String) {
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
     object StationSelection : Screen("stationSelect")
-    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}/{actionType}") {
-        fun createRoute(stationId: Int, stationName: String, actionType: String) =
-            "scanQR/$stationId/$stationName/$actionType"
+    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}") {
+        fun createRoute(stationId: Int, stationName: String) =
+            "scanQR/$stationId/$stationName"
 
         const val defaultRoute = "scanQR/0/None"
     }
@@ -152,10 +160,23 @@ fun Navigation(
             StaffHomeScreen(navController) // Temporarily using HomeScreen for staff
         }
 
-        composable(Screen.StaffStationSelectionScreen.route) {
+        composable(
+            route = Screen.StaffStationSelectionScreen.route,
+            arguments = listOf(
+                navArgument("actionType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val actionTypeString = backStackEntry.arguments?.getString("actionType")
+            val actionType = try {
+                ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
+            } catch (e: IllegalArgumentException) {
+                ActionType.ENTRY // fallback
+            }
+
             StaffStationSelectionScreen(
                 navController = navController,
-                stationViewModel = hiltViewModel<StationSelectionViewModel>()
+                stationViewModel = hiltViewModel<StationSelectionViewModel>(),
+                actionType = actionType
             )
         }
 
@@ -258,30 +279,31 @@ fun Navigation(
             TicketQRCodeScreen(navController = navController, ticketCode = ticketCode)
         }
         composable(
-            Screen.ScanQrCode.route,
+            route = "scanQR/{stationId}/{stationName}/{actionType}",
             arguments = listOf(
                 navArgument("stationId") { type = NavType.IntType },
-                navArgument("stationName") { type = NavType.StringType },  // Added comma here
+                navArgument("stationName") { type = NavType.StringType },
                 navArgument("actionType") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val stationId = backStackEntry.arguments?.getInt("stationId") ?: 0
             val stationName = backStackEntry.arguments?.getString("stationName") ?: ""
-            val actionType = backStackEntry.arguments?.getString("actionType") ?: "Entry"
+            val actionTypeString = backStackEntry.arguments?.getString("actionType")
 
-            // If no station selected, redirect to station selection
-            if (stationId == 0 || stationName == "None") {
-                LaunchedEffect(Unit) {
-                    navController.navigate("stationSelect")
-                }
-            } else {
-                ScanQRScreen(
-                    navController,
-                    stationId,
-                    stationName,
-                    actionType
-                )  // Added actionType parameter
+            val actionType = try {
+                ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
+            } catch (e: IllegalArgumentException) {
+                ActionType.ENTRY
             }
+
+            val viewModel: ScanQRViewModel = hiltViewModel()
+            ScanQRScreen(
+                navController,
+                stationId,
+                stationName,
+                viewModel,
+                actionType
+            )
         }
 
         composable(Screen.Home.route) {
