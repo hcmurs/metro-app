@@ -79,6 +79,8 @@ dependencies {
 
     implementation(libs.composeIcons.fontAwesome)
 
+    // Stripe
+    implementation(libs.stripe.android)
 
     implementation(libs.okhttp)
 

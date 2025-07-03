@@ -34,6 +34,7 @@ ksp = "2.0.0-1.0.23"
 navigationCompose = "2.7.3"
 materialIconsExtended = "1.6.1"
 composeIcons = "1.1.1"
+stripeAndroid = "21.19.0"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -82,6 +83,7 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 composeIcons-fontAwesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "composeIcons" }
+stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import org.com.hcmurs.payment.PaymentScreen
+import org.com.hcmurs.payment.PaymentViewModel
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
@@ -121,6 +126,8 @@ sealed class Screen(val route: String) {
         fun createRoute(stationId: Int, stationName: String) = "scanQR/$stationId/$stationName"
         const val defaultRoute = "scanQR/0/None"
     }
+
+    object PaymentScreen : Screen("paymentScreen")
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
@@ -271,6 +278,39 @@ fun Navigation(
                 )
             }
         }
+
+        composable(route = Screen.PaymentScreen.route) { backStackEntry ->
+            val context = LocalContext.current
+            val paymentViewModel: PaymentViewModel = hiltViewModel()
+
+            // Import needed: import androidx.activity.ComponentActivity
+            val activity = context as androidx.activity.ComponentActivity
+
+            // Create PaymentSheet correctly - the constructor is internal, use the public method
+            val paymentSheet = remember {
+                PaymentSheet(activity) { result ->
+                    when (result) {
+                        is PaymentSheetResult.Completed -> {
+                            paymentViewModel.onPaymentSuccess()
+                        }
+                        is PaymentSheetResult.Canceled -> {
+                            paymentViewModel.onPaymentCancelled()
+                        }
+                        is PaymentSheetResult.Failed -> {
+                            paymentViewModel.onPaymentFailed(
+                                result.error.localizedMessage ?: "Payment failed"
+                            )
+                        }
+                    }
+                }
+            }
+
+            PaymentScreen(
+                paymentSheet = paymentSheet,
+                viewModel = paymentViewModel
+            )
+        }
+
         composable(
             route = Screen.TicketQRCode.route,
             arguments = listOf(navArgument("ticketCode") { type = NavType.StringType })
