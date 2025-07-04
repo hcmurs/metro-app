@@ -40,6 +40,8 @@ import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
+import org.com.hcmurs.ui.screens.news.BlogDetailScreen
+import org.com.hcmurs.ui.screens.news.BlogListScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
@@ -63,6 +65,8 @@ sealed class Screen(val route: String) {
             return "stationSelect/${actionType.name}"
         }
     }
+
+    object Blog : Screen("blog")
 
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
@@ -147,9 +151,9 @@ fun Navigation(
             mainViewModel.setError("")
         }
     }
-    //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
+    val startDestination = if (isAuthenticated) Screen.Home.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
@@ -325,7 +329,17 @@ fun Navigation(
             RouteScreen(navController)
         }
 
+        composable("blog_list") {
+            BlogListScreen(navController)
+        }
 
+        composable(
+            "blog_detail/{blogId}",
+            arguments = listOf(navArgument("blogId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val blogId = backStackEntry.arguments?.getInt("blogId") ?: 0
+            BlogDetailScreen(navController, blogId)
+        }
 
         composable(Screen.Maps.route) {
             MapScreen(navController)
