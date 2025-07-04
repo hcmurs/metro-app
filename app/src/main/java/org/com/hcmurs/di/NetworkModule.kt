@@ -28,6 +28,8 @@ import org.com.hcmurs.repositories.apis.user.ProfileApi
 import org.com.hcmurs.repositories.apis.ticket.TicketApi
 import org.com.hcmurs.repositories.apis.weather.WeatherApi
 import org.com.hcmurs.repositories.apis.weather.WeatherRepository
+import org.com.hcmurs.repositories.apis.stripe.StripeApi
+import org.com.hcmurs.repositories.apis.stripe.StripeRepository
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -39,8 +41,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-//    private val BASE_URL = "http://10.0.2.2:4003/"
-    private val BASE_URL = "http://192.168.88.172:4003/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
+//    private val BASE_URL = "http://192.168.88.172:4003/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
     private val BASE_STATION = "http://192.168.88.172:4004/"
     private val BASE_PHONE = "http://192.168.1.14:4003/"
@@ -274,6 +276,21 @@ class NetworkModule {
     @Singleton
     fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
         return WeatherRepository(api)
+    }
+
+    // Stripe API
+    @Provides
+    @Singleton
+    fun provideStripeApi(
+        retrofit: Retrofit // Reusing the main Retrofit instance for order/ticket services
+    ): StripeApi {
+        return retrofit.create(StripeApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStripeRepository(api: StripeApi): StripeRepository {
+        return StripeRepository(api)
     }
 
 }

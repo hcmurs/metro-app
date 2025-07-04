@@ -41,6 +41,15 @@ data class PaymentMethod(
     val icon: @Composable () -> Unit
 )
 
+// Utility function to map payment method string IDs to backend integer IDs
+fun getPaymentMethodId(paymentMethodStringId: String): Int {
+    return when (paymentMethodStringId) {
+        "vnpay" -> 1  // VN_PAY
+        "stripe" -> 2 // Stripe
+        else -> 1     // Default to VN_PAY
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderInfoScreen(
@@ -86,6 +95,18 @@ fun OrderInfoScreen(
                         imageVector = Icons.Default.CreditCard,
                         contentDescription = "VNPay",
                         tint = Color(0xFF1976D2),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            ),
+            PaymentMethod(
+                id = "stripe",
+                name = "Stripe",
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.CreditCard,
+                        contentDescription = "Stripe",
+                        tint = Color(0xFF6772E5),
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -188,11 +209,28 @@ fun OrderInfoScreen(
             // Payment Button
             Button(
                 onClick = {
-                    // Handle payment action
-                    if (selectedPaymentMethod != null) {
-                        // Proceed with payment
-                    } else {
-                        // Show message to select payment method
+                    // Handle payment action based on selected method
+                    selectedPaymentMethod?.let { paymentMethod ->
+                        when (paymentMethod.id) {
+                            "stripe" -> {
+                                // For Stripe, navigate to the Stripe payment screen
+                                uiState.ticketType?.let { ticketType ->
+                                    navController.navigate("paymentScreen?ticketId=${ticketType.id}")
+                                }
+                            }
+                            "vnpay" -> {
+                                // For VNPay, you might want to handle differently
+                                // For now, also navigate to payment screen or handle VNPay flow
+                                uiState.ticketType?.let { ticketType ->
+                                    navController.navigate("paymentScreen?ticketId=${ticketType.id}")
+                                }
+                            }
+                            "momo", "zalopay" -> {
+                                // Handle other payment methods
+                                // These can be implemented later or show a message
+                                // For now, you could show a "Coming soon" message
+                            }
+                        }
                     }
                 },
                 enabled = selectedPaymentMethod != null,

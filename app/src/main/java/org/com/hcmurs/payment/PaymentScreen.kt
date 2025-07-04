@@ -1,5 +1,7 @@
 package org.com.hcmurs.payment
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -7,20 +9,41 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.rememberPaymentSheet
 
 @Composable
 fun PaymentScreen(
-    paymentSheet: PaymentSheet,
+    orderId: Long? = null,
+    ticketId: Long? = null,
     viewModel: PaymentViewModel = hiltViewModel<PaymentViewModel>()
 ) {
     val context = LocalContext.current
     val paymentState = viewModel.paymentState.collectAsState().value
+
+    // Use rememberPaymentSheet for PaymentSheet (recommended approach for Compose)
+    val paymentSheet = rememberPaymentSheet { result ->
+        when (result) {
+            is PaymentSheetResult.Completed -> {
+                viewModel.onPaymentSuccess()
+            }
+            is PaymentSheetResult.Canceled -> {
+                viewModel.onPaymentCancelled()
+            }
+            is PaymentSheetResult.Failed -> {
+                viewModel.onPaymentFailed(
+                    result.error.localizedMessage ?: "Payment failed"
+                )
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -34,11 +57,26 @@ fun PaymentScreen(
             is PaymentState.Success -> Text("Payment Successful!")
             is PaymentState.Error -> {
                 Text("Payment Failed: ${paymentState.message}")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { 
+                    // Retry payment
+                    when {
+                        orderId != null -> viewModel.startOrderPayment(orderId)
+                        ticketId != null -> viewModel.startTicketPayment(ticketId)
+                        else -> viewModel.onPaymentFailed("No order or ticket ID provided")
+                    }
+                }) {
+                    Text("Retry")
+                }
             }
 
             is PaymentState.Ready -> {
                 Button(onClick = {
-                    viewModel.startPayment()
+                    when {
+                        orderId != null -> viewModel.startOrderPayment(orderId)
+                        ticketId != null -> viewModel.startTicketPayment(ticketId)
+                        else -> viewModel.onPaymentFailed("No order or ticket ID provided")
+                    }
                 }) {
                     Text("Pay Now")
                 }
@@ -68,7 +106,7 @@ fun PaymentScreen(
                             paymentSheet.presentWithPaymentIntent(
                                 paymentIntentClientSecret = clientSecret,
                                 configuration = PaymentSheet.Configuration(
-                                    merchantDisplayName = "Example, Inc.",
+                                    merchantDisplayName = "Metro Transit",
                                     allowsDelayedPaymentMethods = true
                                 )
                             )

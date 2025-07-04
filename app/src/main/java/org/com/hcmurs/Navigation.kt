@@ -279,35 +279,29 @@ fun Navigation(
             }
         }
 
-        composable(route = Screen.PaymentScreen.route) { backStackEntry ->
-            val context = LocalContext.current
-            val paymentViewModel: PaymentViewModel = hiltViewModel()
-
-            // Import needed: import androidx.activity.ComponentActivity
-            val activity = context as androidx.activity.ComponentActivity
-
-            // Create PaymentSheet correctly - the constructor is internal, use the public method
-            val paymentSheet = remember {
-                PaymentSheet(activity) { result ->
-                    when (result) {
-                        is PaymentSheetResult.Completed -> {
-                            paymentViewModel.onPaymentSuccess()
-                        }
-                        is PaymentSheetResult.Canceled -> {
-                            paymentViewModel.onPaymentCancelled()
-                        }
-                        is PaymentSheetResult.Failed -> {
-                            paymentViewModel.onPaymentFailed(
-                                result.error.localizedMessage ?: "Payment failed"
-                            )
-                        }
-                    }
+        composable(
+            route = "paymentScreen?orderId={orderId}&ticketId={ticketId}",
+            arguments = listOf(
+                navArgument("orderId") { 
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("ticketId") { 
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
                 }
-            }
+            )
+        ) { backStackEntry ->
+            val orderIdStr = backStackEntry.arguments?.getString("orderId")
+            val ticketIdStr = backStackEntry.arguments?.getString("ticketId")
+            val orderId = orderIdStr?.toLongOrNull()
+            val ticketId = ticketIdStr?.toLongOrNull()
 
             PaymentScreen(
-                paymentSheet = paymentSheet,
-                viewModel = paymentViewModel
+                orderId = orderId,
+                ticketId = ticketId
             )
         }
 
