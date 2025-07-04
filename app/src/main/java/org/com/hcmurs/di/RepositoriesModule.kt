@@ -1,15 +1,15 @@
 package org.com.hcmurs.di
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import org.com.hcmurs.repositories.Api
 import org.com.hcmurs.repositories.ApiImpl
 import org.com.hcmurs.repositories.MainLog
 import org.com.hcmurs.repositories.MainLogImpl
 import org.com.hcmurs.repositories.Store
 import org.com.hcmurs.repositories.StoreImpl
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module

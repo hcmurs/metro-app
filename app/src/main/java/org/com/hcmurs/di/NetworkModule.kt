@@ -12,20 +12,22 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
-import org.com.hcmurs.repositories.apis.station.BusStationRepository
-import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
-import org.com.hcmurs.repositories.apis.station.MetroStationRepository
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
-import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.auth.AuthApi
+import org.com.hcmurs.repositories.apis.blog.BlogRepository
+import org.com.hcmurs.repositories.apis.blog.PublicBlogApi
 import org.com.hcmurs.repositories.apis.order.OrderSingleApi
 import org.com.hcmurs.repositories.apis.station.BusStationApi
-import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
+import org.com.hcmurs.repositories.apis.station.BusStationRepository
 import org.com.hcmurs.repositories.apis.station.MetroStationApi
+import org.com.hcmurs.repositories.apis.station.MetroStationRepository
 import org.com.hcmurs.repositories.apis.station.StationApi
 import org.com.hcmurs.repositories.apis.station.StationRepository
-import org.com.hcmurs.repositories.apis.user.ProfileApi
+import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
+import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketApi
+import org.com.hcmurs.repositories.apis.ticket.TicketRepository
+import org.com.hcmurs.repositories.apis.user.ProfileApi
 import org.com.hcmurs.repositories.apis.weather.WeatherApi
 import org.com.hcmurs.repositories.apis.weather.WeatherRepository
 import org.com.hcmurs.security.TokenProvider
@@ -39,7 +41,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-    private val BASE_URL = "http://10.0.2.2:4003/"
+//    private val BASE_URL = "http://10.0.2.2:4003/"
+    private val BASE_URL = "http://192.168.88.172:4003/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
     private val BASE_STATION = "http://192.168.88.172:4004/"
     private val BASE_PHONE = "http://192.168.1.14:4003/"
@@ -89,7 +92,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        @Named("Auth")   authInterceptor: Interceptor,
+        @Named("Auth") authInterceptor: Interceptor,
         @Named("ApiKey") apiKeyInterceptor: Interceptor,
         cookieManager: CookieManager
     ): OkHttpClient {
@@ -118,6 +121,7 @@ class NetworkModule {
     fun provideApiService(retrofit: Retrofit): ProfileApi {
         return retrofit.create(ProfileApi::class.java)
     }
+
     @Provides
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
@@ -198,7 +202,7 @@ class NetworkModule {
     @Singleton
     fun provideTicketApi(
 
-         retrofit: Retrofit // Inject the specific Retrofit instance
+        retrofit: Retrofit // Inject the specific Retrofit instance
     ): TicketApi {
         return retrofit.create(TicketApi::class.java)
     }
@@ -273,6 +277,33 @@ class NetworkModule {
     @Singleton
     fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
         return WeatherRepository(api)
+    }
+
+    //Blog
+    @Provides
+    @Named("publicRetrofit")
+    @Singleton
+    fun providePublicRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val publicClient = okHttpClient.newBuilder()
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(publicClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePublicBlogApi(@Named("publicRetrofit") retrofit: Retrofit): PublicBlogApi {
+        return retrofit.create(PublicBlogApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePublicBlogRepository(api: PublicBlogApi): BlogRepository {
+        return BlogRepository(api)
     }
 
 }

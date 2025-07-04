@@ -14,8 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.constant.UserRole
 import org.com.hcmurs.ui.components.common.AppHomeScreen
-import org.com.hcmurs.ui.screens.guide.GuideSection
-import org.com.hcmurs.ui.screens.news.NewsSection
+import org.com.hcmurs.ui.components.featured.FeaturedBlogsSection
+import org.com.hcmurs.ui.screens.news.BlogSection
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -28,14 +28,14 @@ fun HomeScreen(navController: NavHostController) {
         item {
             Spacer(modifier = Modifier.height(30.dp))
             Box(modifier = Modifier.padding(start = 16.dp)) {
-                GuideSection()
+                FeaturedBlogsSection(navController)
             }
         }
 
         item {
             Spacer(modifier = Modifier.height(10.dp))
             Box(modifier = Modifier.padding(start = 16.dp)) {
-                NewsSection(navController)
+                BlogSection(navController)
             }
         }
     }

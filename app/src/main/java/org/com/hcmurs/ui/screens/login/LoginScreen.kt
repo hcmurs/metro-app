@@ -180,7 +180,7 @@ private fun LoginScreenContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = {
-                        navController.navigateUp()
+                        navController.navigate(Screen.Home.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,

@@ -2,21 +2,18 @@ package org.com.hcmurs.oauth
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-
-import com.google.android.gms.tasks.Tasks
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+
 @Singleton
 class GoogleAuthManager @Inject constructor(
     @ApplicationContext private val context: Context

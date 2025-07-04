@@ -1,6 +1,5 @@
 package org.com.hcmurs.repositories.apis.ticket
 
-import com.google.gson.Gson
 import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.FareMatrixResponse
 import javax.inject.Inject

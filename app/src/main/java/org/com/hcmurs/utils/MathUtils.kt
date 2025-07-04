@@ -2,7 +2,6 @@ package org.com.hcmurs.utils
 
 import org.com.hcmurs.model.BusStop
 import org.osmdroid.util.GeoPoint
-import kotlin.compareTo
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow

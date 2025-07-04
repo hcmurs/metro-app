@@ -14,7 +14,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,8 +23,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.dropdown.LanguageDropdown
+import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.weather.WeatherViewModel
 import org.com.hcmurs.ui.theme.GreenPrimary
 
