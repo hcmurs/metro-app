@@ -66,7 +66,10 @@ sealed class Screen(val route: String) {
         }
     }
 
-    object Blog : Screen("blog")
+    object BlogList : Screen("blog_list")
+    object BlogDetail : Screen("blog_detail/{blogId}") {
+        fun createRoute(blogId: Int) = "blog_detail/$blogId"
+    }
 
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
@@ -153,7 +156,7 @@ fun Navigation(
     }
     //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
@@ -329,12 +332,12 @@ fun Navigation(
             RouteScreen(navController)
         }
 
-        composable("blog_list") {
+        composable(Screen.BlogList.route) {
             BlogListScreen(navController)
         }
 
         composable(
-            "blog_detail/{blogId}",
+            route = Screen.BlogDetail.route,
             arguments = listOf(navArgument("blogId") { type = NavType.IntType })
         ) { backStackEntry ->
             val blogId = backStackEntry.arguments?.getInt("blogId") ?: 0

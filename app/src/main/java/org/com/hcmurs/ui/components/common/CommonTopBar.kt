@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import org.com.hcmurs.ui.theme.DarkGreen
-import org.com.hcmurs.ui.theme.GreenPrimary
 import org.com.hcmurs.utils.navigateToHome
 
 @OptIn(ExperimentalMaterial3Api::class)

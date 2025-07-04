@@ -1,8 +1,8 @@
 package org.com.hcmurs.repositories
 
-import org.com.hcmurs.model.NoteItem
 import kotlinx.coroutines.delay
 import org.com.hcmurs.common.exception.AppException
+import org.com.hcmurs.model.NoteItem
 import javax.inject.Inject
 
 class ApiImpl @Inject constructor() : Api {

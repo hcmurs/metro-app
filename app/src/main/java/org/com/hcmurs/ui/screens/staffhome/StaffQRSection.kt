@@ -1,7 +1,7 @@
 package org.com.hcmurs.ui.screens.staffhome
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +41,6 @@ import org.com.hcmurs.Screen
 import org.com.hcmurs.constant.ScreenTitle
 import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.utils.screenTitleIconMap
-import android.util.Log
 
 @Composable
 fun StaffQRSection(

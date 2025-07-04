@@ -19,8 +19,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,17 +28,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
-import org.com.hcmurs.constant.UserRole
-import org.com.hcmurs.ui.components.common.AppHomeScreen
-import org.com.hcmurs.ui.components.floatingButton.FloatingButton
-import org.com.hcmurs.ui.components.topbar.HomeTopBar
-import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
 import org.com.hcmurs.R
+import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.quickaction.StaffAccountQuickAccess
+import org.com.hcmurs.ui.components.topbar.HomeTopBar
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)

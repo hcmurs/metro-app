@@ -1,7 +1,5 @@
 package org.com.hcmurs.model
 
-import org.osmdroid.util.GeoPoint
-
 //var station = listOf<GeoPoint>(
 //    GeoPoint(10.770696325149563, 106.69754740398896), // Ben Thanh
 //    GeoPoint(10.774692602241206, 106.7022005846861), // Ga Nha Hat Thanh Pho

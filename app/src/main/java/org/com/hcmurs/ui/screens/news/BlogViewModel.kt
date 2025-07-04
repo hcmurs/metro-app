@@ -40,6 +40,10 @@ class BlogViewModel @Inject constructor(
     private val _blogDetailState = MutableStateFlow<BlogDetailUiState>(BlogDetailUiState.Loading)
     val blogDetailState: StateFlow<BlogDetailUiState> = _blogDetailState.asStateFlow()
 
+    // Featured blogs
+    private val _featuredBlogs = MutableStateFlow<List<BlogResponse>>(emptyList())
+    val featuredBlogs: StateFlow<List<BlogResponse>> = _featuredBlogs.asStateFlow()
+
     // Pagination state
     private val _currentPage = MutableStateFlow(0)
     val currentPage: StateFlow<Int> = _currentPage.asStateFlow()
@@ -160,6 +164,22 @@ class BlogViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _blogDetailState.value = BlogDetailUiState.Error("Network error: ${e.message}")
+            }
+        }
+    }
+
+    fun getFeaturedBlogs(quantity: Int){
+        viewModelScope.launch {
+            try {
+                val response = repository.getBlogs(page = 0, size = quantity, sort = "createdAt,desc")
+                if (response.isSuccessful) {
+                    val blogs = response.body()?.data?.content ?: emptyList<BlogResponse>()
+                    _featuredBlogs.value = blogs
+                } else {
+                    _featuredBlogs.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _featuredBlogs.value = emptyList()
             }
         }
     }

@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import org.com.hcmurs.Screen
 import org.com.hcmurs.utils.navigateToHome
 
 @OptIn(ExperimentalMaterial3Api::class)
