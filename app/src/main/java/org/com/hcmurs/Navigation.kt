@@ -151,9 +151,9 @@ fun Navigation(
             mainViewModel.setError("")
         }
     }
-    val startDestination = if (isAuthenticated) Screen.Home.route else Screen.Login.route
+    //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
