@@ -30,11 +30,11 @@ data class UserProfileData(
    )
 
 interface AuthApi {
-    @POST("api/v1/auth/oauth2/google")
+    @POST("api/auth/oauth2/google")
 
     suspend fun loginWithGoogle(@Body request: GoogleLoginRequest): FullApiResponse
 
-    @GET("api/v1/auth/profile")
+    @GET("api/auth/profile")
     suspend fun getUserProfile(): UserProfileResponse
 }
 

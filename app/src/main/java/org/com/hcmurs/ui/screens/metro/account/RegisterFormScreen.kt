@@ -130,28 +130,24 @@ fun RegisterFormScreen(
                 textAlign = TextAlign.Center
             )
 
-            // Mục chọn ảnh thẻ sinh viên
             ImagePicker(
                 label = "Ảnh mặt trước thẻ sinh viên",
                 selectedImageUri = uiState.studentCardImageUri,
                 onImageSelected = { viewModel.onStudentCardImageSelected(it) }
             )
 
-            // Mục chọn ảnh CCCD
             ImagePicker(
                 label = "Ảnh mặt trước CCCD/CMND",
                 selectedImageUri = uiState.citizenCardImageUri,
                 onImageSelected = { viewModel.onCitizenCardImageSelected(it) }
             )
 
-            // Mục chọn ngày hết hạn
             DatePicker(
                 label = "Ngày hết hạn trên thẻ sinh viên",
                 selectedDate = uiState.endDate,
                 onDateSelected = { viewModel.onEndDateSelected(it) }
             )
 
-            // Trường nhập nội dung (tùy chọn)
             OutlinedTextField(
                 value = uiState.content,
                 onValueChange = { viewModel.onContentChange(it) },
@@ -179,7 +175,6 @@ fun RegisterFormScreen(
     }
 }
 
-// Composable cho việc chọn ảnh
 @Composable
 private fun ImagePicker(
     label: String,
@@ -222,7 +217,6 @@ private fun ImagePicker(
     }
 }
 
-// Composable cho việc chọn ngày
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DatePicker(
@@ -264,7 +258,7 @@ private fun DatePicker(
                 .fillMaxWidth()
                 .clickable { showDialog = true },
             readOnly = true,
-            enabled = false, // Vô hiệu hóa để ngăn bàn phím hiện lên
+            enabled = false,
             leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Date") },
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = TextSecondaryColor,

@@ -42,7 +42,7 @@ data class ApiResponse<T>(
 )
 
 interface RequestApi {
-    @POST("/users/requests")
+    @POST("/api/users/requests")
     suspend fun createRequest(@Body request: RequestCreationRequest): ApiResponse<RequestDto>
 }
 

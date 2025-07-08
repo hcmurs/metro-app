@@ -42,7 +42,6 @@ class RegisterFormViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(RegisterFormState())
     val uiState: StateFlow<RegisterFormState> = _uiState.asStateFlow()
 
-    // --- Các hàm cập nhật state từ UI ---
     fun onContentChange(content: String) {
         _uiState.update { it.copy(content = content) }
     }
@@ -72,7 +71,6 @@ class RegisterFormViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            // Chuyển đổi ảnh sang Base64
             val studentCardBase64 = uriToBase64(context, currentState.studentCardImageUri)
             val citizenCardBase64 = uriToBase64(context, currentState.citizenCardImageUri)
 
@@ -81,10 +79,8 @@ class RegisterFormViewModel @Inject constructor(
                 return@launch
             }
 
-            // Định dạng ngày
             val formattedEndDate = currentState.endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
-            // Tạo request
             val request = RequestCreationRequest(
                 content = currentState.content,
                 studentCardImage = studentCardBase64,
@@ -106,12 +102,11 @@ class RegisterFormViewModel @Inject constructor(
         }
     }
 
-    // Hàm helper để chuyển Uri sang Base64
     private fun uriToBase64(context: Context, uri: Uri): String? {
         return try {
             val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
             val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream) // Nén ảnh để giảm dung lượng
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
             val byteArray = outputStream.toByteArray()
             Base64.encodeToString(byteArray, Base64.DEFAULT)
         } catch (e: Exception) {
