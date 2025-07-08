@@ -2,6 +2,7 @@ package org.com.hcmurs
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,17 +28,21 @@ class MainActivity : ComponentActivity() {
         LanguageManager.setLocale(this, currentLang)
 
         // Handle OAuth success from redirect activity
-        intent?.let { intent ->
-            if (intent.getBooleanExtra("oauth_success", false)) {
-                // Use the new method to handle sign-in
-                loginViewModel.handleGoogleSignInResult(intent)
-            }
+        try{
+            intent?.let { intent ->
+                if (intent.getBooleanExtra("oauth_success", false)) {
+                    // Use the new method to handle sign-in
+                    loginViewModel.handleGoogleSignInResult(intent)
+                }
 
-            val error = intent.getStringExtra("oauth_error")
-            if (error != null) {
-                // Update LoginViewModel with error
-                loginViewModel.updateLoginError(error)
+                val error = intent.getStringExtra("oauth_error")
+                if (error != null) {
+                    // Update LoginViewModel with error
+                    loginViewModel.updateLoginError(error)
+                }
             }
+        }catch (e: Exception){
+            e.message?.let { Log.d("Main Activity:", it) }
         }
 
         setContent {

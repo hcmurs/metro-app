@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,47 +36,70 @@ import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
+import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
+import org.com.hcmurs.ui.screens.news.BlogDetailScreen
+import org.com.hcmurs.ui.screens.news.BlogListScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
+import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
-import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
-import org.com.hcmurs.ui.screens.stationselection.OrderFareInfoScreen
-import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
-import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
-import androidx.compose.runtime.getValue
-import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
+import org.com.hcmurs.ui.screens.scanqr.ScanQRViewModel
 import org.com.hcmurs.ui.screens.staffhome.StaffAccountScreen
 import org.com.hcmurs.ui.screens.staffhome.StaffHomeScreen
+import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
+import org.com.hcmurs.ui.screens.stationselection.OrderFareInfoScreen
+import org.com.hcmurs.ui.screens.stationselection.StaffStationSelectionScreen
+import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
+import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
 
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Home : Screen("home")
     object StaffHomeScreen : Screen("staffHomeScreen")
+
+    object StaffStationSelectionScreen : Screen("stationSelect/{actionType}") {
+        fun createRoute(actionType: ActionType): String {
+            return "stationSelect/${actionType.name}"
+        }
+    }
+
+    object BlogList : Screen("blog_list")
+    object BlogDetail : Screen("blog_detail/{blogId}") {
+        fun createRoute(blogId: Int) = "blog_detail/$blogId"
+    }
+
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
-    object StaffAccount :Screen("staffAccount")
+    object StaffAccount : Screen("staffAccount")
+
     // Add new screen routes for the grid items
     object BuyTicket : Screen("buyTicket")
-    object BuyTicketDetail : Screen("buyTicketDetail/{ticketId}")
-    {
+    object BuyTicketDetail : Screen("buyTicketDetail/{ticketId}") {
         fun createRoute(ticketId: Int) = "buyTicketDetail/$ticketId"
     }
+
     object OrderInfo : Screen("orderInfo/{ticketId}") {
         fun createRoute(ticketId: Int) = "orderInfo/$ticketId"
     }
+
     object CalculatedFare : Screen("calculatedFare/{entryStationId}/{exitStationId}") {
-        fun createRoute(entryStationId: Int, exitStationId: Int) = "calculatedFare/$entryStationId/$exitStationId"
+        fun createRoute(entryStationId: Int, exitStationId: Int) =
+            "calculatedFare/$entryStationId/$exitStationId"
     }
+
     object OrderFareInfo : Screen("orderFareInfo/{entryStationId}/{exitStationId}") {
-        fun createRoute(entryStationId: Int, exitStationId: Int) = "orderFareInfo/$entryStationId/$exitStationId"
+        fun createRoute(entryStationId: Int, exitStationId: Int) =
+            "orderFareInfo/$entryStationId/$exitStationId"
     }
+
     object TicketQRCode : Screen("ticket_qr_code/{ticketCode}") {
         fun createRoute(ticketCode: String) = "ticket_qr_code/$ticketCode"
     }
+
     object TicketFlow : Screen("ticket_flow")
 
     object Route : Screen("route")
@@ -92,8 +116,16 @@ sealed class Screen(val route: String) {
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
     object StationSelection : Screen("stationSelect")
-    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}/{actionType}") {
-        fun createRoute(stationId: Int, stationName: String, actionType: String) = "scanQR/$stationId/$stationName/$actionType"
+    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}") {
+        fun createRoute(stationId: Int, stationName: String) =
+            "scanQR/$stationId/$stationName"
+
+        const val defaultRoute = "scanQR/0/None"
+    }
+
+    // Staff Only Choose Station and do scan
+    data object StaffScanQrCode : Screen("scanQR/{stationId}/{stationName}") {
+        fun createRoute(stationId: Int, stationName: String) = "scanQR/$stationId/$stationName"
         const val defaultRoute = "scanQR/0/None"
     }
 
@@ -111,6 +143,7 @@ fun Navigation(
     val navController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
     val mainState = mainViewModel.uiState.collectAsState()
+
     val context = LocalContext.current
 
     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -123,17 +156,38 @@ fun Navigation(
     }
     //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
-    NavHost(navController = navController, startDestination = Screen.Login.route) {
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
         }
-        composable  (Screen.StaffHomeScreen.route)
+        composable(Screen.StaffHomeScreen.route)
         {
             // StaffHomeScreen(navController)
             StaffHomeScreen(navController) // Temporarily using HomeScreen for staff
         }
-        composable  (Screen.StaffAccount.route) {
+
+        composable(
+            route = Screen.StaffStationSelectionScreen.route,
+            arguments = listOf(
+                navArgument("actionType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val actionTypeString = backStackEntry.arguments?.getString("actionType")
+            val actionType = try {
+                ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
+            } catch (e: IllegalArgumentException) {
+                ActionType.ENTRY // fallback
+            }
+
+            StaffStationSelectionScreen(
+                navController = navController,
+                stationViewModel = hiltViewModel<StationSelectionViewModel>(),
+                actionType = actionType
+            )
+        }
+
+        composable(Screen.StaffAccount.route) {
             StaffAccountScreen(
                 navController = navController,
                 viewModel = loginViewModel
@@ -143,7 +197,7 @@ fun Navigation(
             LoginScreen(
                 navController = navController,
                 viewModel = loginViewModel,
-             //   mainViewModel = mainViewModel
+                //   mainViewModel = mainViewModel
             )
         }
 
@@ -165,7 +219,8 @@ fun Navigation(
         ) {
             // Màn hình 1: Chọn ga
             composable(route = Screen.StationSelection.route) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
+                val parentEntry =
+                    remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
                 val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
                 // CẢI TIẾN: Chia sẻ cả StationSelectionViewModel
                 val stationViewModel: StationSelectionViewModel = hiltViewModel(parentEntry)
@@ -184,7 +239,8 @@ fun Navigation(
                     navArgument("exitStationId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
+                val parentEntry =
+                    remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
                 val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
                 val stationViewModel: StationSelectionViewModel = hiltViewModel(parentEntry)
                 val entryId = backStackEntry.arguments?.getInt("entryStationId") ?: 0
@@ -206,7 +262,8 @@ fun Navigation(
                     navArgument("exitStationId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
-                val parentEntry = remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
+                val parentEntry =
+                    remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
                 val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
                 val stationViewModel: StationSelectionViewModel = hiltViewModel(parentEntry)
                 val entryId = backStackEntry.arguments?.getInt("entryStationId") ?: 0
@@ -229,25 +286,31 @@ fun Navigation(
             TicketQRCodeScreen(navController = navController, ticketCode = ticketCode)
         }
         composable(
-            Screen.ScanQrCode.route,
+            route = "scanQR/{stationId}/{stationName}/{actionType}",
             arguments = listOf(
                 navArgument("stationId") { type = NavType.IntType },
-                navArgument("stationName") { type = NavType.StringType },  // Added comma here
+                navArgument("stationName") { type = NavType.StringType },
                 navArgument("actionType") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val stationId = backStackEntry.arguments?.getInt("stationId") ?: 0
             val stationName = backStackEntry.arguments?.getString("stationName") ?: ""
-            val actionType = backStackEntry.arguments?.getString("actionType") ?: "Entry"
+            val actionTypeString = backStackEntry.arguments?.getString("actionType")
 
-            // If no station selected, redirect to station selection
-            if (stationId == 0 || stationName == "None") {
-                LaunchedEffect(Unit) {
-                    navController.navigate("stationSelect")
-                }
-            } else {
-                ScanQRScreen(navController, stationId, stationName, actionType)  // Added actionType parameter
+            val actionType = try {
+                ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
+            } catch (e: IllegalArgumentException) {
+                ActionType.ENTRY
             }
+
+            val viewModel: ScanQRViewModel = hiltViewModel()
+            ScanQRScreen(
+                navController,
+                stationId,
+                stationName,
+                viewModel,
+                actionType
+            )
         }
 
         composable(Screen.Home.route) {
@@ -269,7 +332,17 @@ fun Navigation(
             RouteScreen(navController)
         }
 
+        composable(Screen.BlogList.route) {
+            BlogListScreen(navController)
+        }
 
+        composable(
+            route = Screen.BlogDetail.route,
+            arguments = listOf(navArgument("blogId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val blogId = backStackEntry.arguments?.getInt("blogId") ?: 0
+            BlogDetailScreen(navController, blogId)
+        }
 
         composable(Screen.Maps.route) {
             MapScreen(navController)
@@ -286,7 +359,8 @@ fun Navigation(
         composable(Screen.Account.route) {
             AccountScreen(
                 navController,
-                viewModel = loginViewModel)
+                viewModel = loginViewModel
+            )
         }
 
         composable(Screen.CCCD.route) {

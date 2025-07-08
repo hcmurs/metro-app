@@ -1,7 +1,7 @@
 package org.com.hcmurs.repositories.apis.ticket
 
-import retrofit2.Response
 import okhttp3.ResponseBody
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,5 +34,25 @@ class TicketRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun scanTicketEntry(request: ScanTicketRequest): Result<Response<ResponseBody>> {
+        return try {
+            val response = ticketApi.scanTicketEntry(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun scanTicketExit(request: ScanTicketRequest): Result<Response<ResponseBody>> {
+        return try {
+            val response = ticketApi.scanTicketExit(request)
+            Result.success(response)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
 
 }

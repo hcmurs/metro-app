@@ -1,7 +1,6 @@
 package org.com.hcmurs
 
 import android.app.Application
-import coil3.ComponentRegistry
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi

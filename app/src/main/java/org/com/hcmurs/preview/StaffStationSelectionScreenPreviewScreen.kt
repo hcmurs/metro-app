@@ -1,4 +1,4 @@
-//package org.com.hcmurs.ui.screens.stationselection
+//package org.com.hcmurs.preview
 //
 //
 //import androidx.annotation.DrawableRes
@@ -50,7 +50,6 @@
 //import androidx.navigation.compose.rememberNavController
 //import org.com.hcmurs.R
 //import org.com.hcmurs.Screen
-//import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
 //import org.com.hcmurs.ui.theme.GreenPrimary
 //import org.osmdroid.util.GeoPoint
 //
@@ -63,7 +62,7 @@
 //
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
-//fun StationSelectionScreen(navController: NavController) {
+//fun StaffStationSelectionPreview(navController: NavController) {
 //    // Convert your GeoPoint list to MetroStation objects
 //    val stationList = remember {
 //        listOf(
@@ -90,12 +89,11 @@
 //    }
 //
 //    var selectedStation by remember { mutableStateOf<MetroStation?>(null) }
-//    var selectedAction by remember { mutableStateOf<String>("Entry") } // Default to Entry
 //
 //    Scaffold(
 //        topBar = {
 //            CenterAlignedTopAppBar(
-//                title = { Text("Select Your Station") },
+//                title = { Text("Select Current Station") },
 //                navigationIcon = {
 //                    IconButton(onClick = { navController.popBackStack() }) {
 //                        Icon(
@@ -117,10 +115,9 @@
 //                    onClick = {
 //                        // Navigate to QR scan screen with selected station data
 //                        navController.navigate(
-//                            Screen.ScanQrCode.createRoute(
+//                            Screen.StaffScanQrCode.createRoute(
 //                                selectedStation!!.id,
 //                                selectedStation!!.name,
-//                                selectedAction
 //                            )
 //                        )
 //                    },
@@ -142,11 +139,6 @@
 //                .padding(16.dp),
 //            horizontalAlignment = Alignment.CenterHorizontally
 //        ) {
-//            SwitchEntryExit(
-//                selectedAction = selectedAction,
-//                onActionSelected = { selectedAction = it }
-//            )
-//
 //            LazyVerticalGrid(
 //                columns = GridCells.Fixed(2),
 //                modifier = Modifier
@@ -192,7 +184,7 @@
 //                        )
 //                        Button(
 //                            onClick = {
-//                                navController.navigate("scanQR/${selectedStation!!.id}/${selectedStation!!.name}/${selectedAction}")
+//                                navController.navigate("scanQR/${selectedStation!!.id}/${selectedStation!!.name}")
 //                            },
 //                            modifier = Modifier
 //                                .fillMaxWidth()
@@ -270,7 +262,7 @@
 //
 //@Preview(showBackground = true)
 //@Composable
-//fun StationSelectionScreenPreview() {
+//fun StaffStationSelectionScreenPreview() {
 //    val navController = rememberNavController()
-//    StationSelectionScreen(navController)
+//    StaffStationSelectionPreview(navController)
 //}

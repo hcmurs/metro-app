@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,26 +49,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import org.com.hcmurs.repositories.apis.ticket.ScanQRResponse
 import org.com.hcmurs.ui.components.topbar.ScanQRTopBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-data class ScanQRResponse(
-    val ticketId: Int,
-    val ticketTypeName: String,
-    val name: String,
-    val validFrom: String,
-    val validUntil: String,
-    val ticketCode: String,
-    val actualPrice: Int,
-    val signature: String
-)
+enum class ActionType {
+    ENTRY, EXIT
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +71,8 @@ fun ScanQRScreen(
     navController: NavController,
     stationId: Int = 0,
     stationName: String = "",
-    actionType: String = "Entry"
+    viewModel: ScanQRViewModel = hiltViewModel(),
+    actionType: ActionType
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -89,6 +86,10 @@ fun ScanQRScreen(
     }
     var scannedText by remember { mutableStateOf("") }
     var showInvalidQRDialog by remember { mutableStateOf(false) }
+
+    val scanState by viewModel.scanState.collectAsState()
+    var showResultDialog by remember { mutableStateOf(false) }
+    var scannedResponse by remember { mutableStateOf<ScanQRResponse?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -130,6 +131,58 @@ fun ScanQRScreen(
                 .background(Color.Black.copy(alpha = 0.9f))
         ) {
             if (hasCameraPermission) {
+
+                when (val state = scanState) {
+                    is ScanQRViewModel.ScanState.Success, is ScanQRViewModel.ScanState.Error -> {
+                        if (showResultDialog) {
+                            val isSuccess = state is ScanQRViewModel.ScanState.Success
+                            val message = when (state) {
+                                is ScanQRViewModel.ScanState.Success -> state.message
+                                is ScanQRViewModel.ScanState.Error -> state.message
+                                else -> ""
+                            }
+
+                            AlertDialog(
+                                onDismissRequest = {
+                                    showResultDialog = false
+                                    if (isSuccess) {
+                                        navController.popBackStack()
+                                    }
+                                },
+                                title = { Text(if (isSuccess) "Success" else "Error") },
+                                text = {
+                                    Column {
+                                        Text(message)
+                                        if (isSuccess && scannedResponse != null) {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Text("Ticket: ${scannedResponse?.ticketTypeName}")
+                                            Text("Name: ${scannedResponse?.name}")
+                                            Text("Station: $stationName")
+                                        }
+                                    }
+                                },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        showResultDialog = false
+                                        if (isSuccess) {
+                                            navController.popBackStack()
+                                        }
+                                    }) {
+                                        Text("OK")
+                                    }
+                                }
+                            )
+                        }
+                    }
+
+                    is ScanQRViewModel.ScanState.Loading -> {
+                        // Show loading indicator if needed
+                    }
+
+                    else -> { /* Idle - no dialog */
+                    }
+                }
+
                 CameraPreview(
                     onQRCodeScanned = { qrCode ->
                         scannedText = qrCode
@@ -140,7 +193,16 @@ fun ScanQRScreen(
                             val gson = Gson()
                             gson.fromJson(qrCode, ScanQRResponse::class.java)
                             // Valid format - do something with the ticket
+                            val response = gson.fromJson(qrCode, ScanQRResponse::class.java)
+                            scannedResponse = response
 
+                            // Call the API with scanned data and stationId
+                            if (actionType == ActionType.ENTRY) {
+                                viewModel.scanTicketEntry(response, stationId)
+                            } else {
+                                viewModel.scanTicketExit(response, stationId)
+                            }
+                            showResultDialog = true
                         } catch (e: Exception) {
                             Log.e("QR_SCANNER", "Invalid QR format: ${e.message}")
                             showInvalidQRDialog = true
@@ -186,7 +248,7 @@ fun ScanQRScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "Scanned: $scannedText",
+                                    text = "heheheh: $scannedText",
                                     modifier = Modifier.padding(16.dp),
                                     fontSize = 12.sp,
                                     color = Color.Black
@@ -426,5 +488,5 @@ fun ScanningFrame() {
 @Preview(showBackground = true)
 @Composable
 fun ScanQRScreenPreview() {
-    ScanQRScreen(navController = rememberNavController(), stationId = 1, stationName = "Ben Thanh", actionType = "Entry")
+    ScanQRScreen(navController = rememberNavController(), stationId = 1, stationName = "Ben Thanh", actionType = ActionType.ENTRY)
 }
