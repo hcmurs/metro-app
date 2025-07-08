@@ -305,5 +305,19 @@ class NetworkModule {
     fun providePublicBlogRepository(api: PublicBlogApi): BlogRepository {
         return BlogRepository(api)
     }
+    //request
+    @Provides
+    @Singleton
+    fun provideRequestApi(retrofit: Retrofit): RequestApi {
+        return retrofit.create(RequestApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRequestRepository(api: RequestApi): RequestRepository {
+        return RequestRepository(api)
+    }
+    
+    
 
 }

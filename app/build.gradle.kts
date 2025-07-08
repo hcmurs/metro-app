@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "org.com.hcmurs"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -79,6 +79,10 @@ dependencies {
 
     implementation(libs.composeIcons.fontAwesome)
 
+    implementation(libs.jackson.datatype.jsr310)
+    implementation(libs.jackson.annotations)
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.databind)
 
     implementation(libs.okhttp)
 

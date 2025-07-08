@@ -20,31 +20,27 @@ class AuthRepository @Inject constructor(
 
             val accessToken = apiResponse.data?.accessToken
 
-            // THÊM DÒNG LOG NÀY ĐỂ KIỂM TRA GIÁ TRỊ CỦA accessToken
             Log.d("AuthRepository", "Giá trị accessToken trích xuất được: $accessToken")
 
             if (!accessToken.isNullOrEmpty()) {
                 tokenProvider.saveToken(accessToken)
                 accessToken
             } else {
-                // Sử dụng Log.e (error) và in toàn bộ đối tượng apiResponse để kiểm tra
                 Log.e(
                     "AuthRepository",
                     "Received success response from backend, but access token is missing or empty. Full apiResponse object: $apiResponse"
                 )
-                "" // Trả về chuỗi rỗng để báo hiệu thất bại cho ViewModel
+                ""
             }
         } catch (e: Exception) {
-            // Sử dụng Log.e (error) để báo cáo lỗi
             Log.e("AuthRepository", "Error during loginWithGoogle: ${e.message}", e)
-            "" // Trả về chuỗi rỗng để báo hiệu thất bại cho ViewModel
+            ""
         }
     }
 
     private val _userProfile = MutableStateFlow<UserProfileData?>(null)
     val userProfile: StateFlow<UserProfileData?> = _userProfile
 
-    // THÊM HÀM ĐỂ LẤY THÔNG TIN PROFILE TỪ BACKEND
 
     suspend fun fetchUserProfile(): UserProfileData? {
         if (!isAuthenticated()) {
@@ -53,7 +49,6 @@ class AuthRepository @Inject constructor(
             return null
         }
         return try {
-            // SỬA LẠI: Không cần truyền token thủ công nữa vì đã có Interceptor
             val response = api.getUserProfile()
             if (response.status == 200 && response.data != null) {
                 _userProfile.value = response.data
@@ -79,7 +74,6 @@ class AuthRepository @Inject constructor(
         return !tokenProvider.getToken().isNullOrEmpty()
     }
 
-    // Các hàm khác giữ nguyên...
     fun getToken(): String? {
         return tokenProvider.getToken()
     }

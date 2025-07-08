@@ -46,7 +46,6 @@ data class CreatedOrderData(
     val orderId: Int,
     val ticketId: String,
     val status: String
-    // Bạn có thể thêm các trường khác từ response nếu cần
 )
 
 data class CreateOrderResponse(
@@ -72,10 +71,9 @@ data class OrderWithTicketDetails(
     val userId: Int,
     val status: String,
     val amount: Double,
-    val ticket: TicketDetails? // Đối tượng ticket lồng nhau
+    val ticket: TicketDetails?
 )
 
-// Lớp này đại diện cho toàn bộ response từ API /api/orders/user/details
 data class UserOrdersDetailsResponse(
     val status: Int,
     val message: String,
@@ -97,7 +95,6 @@ data class SingleTicketDetails(
     val updatedAt: String
 )
 
-// Lớp này đại diện cho toàn bộ response từ API
 data class TicketDetailsResponse(
     val status: Int,
     val message: String,

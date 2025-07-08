@@ -33,7 +33,7 @@ interface AuthApi {
 
     suspend fun loginWithGoogle(@Body request: GoogleLoginRequest): FullApiResponse
 
-    @GET("api/v1/auth/profile")
+    @GET("api/auth/profile")
     suspend fun getUserProfile(): UserProfileResponse
 }
 
