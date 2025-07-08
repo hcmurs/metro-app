@@ -56,6 +56,16 @@ class BlogViewModel @Inject constructor(
 
     private val allBlogs = mutableListOf<BlogResponse>()
 
+    // Search functionality
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _filteredBlogs = MutableStateFlow<List<BlogResponse>>(emptyList())
+    val filteredBlogs: StateFlow<List<BlogResponse>> = _filteredBlogs.asStateFlow()
+
+    private val _isSearchActive = MutableStateFlow(false)
+    val isSearchActive: StateFlow<Boolean> = _isSearchActive.asStateFlow()
+
     init {
         loadHomeBlogs()
     }
@@ -187,5 +197,38 @@ class BlogViewModel @Inject constructor(
     fun refresh() {
         loadHomeBlogs()
         loadAllBlogs(refresh = true)
+    }
+
+    // Search function for client-side filtering
+    fun searchBlogs(query: String) {
+        _searchQuery.value = query
+        _isSearchActive.value = query.isNotBlank()
+        
+        if (query.isBlank()) {
+            _filteredBlogs.value = emptyList()
+        } else {
+            val filtered = allBlogs.filter { blog ->
+                blog.title.contains(query, ignoreCase = true) ||
+                blog.content.contains(query, ignoreCase = true) ||
+                (blog.excerpt?.contains(query, ignoreCase = true) == true)
+            }
+            _filteredBlogs.value = filtered
+        }
+    }
+
+    // Clear search
+    fun clearSearch() {
+        _searchQuery.value = ""
+        _isSearchActive.value = false
+        _filteredBlogs.value = emptyList()
+    }
+
+    // Get display blogs (either filtered or all blogs)
+    fun getDisplayBlogs(): List<BlogResponse> {
+        return if (_isSearchActive.value) {
+            _filteredBlogs.value
+        } else {
+            allBlogs.toList()
+        }
     }
 }
