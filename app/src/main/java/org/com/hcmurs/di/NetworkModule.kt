@@ -19,6 +19,8 @@ import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.order.OrderSingleApi
+import org.com.hcmurs.repositories.apis.request.RequestApi
+import org.com.hcmurs.repositories.apis.request.RequestRepository
 import org.com.hcmurs.repositories.apis.station.BusStationApi
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixApi
 import org.com.hcmurs.repositories.apis.station.MetroStationApi
@@ -90,6 +92,9 @@ class NetworkModule {
         cookieManager: CookieManager
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
             .addInterceptor(authInterceptor)
             .addInterceptor(apiKeyInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -242,5 +247,18 @@ class NetworkModule {
         retrofit: Retrofit
     ): OrderSingleApi {
         return retrofit.create(OrderSingleApi::class.java)
+    }
+
+    //request
+    @Provides
+    @Singleton
+    fun provideRequestApi(retrofit: Retrofit): RequestApi {
+        return retrofit.create(RequestApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRequestRepository(api: RequestApi): RequestRepository {
+        return RequestRepository(api)
     }
 }
