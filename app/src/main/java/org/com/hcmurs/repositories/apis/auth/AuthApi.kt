@@ -13,7 +13,7 @@ data class AccessTokenData(
 data class FullApiResponse(
     val status: Int,
     val message: String,
-    val data: AccessTokenData? // Trường 'data' chứa AccessTokenData
+    val data: AccessTokenData?
 )
 data class UserProfileResponse(
     val status: Int,
@@ -29,7 +29,7 @@ data class UserProfileData(
    )
 
 interface AuthApi {
-    @POST("api/v1/auth/oauth2/google")
+    @POST("api/auth/oauth2/google")
 
     suspend fun loginWithGoogle(@Body request: GoogleLoginRequest): FullApiResponse
 

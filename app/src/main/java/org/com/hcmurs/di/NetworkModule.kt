@@ -41,8 +41,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-//    private val BASE_URL = "http://10.0.2.2:4003/"
-    private val BASE_URL = "http://192.168.88.172:4003/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
+ //   private val BASE_URL = "http://192.168.88.172:4003/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
     private val BASE_STATION = "http://192.168.88.172:4004/"
     private val BASE_PHONE = "http://192.168.1.14:4003/"
@@ -140,7 +140,7 @@ class NetworkModule {
                 .header(
                     "x-api-key",
                     "c761c9f0bb379612afbfd6ffeca90261db961bb93bce17728bc2a74430a66c0a"
-                ) // API key của bạn
+                )
                 .build()
             chain.proceed(request)
         }
