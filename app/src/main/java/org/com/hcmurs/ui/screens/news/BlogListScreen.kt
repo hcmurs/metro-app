@@ -56,6 +56,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
+import org.com.hcmurs.ui.components.topbar.BlogListTopBar
 import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 import org.com.hcmurs.utils.formatDate
 
@@ -69,43 +70,43 @@ fun BlogListScreen(
     val blogsState by viewModel.blogsState.collectAsState()
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
     val hasMorePages by viewModel.hasMorePages.collectAsState()
+    val isSearchActive by viewModel.isSearchActive.collectAsState()
+    val filteredBlogs by viewModel.filteredBlogs.collectAsState()
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
         viewModel.loadAllBlogs(refresh = true)
     }
 
-    // Detect when user scrolls near the end
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-            .collect { lastVisibleIndex ->
-                val totalItems = listState.layoutInfo.totalItemsCount
-                if (lastVisibleIndex != null && lastVisibleIndex >= totalItems - 3 && hasMorePages) {
-                    viewModel.loadMoreBlogs()
+    // Detect when user scrolls near the end (only for non-search mode)
+    LaunchedEffect(listState, isSearchActive) {
+        if (!isSearchActive) {
+            snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                .collect { lastVisibleIndex ->
+                    val totalItems = listState.layoutInfo.totalItemsCount
+                    if (lastVisibleIndex != null && lastVisibleIndex >= totalItems - 3 && hasMorePages) {
+                        viewModel.loadMoreBlogs()
+                    }
                 }
-            }
+        }
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.news)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = PrimaryGreen
-                )
+            BlogListTopBar(
+                navController = navController,
+                onSearch = { query ->
+                    viewModel.searchBlogs(query)
+                }
             )
         }
-    ) { paddingValues ->
-        BlogListContent(
+    ) { paddingValues ->        BlogListContent(
             blogsState = blogsState,
             isLoadingMore = isLoadingMore,
             paddingValues = paddingValues,
             listState = listState,
+            isSearchActive = isSearchActive,
+            filteredBlogs = filteredBlogs,
             onRetry = { viewModel.loadAllBlogs(refresh = true) },
             onNavigateToBlog = { blogId ->
                 navController.navigate("blog_detail/$blogId")
@@ -121,11 +122,13 @@ private fun BlogListContent(
     isLoadingMore: Boolean,
     paddingValues: PaddingValues,
     listState: LazyListState,
+    isSearchActive: Boolean,
+    filteredBlogs: List<BlogResponse>,
     onRetry: () -> Unit,
     onNavigateToBlog: (Int) -> Unit
 ) {
-    when (blogsState) {
-        is BlogUiState.Loading -> {
+    when {
+        blogsState is BlogUiState.Loading -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -135,7 +138,7 @@ private fun BlogListContent(
                 CircularProgressIndicator()
             }
         }
-        is BlogUiState.Error -> {
+        blogsState is BlogUiState.Error -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -154,7 +157,48 @@ private fun BlogListContent(
                 }
             }
         }
-        is BlogUiState.Success -> {
+        isSearchActive -> {
+            // Show search results
+            if (filteredBlogs.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Không tìm thấy kết quả",
+                            fontSize = 16.sp,
+                            color = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Thử tìm kiếm với từ khóa khác",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredBlogs) { blog ->
+                        BlogListItem(
+                            blog = blog,
+                            onClick = { blog.id?.let { onNavigateToBlog(it) } }
+                        )
+                    }
+                }
+            }
+        }
+        blogsState is BlogUiState.Success -> {
             LazyColumn(
                 state = listState,
                 modifier = Modifier
