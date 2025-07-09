@@ -22,13 +22,11 @@ import android.util.Base64
 
 
 data class RegisterFormState(
-    // Dữ liệu form
     val content: String = "Yêu cầu xác thực sinh viên",
     val studentCardImageUri: Uri? = null,
     val citizenCardImageUri: Uri? = null,
     val endDate: LocalDate? = null,
 
-    // Trạng thái UI
     val isLoading: Boolean = false,
     val submissionSuccess: Boolean = false,
     val errorMessage: String? = null
@@ -58,11 +56,9 @@ class RegisterFormViewModel @Inject constructor(
         _uiState.update { it.copy(endDate = date) }
     }
 
-    // --- Hàm xử lý chính ---
     fun submitRequest(context: Context) {
         val currentState = _uiState.value
 
-        // Validate dữ liệu
         if (currentState.studentCardImageUri == null || currentState.citizenCardImageUri == null || currentState.endDate == null) {
             _uiState.update { it.copy(errorMessage = "Vui lòng điền đầy đủ thông tin và hình ảnh.") }
             return
@@ -88,7 +84,6 @@ class RegisterFormViewModel @Inject constructor(
                 endDate = formattedEndDate
             )
 
-            // Gọi repository
             val result = requestRepository.createStudentVerificationRequest(request)
             result.onSuccess { response ->
                 if (response.status == 200 || response.status == 0) {
@@ -108,7 +103,7 @@ class RegisterFormViewModel @Inject constructor(
             val outputStream = ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
             val byteArray = outputStream.toByteArray()
-            Base64.encodeToString(byteArray, Base64.DEFAULT)
+            "data:image/jpeg;base64,"+ Base64.encodeToString(byteArray, Base64.DEFAULT)
         } catch (e: Exception) {
             e.printStackTrace()
             null
