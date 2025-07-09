@@ -32,6 +32,7 @@ import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
+import org.com.hcmurs.ui.screens.metro.feedback.CreateFeedbackScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
@@ -101,7 +102,7 @@ sealed class Screen(val route: String) {
     }
 
     object TicketFlow : Screen("ticket_flow")
-
+    object CreateFeedback : Screen("createFeedback")
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
@@ -211,6 +212,9 @@ fun Navigation(
 
         composable(Screen.Feedback.route) {
             FeedbackScreen(navController)
+        }
+        composable(Screen.CreateFeedback.route) {
+            CreateFeedbackScreen(navController)
         }
         // Luồng mua vé đơn
         navigation(

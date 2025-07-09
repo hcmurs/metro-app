@@ -1,5 +1,9 @@
 package org.com.hcmurs.ui.screens.metro.feedback
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +16,8 @@ import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.feedback.FeedbackCreationRequest
 import org.com.hcmurs.repositories.apis.feedback.FeedbackDto
 import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
+import java.io.ByteArrayOutputStream
+import android.util.Base64
 import javax.inject.Inject
 
 
@@ -54,11 +60,19 @@ class FeedbackViewModel @Inject constructor(
         }
     }
 
-    fun createFeedback(category: String, content: String, image: String?) {
+    fun createFeedback(category: String, content: String, imageUri: Uri?, context: Context) {
+        if (category.isBlank() || content.isBlank()) {
+            _uiState.update { it.copy(submissionMessage = "Lỗi: Vui lòng nhập đầy đủ chủ đề và nội dung.") }
+            return
+        }
         viewModelScope.launch {
             _uiState.update { it.copy(isSubmitting = true, submissionMessage = null) }
-            val request = FeedbackCreationRequest(category, content, image)
+
+            val imageBase64 = imageUri?.let { uriToBase64(context, it) }
+
+            val request = FeedbackCreationRequest(category, content, imageBase64)
             val result = feedbackRepository.createFeedback(request)
+
             result.onSuccess { response ->
                 _uiState.update { it.copy(isSubmitting = false, submissionMessage = "Gửi phản ánh thành công!") }
                 fetchMyFeedbacks()
@@ -66,5 +80,21 @@ class FeedbackViewModel @Inject constructor(
                 _uiState.update { it.copy(isSubmitting = false, submissionMessage = "Lỗi: ${throwable.localizedMessage}") }
             }
         }
+    }
+    private fun uriToBase64(context: Context, uri: Uri): String? {
+        return try {
+            val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            val outputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
+            val byteArray = outputStream.toByteArray()
+            "data:image/jpeg;base64,"+  Base64.encodeToString(byteArray, Base64.DEFAULT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun clearSubmissionMessage() {
+        _uiState.update { it.copy(submissionMessage = null) }
     }
 }
