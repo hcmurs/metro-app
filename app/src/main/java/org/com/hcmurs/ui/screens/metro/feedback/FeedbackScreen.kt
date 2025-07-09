@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -21,7 +23,11 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -32,6 +38,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,61 +53,102 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.repositories.apis.feedback.FeedbackDto
 import org.com.hcmurs.utils.navigateToHome
-
+import androidx.compose.foundation.lazy.items
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedbackScreen(navController: NavController) {
-    var selectedTab by remember { mutableStateOf(0) }
+fun FeedbackScreen(
+    navController: NavController,
+    viewModel: FeedbackViewModel = hiltViewModel() // Sử dụng ViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Tải danh sách feedback của người dùng khi vào màn hình
+    LaunchedEffect (key1 = Unit) {
+        viewModel.fetchMyFeedbacks()
+    }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = if (selectedTab == 0) "Phản ánh/góp ý của tôi" else "Các phản ánh/góp ý",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                ),
+                title = { Text("Phản ánh/Góp ý", fontWeight = FontWeight.SemiBold, color = Color.Black) },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navigateToHome(navController)
-                    }) {
+                    IconButton(onClick = { navigateToHome(navController) }) {
                         Icon(Icons.Default.Home, contentDescription = "Home", tint = Color(0xFF2D1E66))
                     }
                 },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
             )
         },
-        bottomBar = {
-            BottomNavBar(
-                selectedIndex = selectedTab,
-                onTabSelected = { selectedTab = it }
-            )
-        },
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /* TODO: Mở màn hình tạo feedback mới */ },
+                containerColor = Color.Green
             ) {
-                if (selectedTab == 0) {
-                    EmptyFeedbackContent("Bạn chưa có phản ánh/góp ý nào")
-                } else {
-                    EmptyFeedbackContent("Không có dữ liệu", showSearch = true)
+                Icon(Icons.Default.Add, contentDescription = "Gửi phản ánh mới", tint = Color.White)
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else if (uiState.errorMessage != null) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Lỗi: ${uiState.errorMessage}", color = Color.Red)
+                }
+            } else if (uiState.myFeedbacks.isEmpty()) {
+                EmptyFeedbackContent("Bạn chưa có phản ánh/góp ý nào")
+            } else {
+                LazyColumn (
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items (uiState.myFeedbacks,
+                        key = { feedback: FeedbackDto -> feedback.feedbackId })
+                    { feedback ->
+                        FeedbackCard(feedback = feedback)
+                    }
                 }
             }
         }
-    )
+    }
 }
-
+@Composable
+fun FeedbackCard(feedback: FeedbackDto) {
+    Card (
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column (Modifier.padding(16.dp)) {
+            Text(feedback.category, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Spacer(Modifier.height(8.dp))
+            Text(feedback.content, color = Color.Gray, fontSize = 14.sp)
+            if (!feedback.reply.isNullOrBlank()) {
+                Divider(Modifier.padding(vertical = 8.dp))
+                Text("Phản hồi từ quản trị viên:", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color(0xFF005BAC))
+                Text(feedback.reply, fontSize = 14.sp)
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Gửi lúc: ${feedback.createdAt}",
+                fontSize = 12.sp,
+                color = Color.LightGray,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
+    }
+}
 @Composable
 fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
     Box(modifier = Modifier

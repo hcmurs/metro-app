@@ -16,7 +16,11 @@ import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.blog.BlogRepository
 import org.com.hcmurs.repositories.apis.blog.PublicBlogApi
+import org.com.hcmurs.repositories.apis.feedback.FeedbackApi
+import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
 import org.com.hcmurs.repositories.apis.order.OrderSingleApi
+import org.com.hcmurs.repositories.apis.request.RequestApi
+import org.com.hcmurs.repositories.apis.request.RequestRepository
 import org.com.hcmurs.repositories.apis.station.BusStationApi
 import org.com.hcmurs.repositories.apis.station.BusStationRepository
 import org.com.hcmurs.repositories.apis.station.MetroStationApi
@@ -318,6 +322,17 @@ class NetworkModule {
         return RequestRepository(api)
     }
     
-    
+//feedback
+@Provides
+@Singleton
+fun provideFeedbackApi(retrofit: Retrofit): FeedbackApi {
+    return retrofit.create(FeedbackApi::class.java)
+}
+
+    @Provides
+    @Singleton
+    fun provideFeedbackRepository(api: FeedbackApi): FeedbackRepository {
+        return FeedbackRepository(api)
+    }
 
 }
