@@ -1,5 +1,8 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +29,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +56,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.PaymentSheetResultCallback
+import com.stripe.android.paymentsheet.rememberPaymentSheet
+import org.com.hcmurs.Screen
 
 data class OrderInfo(
     val ticketType: String,
@@ -72,36 +83,55 @@ fun OrderInfoScreen(
     viewModel: OrderInfoViewModel  = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(null) }
+    var isTicketInfoExpanded by remember { mutableStateOf(true) }
+
+
+    val paymentSheet = rememberPaymentSheet(
+        paymentResultCallback = object : PaymentSheetResultCallback {
+            override fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
+                when (paymentSheetResult) {
+                    is PaymentSheetResult.Completed -> {
+                        viewModel.verifyPaymentSuccess()
+                    }
+                    is PaymentSheetResult.Canceled -> {
+                        Toast.makeText(context, "Thanh toán đã huỷ", Toast.LENGTH_SHORT).show()
+                    }
+                    is PaymentSheetResult.Failed -> {
+                        viewModel.verifyPaymentFailed()
+                    }
+                }
+            }
+        }
+    )
+
+    LaunchedEffect(uiState.clientSecret) {
+        val clientSecret = uiState.clientSecret
+        if (!clientSecret.isNullOrBlank()) {
+            val configuration = PaymentSheet.Configuration(
+                merchantDisplayName = "HCMURS Metro"
+            )
+            paymentSheet.presentWithPaymentIntent(
+                clientSecret,
+                configuration
+            )
+        }
+    }
+
+    LaunchedEffect(uiState.processMessage) {
+        uiState.processMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            viewModel.clearCheckoutStatus()
+        }
+    }
+
 
     // Available payment methods
     val paymentMethods = remember {
         listOf(
-            PaymentMethod(
-                id = "momo",
-                name = "Ví MoMo",
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.CreditCard,
-                        contentDescription = "MoMo",
-                        tint = Color(0xFFE91E63),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            ),
-            PaymentMethod(
-                id = "zalopay",
-                name = "ZaloPay",
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.CreditCard,
-                        contentDescription = "ZaloPay",
-                        tint = Color(0xFF0066CC),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            ),
+
             PaymentMethod(
                 id = "vnpay",
                 name = "VNPay",
@@ -113,6 +143,17 @@ fun OrderInfoScreen(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+            ), PaymentMethod(
+                id = "stripe",
+                name = "Stripe",
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.CreditCard,
+                        contentDescription = "Stripe",
+                        tint = Color(0xFFE91E63),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             )
         )
     }
@@ -121,22 +162,22 @@ fun OrderInfoScreen(
         val ticket = uiState.ticketType
         if (ticket != null) {
             val validityText = when (ticket.validityDuration) {
-                "ONE_DAY" -> "24h kể từ thời điểm kích hoạt"
-                "THREE_DAYS" -> "72h kể từ thời điểm kích hoạt"
-                "ONE_WEEK" -> "7 ngày kể từ thời điểm kích hoạt"
-                "ONE_MONTH" -> "30 ngày kể từ thời điểm kích hoạt"
-                "SINGLE" -> "Sử dụng một lần"
+                "Vé 1 ngày" -> "24h kể từ thời điểm kích hoạt"
+                "Vé 3 ngày" -> "72h kể từ thời điểm kích hoạt"
+                "Vé tuần" -> "7 ngày kể từ thời điểm kích hoạt"
+                "Vé tháng" -> "30 ngày kể từ thời điểm kích hoạt"
+                "Vé đơn" -> "Sử dụng một lần"
                 else -> "Theo quy định"
             }
             val noteText = when (ticket.name) {
-                "One Day", "Three Days", "One Week", "One Month" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé"
-                "Student Monthly" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua vé. Chỉ dành cho học sinh, sinh viên có thẻ hợp lệ"
-                else -> "Vui lòng xem chi tiết tại quầy vé"
+                "Vé 1 ngày", "Vé 3 ngày", "Vé tuần", "Vé tháng" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua."
+                "Vé sinh viên" -> "Tự động kích hoạt sau 30 ngày. Chỉ dành cho HSSV có thẻ hợp lệ."
+                else -> "Vui lòng xem chi tiết tại quầy vé."
             }
             OrderInfo(
                 ticketType = ticket.description,
                 unitPrice = "${ticket.price}đ",
-                quantity = 1, // Assuming quantity is always 1 for now
+                quantity = 1,
                 totalPrice = "${ticket.price}đ",
                 validity = validityText,
                 note = noteText
@@ -154,7 +195,6 @@ fun OrderInfoScreen(
         }
     }
 
-    var isTicketInfoExpanded by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
@@ -210,33 +250,36 @@ fun OrderInfoScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Payment Button
+            val currentSelectedMethod = selectedPaymentMethod
             Button(
                 onClick = {
-                    // Handle payment action
-                    if (selectedPaymentMethod != null) {
-                        // Proceed with payment
-                    } else {
-                        // Show message to select payment method
-                    }
+                    val paymentMethodId = 2
+                    viewModel.startCheckoutFlow(paymentMethodId)
                 },
-                enabled = selectedPaymentMethod != null,
+                enabled = !uiState.isProcessing,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedPaymentMethod != null)
-                        Color(0xFF4CAF50) else Color(0xFF999999),
-                    disabledContainerColor = Color(0xFF999999)
+                    containerColor = Color(0xFF4CAF50),
+                    disabledContainerColor = Color(0xFF9E9E9E)
                 )
             ) {
-                Text(
-                    text = "Thanh toán: ${orderInfo.totalPrice}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
+                if (uiState.isProcessing) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                            Spacer(Modifier.width(8.dp))
+                            // Hiển thị thông báo trạng thái
+                            Text(uiState.processMessage ?: "Đang xử lý...", color = Color.White)
+                } else {
+                    Text(
+                        text = "Thanh toán: ${orderInfo.totalPrice}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))

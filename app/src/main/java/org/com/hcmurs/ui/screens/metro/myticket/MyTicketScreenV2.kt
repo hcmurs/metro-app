@@ -162,7 +162,7 @@ fun TicketCard(order: OrderWithTicketDetails,
                 Spacer(Modifier.width(12.dp))
                 // Tên vé
                 Text(
-                    text = "Vé lượt",
+                    text = order.ticket.name,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimaryColor,

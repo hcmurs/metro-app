@@ -108,6 +108,7 @@ dependencies {
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
+    implementation("com.stripe:stripe-android:20.42.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
