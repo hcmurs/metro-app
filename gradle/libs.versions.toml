@@ -35,6 +35,7 @@ navigationCompose = "2.7.3"
 materialIconsExtended = "1.6.1"
 composeIcons = "1.1.1"
 jackson = "2.15.3"
+stripeAndroid = "20.42.0"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -89,6 +90,7 @@ jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", ver
 
 
 composeIcons-fontAwesome = { module = "br.com.devsrsouza.compose.icons:font-awesome", version.ref = "composeIcons" }
+stripe-android = { module = "com.stripe:stripe-android", version.ref = "stripeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.order.ObjTicketId
 import org.com.hcmurs.repositories.apis.order.OrderDaysRepository
 import org.com.hcmurs.repositories.apis.order.OrderTicketDaysRequest
+import org.com.hcmurs.repositories.apis.payment.PaymentRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import javax.inject.Inject
@@ -22,7 +23,11 @@ data class OrderInfoUiState(
     val errorMessage: String? = null,
     val isCreatingOrder: Boolean = false,
     val orderCreationSuccess: Boolean = false,
-    val orderCreationMessage: String? = null
+    val orderCreationMessage: String? = null,
+    val isProcessing: Boolean = false,
+    val clientSecret: String? = null,
+    val processMessage: String? = null,
+    val paymentIntentId: String? = null,
 )
 
 
@@ -30,6 +35,7 @@ data class OrderInfoUiState(
 class OrderInfoViewModel @Inject constructor(
     private val ticketRepository: TicketRepository,
     private val orderDaysRepository: OrderDaysRepository,
+    private val paymentRepository: PaymentRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -90,7 +96,85 @@ class OrderInfoViewModel @Inject constructor(
             }
         }
     }
-    fun clearOrderCreationStatus() {
-        _uiState.update { it.copy(orderCreationSuccess = false, orderCreationMessage = null) }
+    fun startCheckoutFlow(paymentMethodId: Int) {
+        val currentTicketType = uiState.value.ticketType
+        if (currentTicketType == null) {
+            _uiState.update { it.copy(processMessage = "Lỗi: Không có thông tin loại vé.") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isProcessing = true, processMessage = "Đang tạo đơn hàng...") }
+
+            val orderRequest = OrderTicketDaysRequest(
+                ticketId = ObjTicketId(id = currentTicketType.id),
+                paymentMethodId = paymentMethodId
+            )
+            val orderResult = orderDaysRepository.createOrderForTicketDays(orderRequest)
+
+            orderResult.onSuccess { orderResponse ->
+                val orderData = orderResponse.data
+                if ((orderResponse.status == 200 || orderResponse.status == 0) && orderData != null) {
+                    _uiState.update { it.copy(processMessage = "Đang tạo PaymentIntent...") }
+
+                    val checkoutResult = paymentRepository.createStripeCheckoutSession(orderData.orderId)
+
+                    checkoutResult.onSuccess { checkoutResponse ->
+                        if (checkoutResponse.status == 200) {
+                            val clientSecret = checkoutResponse.data?.clientSecret
+                            val paymentIntentId = checkoutResponse.data?.sessionId
+                            if (!clientSecret.isNullOrBlank() && !paymentIntentId.isNullOrBlank()) {
+                                _uiState.update {
+                                    it.copy(
+                                        isProcessing = false,
+                                        processMessage = "Đã sẵn sàng thanh toán",
+                                        clientSecret = clientSecret,
+                                        paymentIntentId = paymentIntentId
+                                    )
+                                }
+                            } else {
+                                _uiState.update { it.copy(isProcessing = false, processMessage = "Dữ liệu phiên không hợp lệ.") }
+                            }
+                        } else {
+                            _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi tạo phiên thanh toán: ${checkoutResponse.message}") }
+                        }
+                    }.onFailure {
+                        _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi kết nối khi tạo phiên thanh toán.") }
+                    }
+                } else {
+                    _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi tạo đơn hàng: ${orderResponse.message}") }
+                }
+            }.onFailure {
+                _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi kết nối khi tạo đơn hàng.") }
+            }
+        }
+    }
+
+    fun verifyPaymentSuccess() {
+        val intentId = uiState.value.paymentIntentId ?: return
+        viewModelScope.launch {
+            val result = paymentRepository.verifyStripeSuccess(intentId)
+            result.onSuccess {
+                _uiState.update { it.copy(processMessage = "✅ Thanh toán thành công") }
+            }.onFailure {
+                _uiState.update { it.copy(processMessage = "❌ Lỗi xác nhận thanh toán thành công") }
+            }
+        }
+    }
+
+    fun verifyPaymentFailed() {
+        val intentId = uiState.value.paymentIntentId ?: return
+        viewModelScope.launch {
+            val result = paymentRepository.verifyStripeFailed(intentId)
+            result.onSuccess {
+                _uiState.update { it.copy(processMessage = "❌ Thanh toán thất bại") }
+            }.onFailure {
+                _uiState.update { it.copy(processMessage = "❌ Lỗi xác nhận thất bại") }
+            }
+        }
+    }
+
+    fun clearCheckoutStatus() {
+        _uiState.update { it.copy(clientSecret = null, processMessage = null) }
     }
 }

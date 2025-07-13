@@ -21,6 +21,8 @@ import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
 import org.com.hcmurs.repositories.apis.order.OrderDaysApi
 import org.com.hcmurs.repositories.apis.order.OrderDaysRepository
 import org.com.hcmurs.repositories.apis.order.OrderSingleApi
+import org.com.hcmurs.repositories.apis.payment.PaymentApi
+import org.com.hcmurs.repositories.apis.payment.PaymentRepository
 import org.com.hcmurs.repositories.apis.request.RequestApi
 import org.com.hcmurs.repositories.apis.request.RequestRepository
 import org.com.hcmurs.repositories.apis.station.BusStationApi
@@ -345,6 +347,18 @@ fun provideFeedbackApi(retrofit: Retrofit): FeedbackApi {
     @Singleton
     fun provideFeedbackRepository(api: FeedbackApi): FeedbackRepository {
         return FeedbackRepository(api)
+    }
+// payment
+@Provides
+@Singleton
+    fun providePaymentApi(retrofit: Retrofit): PaymentApi {
+    return retrofit.create(PaymentApi::class.java)
+}
+
+    @Provides
+    @Singleton
+    fun providePaymentRepository(api: PaymentApi): PaymentRepository {
+        return PaymentRepository(api)
     }
 
 }

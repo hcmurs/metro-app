@@ -1,5 +1,7 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,6 +56,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.PaymentSheetResultCallback
+import com.stripe.android.paymentsheet.rememberPaymentSheet
 import org.com.hcmurs.Screen
 
 data class OrderInfo(
@@ -82,17 +88,45 @@ fun OrderInfoScreen(
     var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(null) }
     var isTicketInfoExpanded by remember { mutableStateOf(true) }
 
-    LaunchedEffect(key1 = uiState.orderCreationMessage) {
-        uiState.orderCreationMessage?.let { message ->
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-            if (uiState.orderCreationSuccess) {
-                navController.navigate(Screen.MyTicket.route) {
-                    popUpTo(Screen.Home.route)
+
+    val paymentSheet = rememberPaymentSheet(
+        paymentResultCallback = object : PaymentSheetResultCallback {
+            override fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
+                when (paymentSheetResult) {
+                    is PaymentSheetResult.Completed -> {
+                        viewModel.verifyPaymentSuccess()
+                    }
+                    is PaymentSheetResult.Canceled -> {
+                        Toast.makeText(context, "Thanh toán đã huỷ", Toast.LENGTH_SHORT).show()
+                    }
+                    is PaymentSheetResult.Failed -> {
+                        viewModel.verifyPaymentFailed()
+                    }
                 }
             }
-            viewModel.clearOrderCreationStatus()
+        }
+    )
+
+    LaunchedEffect(uiState.clientSecret) {
+        val clientSecret = uiState.clientSecret
+        if (!clientSecret.isNullOrBlank()) {
+            val configuration = PaymentSheet.Configuration(
+                merchantDisplayName = "HCMURS Metro"
+            )
+            paymentSheet.presentWithPaymentIntent(
+                clientSecret,
+                configuration
+            )
         }
     }
+
+    LaunchedEffect(uiState.processMessage) {
+        uiState.processMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            viewModel.clearCheckoutStatus()
+        }
+    }
+
 
     // Available payment methods
     val paymentMethods = remember {
@@ -219,12 +253,10 @@ fun OrderInfoScreen(
             val currentSelectedMethod = selectedPaymentMethod
             Button(
                 onClick = {
-                    if (currentSelectedMethod != null && uiState.ticketType != null) {
-                        val paymentId = if(currentSelectedMethod.id == "vnpay") 1 else 2
-                        viewModel.createOrderForDaysTicket(paymentId)
-                    }
+                    val paymentMethodId = 2
+                    viewModel.startCheckoutFlow(paymentMethodId)
                 },
-                enabled = selectedPaymentMethod != null && !uiState.isCreatingOrder,
+                enabled = !uiState.isProcessing,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -235,8 +267,11 @@ fun OrderInfoScreen(
                     disabledContainerColor = Color(0xFF9E9E9E)
                 )
             ) {
-                if (uiState.isCreatingOrder) {
+                if (uiState.isProcessing) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                            Spacer(Modifier.width(8.dp))
+                            // Hiển thị thông báo trạng thái
+                            Text(uiState.processMessage ?: "Đang xử lý...", color = Color.White)
                 } else {
                     Text(
                         text = "Thanh toán: ${orderInfo.totalPrice}",
