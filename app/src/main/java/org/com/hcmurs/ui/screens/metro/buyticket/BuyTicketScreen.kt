@@ -178,7 +178,7 @@ fun TicketCard(
             .fillMaxWidth()
             .clickable {
                 // LOGIC GỐC: Được giữ nguyên
-                if (ticket.name == "Single") {
+                if (ticket.name == "Vé đơn") {
                     navController.navigate(Screen.StationSelection.route)
                 } else {
                     navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))

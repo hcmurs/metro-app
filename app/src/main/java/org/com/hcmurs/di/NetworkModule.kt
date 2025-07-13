@@ -18,6 +18,8 @@ import org.com.hcmurs.repositories.apis.blog.BlogRepository
 import org.com.hcmurs.repositories.apis.blog.PublicBlogApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
+import org.com.hcmurs.repositories.apis.order.OrderDaysApi
+import org.com.hcmurs.repositories.apis.order.OrderDaysRepository
 import org.com.hcmurs.repositories.apis.order.OrderSingleApi
 import org.com.hcmurs.repositories.apis.request.RequestApi
 import org.com.hcmurs.repositories.apis.request.RequestRepository
@@ -255,7 +257,17 @@ class NetworkModule {
     ): OrderSingleApi {
         return retrofit.create(OrderSingleApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideOrdersApi(retrofit: Retrofit): OrderDaysApi {
+        return retrofit.create(OrderDaysApi::class.java)
+    }
 
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(api: OrderDaysApi): OrderDaysRepository {
+        return OrderDaysRepository(api)
+    }
     // weather
     @Provides
     @Singleton
