@@ -95,9 +95,12 @@ fun OrderInfoScreen(
                 when (paymentSheetResult) {
                     is PaymentSheetResult.Completed -> {
                         viewModel.verifyPaymentSuccess()
+                        navController.navigate(Screen.MyTicket.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
                     }
                     is PaymentSheetResult.Canceled -> {
-                        Toast.makeText(context, "Thanh toán đã huỷ", Toast.LENGTH_SHORT).show()
+                        viewModel.verifyPaymentFailed()
                     }
                     is PaymentSheetResult.Failed -> {
                         viewModel.verifyPaymentFailed()
@@ -270,7 +273,6 @@ fun OrderInfoScreen(
                 if (uiState.isProcessing) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                             Spacer(Modifier.width(8.dp))
-                            // Hiển thị thông báo trạng thái
                             Text(uiState.processMessage ?: "Đang xử lý...", color = Color.White)
                 } else {
                     Text(

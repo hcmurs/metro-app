@@ -70,19 +70,20 @@ fun MyTicketScreen(
     viewModel: MyTicketViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val selectedTab = remember { mutableStateOf("PENDING") } // PENDING, COMPLETED, EXPIRED
+    val selectedTab = remember { mutableStateOf("NOT_USED") }    // PENDING, FAILED, SUCCESSFUL
 
-    // Lọc danh sách vé dựa trên tab đã chọn
+
     val filteredOrders = remember(uiState.orders, selectedTab.value) {
         uiState.orders.filter { order ->
             when (selectedTab.value) {
-                "PENDING" -> order.status.equals("PENDING", ignoreCase = true) || order.status.equals("ACTIVE", ignoreCase = true)
-                "COMPLETED" -> order.status.equals("COMPLETED", ignoreCase = true)
-                "EXPIRED" -> order.status.equals("EXPIRED", ignoreCase = true)
+                "NOT_USED" -> order.ticket?.status.equals("NOT_USED", ignoreCase = true)
+                "USED" -> order.ticket?.status.equals("USED", ignoreCase = true)
+                "EXPIRED" -> order.ticket?.status.equals("EXPIRED", ignoreCase = true)
                 else -> false
             }
         }
     }
+
 
     Scaffold (
         topBar = { MyTicketTopBar(navController) },
@@ -95,18 +96,31 @@ fun MyTicketScreen(
                 .background(LightGreenBackground)
         ) {
             // Tabs
-            TabRow (
+            TabRow(
                 selectedTabIndex = when (selectedTab.value) {
-                    "PENDING" -> 0
-                    "COMPLETED" -> 1
-                    else -> 2
+                    "NOT_USED" -> 0
+                    "USED" -> 1
+                    "EXPIRED" -> 2
+                    else -> 0
                 },
                 containerColor = Color.White,
                 contentColor = DarkGreen
             ) {
-                Tab (selected = selectedTab.value == "PENDING", onClick = { selectedTab.value = "PENDING" }, text = { Text("Đang hoạt động") })
-                Tab(selected = selectedTab.value == "COMPLETED", onClick = { selectedTab.value = "COMPLETED" }, text = { Text("Đã sử dụng") })
-                Tab(selected = selectedTab.value == "EXPIRED", onClick = { selectedTab.value = "EXPIRED" }, text = { Text("Hết hạn") })
+                Tab(
+                    selected = selectedTab.value == "NOT_USED",
+                    onClick = { selectedTab.value = "NOT_USED" },
+                    text = { Text("Chưa dùng") }
+                )
+                Tab(
+                    selected = selectedTab.value == "USED",
+                    onClick = { selectedTab.value = "USED" },
+                    text = { Text("Đã dùng") }
+                )
+                Tab(
+                    selected = selectedTab.value == "EXPIRED",
+                    onClick = { selectedTab.value = "EXPIRED" },
+                    text = { Text("Hết hạn") }
+                )
             }
 
             // Nội dung
@@ -182,15 +196,15 @@ fun TicketCard(order: OrderWithTicketDetails,
                     value = "#${order.orderId}")
 
             Spacer(Modifier.height(4.dp))
+//
+//            InfoRow(label = "Tuyến:", value = order.ticket.ticketCode)
+//            Spacer(Modifier.height(4.dp))
 
-            InfoRow(label = "Tuyến:", value = order.ticket.ticketCode)
-            Spacer(Modifier.height(4.dp))
 
 
-
-            InfoRow(label = "Trạng thái:",
-                    value = order.status.replaceFirstChar { it.uppercase() },
-                    valueColor = getStatusColor(order.status))
+//            InfoRow(label = "Trạng thái:",
+//                    value = order.status.replaceFirstChar { it.uppercase() },
+//                    valueColor = getStatusColor(order.status))
 
             Spacer(Modifier.height(4.dp))
 
