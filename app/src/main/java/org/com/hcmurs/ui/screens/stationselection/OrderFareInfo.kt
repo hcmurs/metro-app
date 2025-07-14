@@ -61,6 +61,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.PaymentSheetResultCallback
+import com.stripe.android.paymentsheet.rememberPaymentSheet
 import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
@@ -90,10 +94,10 @@ fun OrderFareInfoScreen(
     fareMatrixViewModel: FareMatrixViewModel,
     stationViewModel: StationSelectionViewModel
 ) {
-    val fareMatrixUiState by fareMatrixViewModel.uiState.collectAsState()
+    val uiState by fareMatrixViewModel.uiState.collectAsState()
     val stationUiState by stationViewModel.uiState.collectAsState()
 
-    val fareInfo = fareMatrixUiState.calculatedFare?.data
+    val fareInfo = uiState.calculatedFare?.data
     val entryStation = stationUiState.stations.find { it.stationId == entryStationId }
     val exitStation = stationUiState.stations.find { it.stationId == exitStationId }
 
@@ -103,33 +107,53 @@ fun OrderFareInfoScreen(
 
     val paymentMethods = listOf(
         LocalPaymentMethod(1,"VNPAY", R.drawable.ic_vnpay),
-        LocalPaymentMethod(2,"MoMo",   R.drawable.ic_momo)
+        LocalPaymentMethod(2,"Stripe",   R.drawable.ic_momo)
     )
     var selectedPaymentMethod by remember { mutableStateOf(paymentMethods.first()) }
     val context = LocalContext.current
 
-    LaunchedEffect (key1 = fareMatrixUiState.createOrderResponse, key2 = fareMatrixUiState.createOrderError) {
-        val response = fareMatrixUiState.createOrderResponse
-        if (response != null) {
-            if (response.status == 200 && response.data != null) {
-                Toast.makeText(context, "Tạo đơn hàng thành công!", Toast.LENGTH_SHORT).show()
-
-                navController.navigate(Screen.MyTicket.route)
-            } else {
-                Toast.makeText(context, response.message, Toast.LENGTH_LONG).show()
+    val paymentSheet = rememberPaymentSheet(
+        paymentResultCallback = object : PaymentSheetResultCallback {
+            override fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
+                when (paymentSheetResult) {
+                    is PaymentSheetResult.Completed -> {
+                        fareMatrixViewModel.verifyPaymentSuccess()
+                        navController.navigate(Screen.MyTicket.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
+                    }
+                    is PaymentSheetResult.Canceled -> {
+                        fareMatrixViewModel.verifyPaymentFailed()
+                    }
+                    is PaymentSheetResult.Failed -> {
+                        fareMatrixViewModel.verifyPaymentFailed()
+                    }
+                }
             }
-            fareMatrixViewModel.clearCreateOrderStatus()
-        }
+        })
 
-        val error = fareMatrixUiState.createOrderError
-        if (error != null) {
-            // Lỗi mạng hoặc lỗi hệ thống
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+
+    LaunchedEffect(uiState.clientSecret) {
+        val clientSecret = uiState.clientSecret
+        if (!clientSecret.isNullOrBlank()) {
+            val configuration = PaymentSheet.Configuration(
+                merchantDisplayName = "HCMURS Metro"
+            )
+            paymentSheet.presentWithPaymentIntent(
+                clientSecret,
+                configuration
+            )
+        }
+    }
+    LaunchedEffect(uiState.processMessage) {
+        uiState.processMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             fareMatrixViewModel.clearCreateOrderStatus()
         }
     }
 
-    if (showPaymentSheet) {
+
+        if (showPaymentSheet) {
         PaymentMethodBottomSheet(
             paymentMethods = paymentMethods,
             selectedMethod = selectedPaymentMethod,
@@ -161,13 +185,14 @@ fun OrderFareInfoScreen(
             if (fareInfo != null) {
                 PaymentBottomBar(
                     price = fareInfo.price,
-                    isLoading = fareMatrixUiState.isCreatingOrder,
+                    isLoading = uiState.isCreatingOrder,
+                    processMessage = uiState.processMessage,
                     onPayClick = {
                         // Gọi ViewModel để tạo đơn hàng
-                        fareMatrixViewModel.createSingleOrder(
-                            fareMatrixId = fareInfo.fareMatrixId,
-                            paymentMethodId = selectedPaymentMethod.id
-                        )
+                        if (!uiState.isProcessing) {
+                            fareMatrixViewModel.startSingleTicketCheckoutFlow(selectedPaymentMethod.id)
+                        }
+
                     },
                     onTermsClick = { showTermsDialog = true }
                 )
@@ -308,14 +333,14 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
         }
     )
 }
-
 @Composable
 private fun PaymentBottomBar(
     price: Int,
     onTermsClick: () -> Unit,
-    onPayClick : () -> Unit,
-    isLoading: Boolean = false
-){
+    onPayClick: () -> Unit,
+    isLoading: Boolean = false,
+    processMessage: String? = null
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -357,18 +382,41 @@ private fun PaymentBottomBar(
             )
 
             Spacer(Modifier.height(8.dp))
+
             Button(
                 onClick = onPayClick,
                 enabled = !isLoading,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryGreen,
+                    disabledContainerColor = Color(0xFF9E9E9E)
+                )
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = processMessage ?: "Đang xử lý...",
+                            color = Color.White
+                        )
+                    }
                 } else {
-                    Text("Thanh toán: ${price}đ", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                }            }
+                    Text(
+                        text = "Thanh toán: ${price}đ",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }
