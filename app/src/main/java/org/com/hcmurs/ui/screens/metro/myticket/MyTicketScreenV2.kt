@@ -216,7 +216,7 @@ fun TicketCard(order: OrderWithTicketDetails,
             InfoRow(label = "Hiệu lực:",
                     value = "${formatDate(ticket.validFrom)} - ${formatDate(ticket.validUntil)}")
 
-            if (order.status.equals("PENDING", ignoreCase = true) || order.status.equals("ACTIVE", ignoreCase = true)) {
+
                 Spacer(Modifier.height(16.dp))
                 Button (
                     onClick = {
@@ -227,7 +227,7 @@ fun TicketCard(order: OrderWithTicketDetails,
                 ) {
                     Text("SỬ DỤNG VÉ", color = Color.White, fontWeight = FontWeight.Bold)
                 }
-            }
+
         }
     }
 }

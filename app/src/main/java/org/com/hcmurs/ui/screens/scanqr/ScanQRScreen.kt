@@ -3,9 +3,11 @@ package org.com.hcmurs.ui.screens.scanqr
 import android.Manifest
 import android.content.pm.PackageManager
 import android.util.Log
+import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -54,7 +56,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import org.com.hcmurs.repositories.apis.ticket.ScanQRResponse
 import org.com.hcmurs.ui.components.topbar.ScanQRTopBar
@@ -86,6 +90,7 @@ fun ScanQRScreen(
     }
     var scannedText by remember { mutableStateOf("") }
     var showInvalidQRDialog by remember { mutableStateOf(false) }
+    var isProcessing by remember { mutableStateOf(false) }
 
     val scanState by viewModel.scanState.collectAsState()
     var showResultDialog by remember { mutableStateOf(false) }
@@ -145,6 +150,7 @@ fun ScanQRScreen(
                             AlertDialog(
                                 onDismissRequest = {
                                     showResultDialog = false
+                                    isProcessing = false
                                     if (isSuccess) {
                                         navController.popBackStack()
                                     }
@@ -164,6 +170,7 @@ fun ScanQRScreen(
                                 confirmButton = {
                                     TextButton(onClick = {
                                         showResultDialog = false
+                                        isProcessing = false
                                         if (isSuccess) {
                                             navController.popBackStack()
                                         }
@@ -185,27 +192,33 @@ fun ScanQRScreen(
 
                 CameraPreview(
                     onQRCodeScanned = { qrCode ->
-                        scannedText = qrCode
-                        Log.d("QR_SCANNER", "QR Code Scanned: $qrCode")
+                        if (!isProcessing) {
+                            isProcessing = true
+                            scannedText = qrCode
+                            Log.d("QR_SCANNER", "QR Code Scanned: $qrCode")
 
-                        // Validate QR code format
-                        try {
-                            val gson = Gson()
-                            gson.fromJson(qrCode, ScanQRResponse::class.java)
-                            // Valid format - do something with the ticket
-                            val response = gson.fromJson(qrCode, ScanQRResponse::class.java)
-                            scannedResponse = response
+                            // Validate QR code format
+                            try {
+                                val gson = Gson()
+                                val response = gson.fromJson(qrCode, ScanQRResponse::class.java)
+                                if (response != null) {
+                                    scannedResponse = response
 
-                            // Call the API with scanned data and stationId
-                            if (actionType == ActionType.ENTRY) {
-                                viewModel.scanTicketEntry(response, stationId)
-                            } else {
-                                viewModel.scanTicketExit(response, stationId)
+                                    // Call the API with scanned data and stationId
+                                    if (actionType == ActionType.ENTRY) {
+                                        viewModel.scanTicketEntry(response, stationId)
+                                    } else {
+                                        viewModel.scanTicketExit(response, stationId)
+                                    }
+                                    showResultDialog = true
+                                } else {
+                                    throw Exception("Invalid QR format")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("QR_SCANNER", "Invalid QR format: ${e.message}")
+                                showInvalidQRDialog = true
+                                isProcessing = false
                             }
-                            showResultDialog = true
-                        } catch (e: Exception) {
-                            Log.e("QR_SCANNER", "Invalid QR format: ${e.message}")
-                            showInvalidQRDialog = true
                         }
                     },
                     lifecycleOwner = lifecycleOwner
@@ -248,7 +261,7 @@ fun ScanQRScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "heheheh: $scannedText",
+                                    text = "Scanned: $scannedText",
                                     modifier = Modifier.padding(16.dp),
                                     fontSize = 12.sp,
                                     color = Color.Black
@@ -290,6 +303,7 @@ fun ScanQRScreen(
     }
 }
 
+@androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraPreview(
     onQRCodeScanned: (String) -> Unit,
@@ -314,6 +328,8 @@ fun CameraPreview(
 
                 val imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .setTargetResolution(Size(1280, 720))
+                    .setTargetRotation(previewView.display.rotation)
                     .build()
                     .also {
                         it.setAnalyzer(cameraExecutor, QRCodeAnalyzer(onQRCodeScanned))
@@ -346,15 +362,23 @@ fun CameraPreview(
     }
 }
 
+@androidx.camera.core.ExperimentalGetImage
 class QRCodeAnalyzer(
     private val onQRCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
 
-    private val scanner = BarcodeScanning.getClient()
-    private var lastScannedTime = 0L
-    private val scanCooldown = 2000L // 2 seconds cooldown
+    private val options = BarcodeScannerOptions.Builder()
+        .setBarcodeFormats(
+            Barcode.FORMAT_QR_CODE,
+            Barcode.FORMAT_AZTEC,
+            Barcode.FORMAT_DATA_MATRIX
+        )
+        .build()
 
-    @androidx.camera.core.ExperimentalGetImage
+    private val scanner = BarcodeScanning.getClient(options)
+    private var lastScannedTime = 0L
+    private val scanCooldown = 1000L // Reduced to 1 second
+
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
         if (mediaImage != null) {
@@ -362,13 +386,14 @@ class QRCodeAnalyzer(
 
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
-                    for (barcode in barcodes) {
+                    if (barcodes.isNotEmpty()) {
                         val currentTime = System.currentTimeMillis()
                         if (currentTime - lastScannedTime > scanCooldown) {
-                            barcode.rawValue?.let { value ->
+                            barcodes.firstOrNull()?.rawValue?.let { value ->
                                 Log.d("QR_SCANNER", "QR Code detected: $value")
-                                Log.d("QR_SCANNER", "QR Code format: ${barcode.format}")
-                                Log.d("QR_SCANNER", "QR Code value type: ${barcode.valueType}")
+                                Log.d("QR_SCANNER", "QR Code format: ${barcodes.first().format}")
+                                Log.d("QR_SCANNER", "QR Code value type: ${barcodes.first().valueType}")
+                                Log.d("QR_SCANNER", "Image rotation: ${imageProxy.imageInfo.rotationDegrees}")
 
                                 onQRCodeScanned(value)
                                 lastScannedTime = currentTime
@@ -383,6 +408,7 @@ class QRCodeAnalyzer(
                     imageProxy.close()
                 }
         } else {
+            Log.w("QR_SCANNER", "MediaImage is null")
             imageProxy.close()
         }
     }
@@ -399,9 +425,6 @@ fun ScanningFrame() {
             modifier = Modifier
                 .size(30.dp)
                 .align(Alignment.TopStart)
-                .background(
-                    Color.Transparent
-                )
         ) {
             Box(
                 modifier = Modifier

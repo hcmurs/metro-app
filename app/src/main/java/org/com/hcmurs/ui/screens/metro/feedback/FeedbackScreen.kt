@@ -1,6 +1,8 @@
 package org.com.hcmurs.ui.screens.metro.feedback
 
 import android.R
+import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -70,14 +72,32 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.foundation.border
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
+import android.net.Uri
 
-// Màu sắc theme
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.graphics.asImageBitmap
+
+import android.util.Base64
+import androidx.compose.foundation.Image
+
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val SecondaryGreen = Color(0xFF66BB6A)
 private val LightGreen = Color(0xFFE8F5E8)
 private val DarkGreen = Color(0xFF2E7D32)
-private val BackgroundGray = Color(0xFFF8F9FA)
-private val BorderColor = Color(0xFFE0E0E0)
+private val AccentGreen = Color(0xFF81C784)
+private val BackgroundGray = Color(0xFFF5F7FA)
+private val CardBackground = Color(0xFFFFFFFF)
+private val BorderColor = Color(0xFFE1E5E9)
+private val TextSecondary = Color(0xFF6B7280)
+private val TextPrimary = Color(0xFF1F2937)
+private val SuccessGreen = Color(0xFF10B981)
+private val WarningOrange = Color(0xFFF59E0B)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,12 +127,15 @@ fun FeedbackScreen(
                         Icon(
                             Icons.Default.Home,
                             contentDescription = "Home",
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = PrimaryGreen
+                    containerColor = Brush.horizontalGradient(
+                        colors = listOf(PrimaryGreen, SecondaryGreen)
+                    ).let { PrimaryGreen } // Fallback cho gradient
                 )
             )
         },
@@ -123,12 +146,14 @@ fun FeedbackScreen(
                 },
                 containerColor = PrimaryGreen,
                 contentColor = Color.White,
-                modifier = Modifier.shadow(12.dp, RoundedCornerShape(16.dp))
+                modifier = Modifier
+                    .shadow(16.dp, RoundedCornerShape(20.dp))
+                    .size(64.dp)
             ) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = "Gửi phản ánh mới",
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
         },
@@ -144,21 +169,33 @@ fun FeedbackScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = CardBackground
+                        ),
+                        modifier = Modifier
+                            .padding(32.dp)
+                            .shadow(8.dp, RoundedCornerShape(20.dp)),
+                        shape = RoundedCornerShape(20.dp)
                     ) {
-                        CircularProgressIndicator(
-                            color = PrimaryGreen,
-                            strokeWidth = 4.dp,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            "Đang tải dữ liệu...",
-                            color = DarkGreen,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(40.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                color = PrimaryGreen,
+                                strokeWidth = 4.dp,
+                                modifier = Modifier.size(56.dp)
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                "Đang tải dữ liệu...",
+                                color = TextPrimary,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp
+                            )
+                        }
                     }
                 }
             } else if (uiState.errorMessage != null) {
@@ -168,26 +205,39 @@ fun FeedbackScreen(
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFFEBEE)
+                            containerColor = Color(0xFFFEF2F2)
                         ),
                         modifier = Modifier
-                            .padding(16.dp)
-                            .shadow(4.dp, RoundedCornerShape(12.dp))
+                            .padding(24.dp)
+                            .shadow(8.dp, RoundedCornerShape(16.dp))
+                            .border(
+                                1.dp,
+                                Color(0xFFFECACA),
+                                RoundedCornerShape(16.dp)
+                            ),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Column(
-                            modifier = Modifier.padding(24.dp),
+                            modifier = Modifier.padding(32.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Icon(
+                                Icons.Default.Feedback,
+                                contentDescription = null,
+                                tint = Color(0xFFEF4444),
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 "Đã xảy ra lỗi",
-                                color = Color(0xFFD32F2F),
+                                color = Color(0xFFDC2626),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 "${uiState.errorMessage}",
-                                color = Color(0xFFD32F2F),
+                                color = Color(0xFFDC2626),
                                 fontSize = 14.sp
                             )
                         }
@@ -197,8 +247,8 @@ fun FeedbackScreen(
                 EmptyFeedbackContent("Bạn chưa có phản ánh/góp ý nào")
             } else {
                 LazyColumn (
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    contentPadding = PaddingValues(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items (uiState.myFeedbacks,
                         key = { feedback: FeedbackDto -> feedback.feedbackId })
@@ -216,83 +266,86 @@ fun FeedbackCard(feedback: FeedbackDto) {
     Card (
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(6.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(16.dp)
+            .shadow(8.dp, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Column (
-            modifier = Modifier.padding(20.dp)
-        ) {
-            // Header với icon và category
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Feedback,
-                        contentDescription = "Feedback",
-                        tint = PrimaryGreen,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+        var showImageDialog by remember { mutableStateOf(false) }
+        val context= LocalContext.current
+
+        if (showImageDialog) {
+            AlertDialog (
+                onDismissRequest = { showImageDialog = false },
+                confirmButton = {
                     Text(
-                        feedback.category,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = DarkGreen
+                        "Đóng",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { showImageDialog = false },
+                        color = PrimaryGreen
+                    )
+                },
+                text = {
+                    val imageBytes = Base64.decode(
+                        feedback.image!!.substringAfter("base64,"),
+                        Base64.DEFAULT
+                    )
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Ảnh phản ánh",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentScale = ContentScale.Fit
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Content
-            Text(
-                feedback.content,
-                color = Color.Gray,
-                fontSize = 14.sp,
-                lineHeight = 20.sp
             )
+        }
 
-            // Reply section
-            if (!feedback.reply.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = LightGreen
-                    ),
-                    shape = RoundedCornerShape(12.dp)
+        Column (
+            modifier = Modifier.padding(24.dp)
+        ) {
+            // Header với gradient background
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = LightGreen
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(
+                                    PrimaryGreen,
+                                    RoundedCornerShape(10.dp)
+                                ),
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                Icons.Default.Reply,
-                                contentDescription = "Reply",
-                                tint = DarkGreen,
+                                Icons.Default.Feedback,
+                                contentDescription = "Feedback",
+                                tint = Color.White,
                                 modifier = Modifier.size(20.dp)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                "Phản hồi từ quản trị viên:",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                color = DarkGreen
-                            )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            feedback.reply,
-                            fontSize = 14.sp,
-                            color = Color.Black,
-                            lineHeight = 20.sp
+                            feedback.category,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = DarkGreen
                         )
                     }
                 }
@@ -300,23 +353,135 @@ fun FeedbackCard(feedback: FeedbackDto) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Content với improved styling
+            Text(
+                feedback.content,
+                color = TextSecondary,
+                fontSize = 15.sp,
+                lineHeight = 22.sp,
+                fontWeight = FontWeight.Normal
+            )
+
+            if (!feedback.image.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable {
+                            showImageDialog = true
+                        }
+                        .background(Color(0xFFE8F5E9))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Visibility,
+                        contentDescription = "Xem ảnh",
+                        tint = PrimaryGreen,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Xem ảnh đính kèm",
+                        color = PrimaryGreen,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+
+
+
+            // Reply section
+            if (!feedback.reply.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = LightGreen
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            1.dp,
+                            Color(0xFFA5D6A7),
+                            RoundedCornerShape(16.dp)
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        SuccessGreen,
+                                        RoundedCornerShape(8.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Reply,
+                                    contentDescription = "Reply",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                "Phản hồi từ quản trị viên",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp,
+                                color = DarkGreen
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            feedback.reply,
+                            fontSize = 14.sp,
+                            color = TextPrimary,
+                            lineHeight = 20.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Footer với improved design
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    Icons.Default.Schedule,
-                    contentDescription = "Time",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    "Gửi lúc: ${feedback.createdAt}",
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFF9FAFB)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.Schedule,
+                            contentDescription = "Time",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            feedback.createdAt,
+                            fontSize = 12.sp,
+                            color = TextSecondary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
     }
@@ -341,21 +506,27 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
 
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = CardBackground
                 ),
-                modifier = Modifier.shadow(8.dp, RoundedCornerShape(20.dp)),
-                shape = RoundedCornerShape(20.dp)
+                modifier = Modifier.shadow(12.dp, RoundedCornerShape(24.dp)),
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(32.dp)
+                    modifier = Modifier.padding(40.dp)
                 ) {
+                    // Gradient circle background
                     Box(
                         modifier = Modifier
-                            .size(120.dp)
+                            .size(140.dp)
                             .background(
-                                LightGreen,
-                                RoundedCornerShape(60.dp)
+                                Brush.radialGradient(
+                                    colors = listOf(
+                                        LightGreen,
+                                        Color(0xFFBBDEFB)
+                                    )
+                                ),
+                                RoundedCornerShape(70.dp)
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -363,25 +534,25 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                             Icons.Default.Feedback,
                             contentDescription = null,
                             tint = PrimaryGreen,
-                            modifier = Modifier.size(64.dp)
+                            modifier = Modifier.size(72.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     Text(
                         text = message,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = DarkGreen
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "Hãy gửi phản ánh đầu tiên của bạn",
-                        fontSize = 14.sp,
-                        color = Color.Gray
+                        fontSize = 15.sp,
+                        color = TextSecondary
                     )
                 }
             }
@@ -394,18 +565,18 @@ fun SearchBarWithButtons() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(16.dp)
+            .padding(horizontal = 20.dp)
+            .shadow(8.dp, RoundedCornerShape(20.dp)),
+        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                placeholder = { Text("Tìm kiếm phản ánh...", color = Color.Gray) },
+                placeholder = { Text("Tìm kiếm phản ánh...", color = TextSecondary) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
                     Icon(
@@ -417,15 +588,16 @@ fun SearchBarWithButtons() {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = PrimaryGreen,
                     unfocusedBorderColor = BorderColor,
-                    cursorColor = PrimaryGreen
+                    cursorColor = PrimaryGreen,
+                    focusedLabelColor = PrimaryGreen
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(16.dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
@@ -434,15 +606,15 @@ fun SearchBarWithButtons() {
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PrimaryGreen
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(
                         Icons.Default.Add,
                         contentDescription = "Add",
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Gửi phản ánh")
+                    Text("Gửi phản ánh", fontWeight = FontWeight.Medium)
                 }
 
                 Button(
@@ -451,15 +623,15 @@ fun SearchBarWithButtons() {
                     colors = ButtonDefaults.buttonColors(
                         containerColor = SecondaryGreen
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(
                         Icons.Default.FilterList,
                         contentDescription = "Filter",
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Lọc phản ánh")
+                    Text("Lọc phản ánh", fontWeight = FontWeight.Medium)
                 }
             }
         }
@@ -474,14 +646,14 @@ fun BottomNavBar(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(12.dp, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+            .shadow(16.dp, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
         colors = CardDefaults.cardColors(containerColor = PrimaryGreen),
-        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+                .padding(horizontal = 32.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -492,25 +664,25 @@ fun BottomNavBar(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                         .padding(8.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = if (selectedIndex == index)
-                            Color.White.copy(alpha = 0.2f)
+                            Color.White.copy(alpha = 0.25f)
                         else Color.Transparent
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
                             imageVector = icons[index],
                             contentDescription = label,
                             tint = if (selectedIndex == index) Color.White else Color.White.copy(alpha = 0.7f),
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(28.dp)
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = label,
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             color = if (selectedIndex == index) Color.White else Color.White.copy(alpha = 0.7f),
                             fontWeight = if (selectedIndex == index) FontWeight.Bold else FontWeight.Normal
                         )

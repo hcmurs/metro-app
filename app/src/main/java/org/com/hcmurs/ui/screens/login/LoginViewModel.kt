@@ -48,14 +48,12 @@ class LoginViewModel @Inject constructor(
         checkAuthenticationStatus()
     }
 
-    // THÊM: Kiểm tra trạng thái đăng nhập và load profile
     private fun checkAuthenticationStatus() {
         viewModelScope.launch {
             _isLoading.value = true
             val authenticated = authRepository.isAuthenticated()
             _isAuthenticated.value = authenticated
             if (authenticated) {
-                // Nếu đã đăng nhập, tải thông tin người dùng
                 refreshUserProfile()
             }
             _isLoading.value = false

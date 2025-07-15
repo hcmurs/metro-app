@@ -5,7 +5,8 @@
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">192.168.88.172</domain>
-        <domain includeSubdomains="true">192.168.1.17</domain> <!-- 👈 Thêm dòng này -->
+        <domain includeSubdomains="true">192.168.1.17</domain>
+        <domain includeSubdomains="true">172.20.10.9</domain>
     </domain-config>
     <debug-overrides>
         <trust-anchors>

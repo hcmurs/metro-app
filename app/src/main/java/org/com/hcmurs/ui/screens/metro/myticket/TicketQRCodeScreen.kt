@@ -93,7 +93,7 @@ fun TicketQRCodeScreen(
                         .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Vé lượt", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = DarkGreen)
+                    Text("", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = DarkGreen)
 
                     Spacer(Modifier.height(8.dp))
 

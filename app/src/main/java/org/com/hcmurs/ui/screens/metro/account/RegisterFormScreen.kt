@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.AppRegistration
 import androidx.compose.material.icons.filled.ArrowBack
@@ -76,6 +77,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.input.KeyboardType
 
 
 private val LightGray = Color(0xFFF0F0F0)
@@ -154,6 +157,24 @@ fun RegisterFormScreen(
                 label = { Text("Ghi chú (tùy chọn)") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            OutlinedTextField(
+                value = uiState.citizenIdNumber,
+                onValueChange = { viewModel.onCitizenIdNumberChange(it) },
+                label = { Text("Số căn cước công dân") },
+                placeholder = { Text("Nhập 12 số CCCD") },
+                isError = uiState.citizenIdNumber.isNotEmpty() && uiState.citizenIdNumber.length != 12,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (uiState.citizenIdNumber.isNotEmpty() && uiState.citizenIdNumber.length != 12) {
+                Text(
+                    text = "CCCD phải có đúng 12 chữ số",
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -59,6 +59,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import coil3.compose.AsyncImage
 
 private val PrimaryGreen = Color(0xFF4CAF50)
@@ -79,6 +81,8 @@ fun CreateFeedbackScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val categories = listOf("Góp ý", "Sự cố ứng dụng", "Khác")
+    var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect (key1 = uiState.submissionMessage) {
         uiState.submissionMessage?.let {
@@ -134,40 +138,49 @@ fun CreateFeedbackScreen(
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    OutlinedTextField(
-                        value = category,
-                        onValueChange = { category = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        label = {
-                            Text(
-                                "Chủ đề",
-                                color = DarkGreen,
-                                fontWeight = FontWeight.Medium
-                            )
-                        },
-                        placeholder = {
-                            Text(
-                                "Ví dụ: Góp ý về dịch vụ, Báo cáo sự cố...",
-                                color = Color.Gray
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.Category,
-                                contentDescription = "Category",
-                                tint = PrimaryGreen
-                            )
-                        },
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = PrimaryGreen,
-                            unfocusedBorderColor = BorderColor,
-                            cursorColor = PrimaryGreen
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    ExposedDropdownMenuBox (
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = category,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = {
+                                Text("Chủ đề", color = DarkGreen, fontWeight = FontWeight.Medium)
+                            },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryGreen,
+                                unfocusedBorderColor = BorderColor,
+                                cursorColor = PrimaryGreen
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            categories.forEach { selectionOption ->
+                                androidx.compose.material3.DropdownMenuItem(
+                                    text = { Text(selectionOption) },
+                                    onClick = {
+                                        category = selectionOption
+                                        expanded = false
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                )
+                            }
+                        }
+                    }
                 }
 
                 Card(

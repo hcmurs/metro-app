@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WavingHand
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -36,11 +37,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +61,8 @@ import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.ticket.TicketType
+import org.com.hcmurs.ui.screens.login.LoginViewModel
+import androidx.compose.runtime.setValue
 
 data class TicketOption(
     val title: String,
@@ -171,15 +177,35 @@ fun SectionHeader(title: String, icon: ImageVector) {
 @Composable
 fun TicketCard(
     ticket: TicketType,
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel : LoginViewModel
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    val userProfile by viewModel.userProfile.collectAsState()
+    if (showDialog) {
+        AlertDialog (
+            onDismissRequest = { showDialog = false },
+            title = { Text("Thông báo") },
+            text = { Text("Bạn không phải là sinh viên, vui lòng xác thực để tiếp tục.") },
+            confirmButton = {
+                TextButton (onClick = { showDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                // LOGIC GỐC: Được giữ nguyên
                 if (ticket.name == "Vé đơn") {
                     navController.navigate(Screen.StationSelection.route)
+                } else if (ticket.name == "Vé sinh viên") {
+                    if (userProfile?.isStudent == true) {
+                        navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
+                    } else {
+                        showDialog = true
+                    }
                 } else {
                     navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
                 }
@@ -219,11 +245,14 @@ fun TicketCard(
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimaryColor
                     )
-                    Text(
-                        text = "${ticket.price} đ",
-                        fontSize = 14.sp,
-                        color = TextSecondaryColor
-                    )
+                    if( ticket.name != "Vé đơn") {
+                        Text(
+                            text = "${ticket.price} đ",
+                            fontSize = 14.sp,
+                            color = TextSecondaryColor
+                        )
+                    }
+
                 }
             }
             Icon(
@@ -299,14 +328,15 @@ fun RouteCard(fareMatrix: FareMatrix) {
 @Composable
 fun TicketOptionsSection(
     navController: NavHostController,
-    viewModel: BuyTicketViewModel
+    viewModel: BuyTicketViewModel,
+    loginViewModel: LoginViewModel
 ) {
-    // LOGIC GỐC: Được giữ nguyên
     val ticketOptions by viewModel.ticketTypes.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
-    LaunchedEffect(Unit) {
+
+        LaunchedEffect(Unit) {
         if (ticketOptions.isEmpty() && !isLoading && errorMessage == null) {
             viewModel.fetchTicketTypes()
         }
@@ -319,9 +349,32 @@ fun TicketOptionsSection(
     } else if (errorMessage != null) {
         Text(text = "Lỗi tải dữ liệu: $errorMessage", color = Color.Red, modifier = Modifier.padding(16.dp))
     } else {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            ticketOptions.forEach { ticket ->
-                TicketCard(ticket = ticket, navController = navController)
+
+        val ticketSingle = ticketOptions.find { it.name == "Vé đơn" }
+        val ticketStudent = ticketOptions.find { it.name == "Vé sinh viên" }
+        val otherTickets = ticketOptions.filterNot { it.name == "Vé đơn" || it.name == "Vé sinh viên"}
+
+
+
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            ticketSingle?.let {
+                SectionHeader(title = "Mua vé theo tuyến ", icon = Icons.Default.Route)
+
+                TicketCard(ticket = it, navController = navController, viewModel = loginViewModel)
+            }
+
+            ticketStudent?.let {
+                SectionHeader(title = "Vé dành cho sinh viên theo tháng", icon = Icons.Default.School)
+
+                TicketCard(ticket = it, navController = navController, viewModel = loginViewModel)
+            }
+
+            if (otherTickets.isNotEmpty()) {
+                SectionHeader(title = "Các loại vé khác", icon = Icons.Default.LocalActivity)
+
+                otherTickets.forEach { ticket ->
+                    TicketCard(ticket = ticket, navController = navController, viewModel = loginViewModel)
+                }
             }
         }
     }
@@ -360,7 +413,7 @@ fun RoutesSection(viewModel: FareMatrixViewModel) {
 fun BuyTicketScreen(
     navController: NavHostController,
     buyTicketViewModel: BuyTicketViewModel = hiltViewModel(),
-    fareMatrixViewModel: FareMatrixViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     Scaffold(
         topBar = { BuyTicketTopBar(onBackClick = { navController.popBackStack() }) },
@@ -374,7 +427,7 @@ fun BuyTicketScreen(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.White, LightGreenBackground),
                         startY = 0f,
-                        endY = 1500f // Gradient nhẹ nhàng hơn
+                        endY = 1500f
                     )
                 )
                 .verticalScroll(rememberScrollState())
@@ -384,36 +437,9 @@ fun BuyTicketScreen(
             WelcomeCard()
             Spacer(modifier = Modifier.height(24.dp))
 
-            SectionHeader(title = "Mua vé theo lượt", icon = Icons.Default.LocalActivity)
             Spacer(modifier = Modifier.height(12.dp))
-            TicketOptionsSection(navController, buyTicketViewModel) // LOGIC GỐC
+            TicketOptionsSection(navController, buyTicketViewModel,loginViewModel)
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SectionHeader(title = "Ưu đãi Học sinh - Sinh viên", icon = Icons.Default.School)
-            Spacer(modifier = Modifier.height(12.dp))
-
-            TicketCard(
-                ticket = TicketType(
-                    id = 0, name = "Student Monthly", description = "Vé tháng HSSV", price = 150000,
-                    validityDuration = "ONE_MONTH", isActive = true, createdAt = "", updatedAt = ""
-                ),
-                navController = navController
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SectionHeader(title = "Các tuyến nổi bật", icon = Icons.Default.Star)
-            Spacer(modifier = Modifier.height(12.dp))
-            RoutesSection(fareMatrixViewModel)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            SectionHeader(title = "Vé dài hạn", icon = Icons.Default.DateRange)
-            Spacer(modifier = Modifier.height(12.dp))
-            TicketOptionsSection(navController, buyTicketViewModel)
-
-            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }

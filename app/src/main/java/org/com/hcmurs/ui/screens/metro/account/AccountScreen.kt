@@ -174,11 +174,10 @@ fun LogoutButton(
 fun AccountScreen(
     navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {},
-    viewModel: LoginViewModel // Lấy LoginViewModel
+    viewModel: LoginViewModel
 ) {
 
     if (viewModel == null) {
-        // Simple placeholder UI when no viewModel is provided
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("Account information unavailable")
         }
@@ -191,14 +190,13 @@ fun AccountScreen(
     LaunchedEffect(isAuthenticated) {
         if (!isAuthenticated) {
             navController.navigate(Screen.Login.route) {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true } // Xóa toàn bộ back stack
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         }
     }
     LaunchedEffect(Unit) {
         viewModel.refreshUserProfile()
     }
-    // Sử dụng thông tin profile để cập nhật menu items
     val userName = userProfile?.name ?: "Chưa cập nhật"
     val userEmail = userProfile?.email ?: "Chưa cập nhật"
 
@@ -213,25 +211,33 @@ fun AccountScreen(
             title = "Email: $userEmail", // Cập nhật email
             hasArrow = false
         ),
+        if( userProfile?.isStudent == false) {
+            MenuItem(
+                icon = Icons.Default.Info,
+                title = "Xác thực tài khoản",
+                hasArrow = true,
+                onClickAction = { navController.navigate(Screen.CCCD.route) }
+            )
+        } else {
+            MenuItem(
+                icon = Icons.Default.Info,
+                title = "Bạn đang là sinh viên",
+                hasArrow = false
+            )
+        },
 
-        MenuItem(
-            icon = Icons.Default.Info,
-            title = "Xác thực tài khoản",
-            hasArrow = true,
-            onClickAction = { navController.navigate(Screen.CCCD.route) }
-        ),
 
-        MenuItem(
-            icon = Icons.Default.ShoppingCart,
-            title = "Quản lý phương thức thanh toán",
-            hasArrow = true
-        ),
-        MenuItem(
-            icon = Icons.Default.Clear,
-            title = "Xóa tài khoản",
-            hasArrow = false,
-            isDestructive = true
-        )
+//        MenuItem(
+//            icon = Icons.Default.ShoppingCart,
+//            title = "Quản lý phương thức thanh toán",
+//            hasArrow = true
+//        ),
+//        MenuItem(
+//            icon = Icons.Default.Clear,
+//            title = "Xóa tài khoản",
+//            hasArrow = false,
+//            isDestructive = true
+//        )
     )
 
     Box(

@@ -10,6 +10,7 @@ data class RequestCreationRequest(
     val content: String?,
     val studentCardImage: String,
     val citizenIdentityCardImage: String,
+    val citizenIdNumber : String,
     @JsonFormat(pattern = "dd/MM/yyyy")
     val endDate: String
 )

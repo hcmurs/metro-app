@@ -26,6 +26,7 @@ data class RegisterFormState(
     val studentCardImageUri: Uri? = null,
     val citizenCardImageUri: Uri? = null,
     val endDate: LocalDate? = null,
+        val citizenIdNumber: String = "",
 
     val isLoading: Boolean = false,
     val submissionSuccess: Boolean = false,
@@ -43,7 +44,9 @@ class RegisterFormViewModel @Inject constructor(
     fun onContentChange(content: String) {
         _uiState.update { it.copy(content = content) }
     }
-
+    fun onCitizenIdNumberChange(number: String) {
+        _uiState.update { it.copy(citizenIdNumber = number) }
+    }
     fun onStudentCardImageSelected(uri: Uri?) {
         _uiState.update { it.copy(studentCardImageUri = uri) }
     }
@@ -74,10 +77,15 @@ class RegisterFormViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, errorMessage = "Không thể xử lý hình ảnh.") }
                 return@launch
             }
+            if (currentState.citizenIdNumber.length != 12) {
+                _uiState.update { it.copy(errorMessage = "Số CCCD phải gồm đúng 12 chữ số.") }
+                return@launch
+            }
 
             val formattedEndDate = currentState.endDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
             val request = RequestCreationRequest(
+                citizenIdNumber = currentState.citizenIdNumber,
                 content = currentState.content,
                 studentCardImage = studentCardBase64,
                 citizenIdentityCardImage = citizenCardBase64,
