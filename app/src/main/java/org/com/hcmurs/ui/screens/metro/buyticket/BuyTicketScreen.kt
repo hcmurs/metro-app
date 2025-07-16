@@ -270,7 +270,7 @@ fun RouteCard(fareMatrix: FareMatrix) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* LOGIC GỐC: Handle route selection */ },
+            .clickable {  },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -318,7 +318,7 @@ fun RouteCard(fareMatrix: FareMatrix) {
                 color = PrimaryGreen,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { /* LOGIC GỐC: Handle details */ }
+                modifier = Modifier.clickable {  }
             )
         }
     }
@@ -407,7 +407,6 @@ fun RoutesSection(viewModel: FareMatrixViewModel) {
 }
 
 
-// --- MÀN HÌNH CHÍNH: BUY TICKET SCREEN ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuyTicketScreen(
@@ -417,7 +416,7 @@ fun BuyTicketScreen(
 ) {
     Scaffold(
         topBar = { BuyTicketTopBar(onBackClick = { navController.popBackStack() }) },
-        containerColor = Color.White // Nền trắng cho toàn màn hình
+        containerColor = Color.White
     ) { padding ->
         Column(
             modifier = Modifier

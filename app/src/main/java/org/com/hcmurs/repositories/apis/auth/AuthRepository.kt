@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.security.TokenProvider
+import org.com.hcmurs.utils.JwtUtils
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -71,8 +72,8 @@ class AuthRepository @Inject constructor(
     }
 
     fun isAuthenticated(): Boolean {
-        return !tokenProvider.getToken().isNullOrEmpty()
-    }
+        val token = tokenProvider.getToken()
+        return !token.isNullOrEmpty() && !JwtUtils.isTokenExpired(token)    }
 
     fun getToken(): String? {
         return tokenProvider.getToken()

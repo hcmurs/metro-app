@@ -48,7 +48,8 @@ import org.com.hcmurs.utils.screenTitleIconMap
 @Composable
 fun QuickActionsSection(
     navController: NavHostController,
-    userRole: UserRole = UserRole.GUEST
+    userRole: UserRole = UserRole.GUEST,
+    onGridItemClick: (String) -> Unit
 ) {
     // Filter the list based on user role
     val allScreenTitles = ScreenTitle.values().toList()
@@ -113,7 +114,7 @@ fun QuickActionsSection(
                                 onClick = {
                                     val route = getNavigationRoute(item)
                                     try {
-                                        navController.navigate(route)
+                                        onGridItemClick(route)
                                     } catch (e: Exception) {
                                         println("Navigation failed: $route - ${e.message}")
                                     }

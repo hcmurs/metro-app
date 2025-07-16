@@ -42,8 +42,9 @@ fun AppHomeScreen(
     navController: NavHostController,
     showFloatingButton: Boolean = true,
     role: UserRole = UserRole.GUEST,
-    contentAfterBanner: LazyListScope.() -> Unit
-) {
+    onGridItemClick: (String) -> Unit,
+    contentAfterBanner: LazyListScope.() -> Unit,
+    ) {
     val listState = rememberLazyListState()
     val isScrolled by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset > 0 }
@@ -81,7 +82,7 @@ fun AppHomeScreen(
                             .align(Alignment.BottomCenter)
                             .offset(y = 30.dp)
                     ) {
-                        QuickActionsSection(navController, userRole = role)
+                        QuickActionsSection(navController, userRole = role,onGridItemClick = onGridItemClick )
                     }
                 }
             }
