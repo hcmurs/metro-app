@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
@@ -43,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
-
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFF1F8E9)
@@ -62,12 +63,12 @@ fun TicketQRCodeScreen(
         viewModel.fetchTicketQRCode(ticketCode)
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Vé điện tử", color = DarkGreen, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton (onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
@@ -75,37 +76,73 @@ fun TicketQRCodeScreen(
             )
         }
     ) { padding ->
-        Box(
+        // Make the entire content scrollable
+        Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(LightGreenBackground),
-            contentAlignment = Alignment.Center
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(color = PrimaryGreen)
-            } else if (uiState.errorMessage != null) {
-                Text("Lỗi: ${uiState.errorMessage}", color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp))
-            } else if (uiState.qrCodeBitmap != null) {
-                Column (
+                // Loading state with proper spacing
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(32.dp),
+                        .height(400.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = PrimaryGreen)
+                }
+            } else if (uiState.errorMessage != null) {
+                // Error state with proper spacing
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Lỗi: ${uiState.errorMessage}",
+                        color = Color.Red,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else if (uiState.qrCodeBitmap != null) {
+                // Success state with responsive layout
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 16.dp), // Reduced padding
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = DarkGreen)
+                    // Header text with reduced spacing
+                    Text(
+                        "",
+                        fontSize = 20.sp, // Slightly smaller
+                        fontWeight = FontWeight.Bold,
+                        color = DarkGreen
+                    )
 
                     Spacer(Modifier.height(8.dp))
 
-                    Text("Vui lòng quét mã tại cổng soát vé", fontSize = 16.sp, color = TextSecondaryColor)
+                    Text(
+                        "Vui lòng quét mã tại cổng soát vé",
+                        fontSize = 15.sp, // Slightly smaller
+                        color = TextSecondaryColor,
+                        textAlign = TextAlign.Center
+                    )
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(20.dp)) // Reduced spacing
 
-                    // Hiển thị QR Code từ Bitmap
-                    Card (
-                        modifier = Modifier.size(250.dp),
+                    // QR Code with adaptive size
+                    Card(
+                        modifier = Modifier.size(280.dp), // Smaller for compact screens
                         shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(8.dp)
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
                         Image(
                             bitmap = uiState.qrCodeBitmap!!.asImageBitmap(),
@@ -115,22 +152,43 @@ fun TicketQRCodeScreen(
                     }
 
                     Spacer(Modifier.height(16.dp))
+
+                    // Ticket code display
                     uiState.ticketCode?.let {
                         Text(
                             it,
-                            fontSize = 18.sp,
+                            fontSize = 16.sp, // Slightly smaller
                             fontWeight = FontWeight.Medium,
-                            letterSpacing = 2.sp
+                            letterSpacing = 1.5.sp, // Slightly reduced
+                            color = DarkGreen
                         )
                     }
-                    Spacer(Modifier.height(24.dp))
+
+                    Spacer(Modifier.height(20.dp)) // Reduced spacing
+
+                    // Countdown and reset section
                     CountdownAndReset(
                         seconds = uiState.countdownSeconds,
                         onResetClick = { viewModel.resetQRCode() }
                     )
+
+                    // Bottom padding to ensure content is never cut off
+                    Spacer(Modifier.height(24.dp))
                 }
             } else {
-                Text("Không thể tải được mã QR.", color = TextSecondaryColor, textAlign = TextAlign.Center)
+                // Default state with proper spacing
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Không thể tải được mã QR.",
+                        color = TextSecondaryColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
@@ -144,23 +202,29 @@ private fun CountdownAndReset(seconds: Int, onResetClick: () -> Unit) {
     ) {
         Text(
             "Mã sẽ được làm mới sau:",
-            fontSize = 14.sp,
+            fontSize = 13.sp, // Slightly smaller
             color = TextSecondaryColor
         )
         Text(
             String.format("0:%02d", seconds),
-            fontSize = 20.sp,
+            fontSize = 18.sp, // Slightly smaller
             fontWeight = FontWeight.Bold,
             color = if (seconds <= 10) Color.Red else DarkGreen
         )
         OutlinedButton(
             onClick = onResetClick,
             shape = RoundedCornerShape(50),
-            border = BorderStroke(1.dp, PrimaryGreen)
+            border = BorderStroke(1.dp, PrimaryGreen),
+            modifier = Modifier.height(44.dp) // Slightly more compact
         ) {
-            Icon(Icons.Default.Refresh, contentDescription = "Reset QR Code", tint = PrimaryGreen, modifier = Modifier.size(20.dp))
+            Icon(
+                Icons.Default.Refresh,
+                contentDescription = "Reset QR Code",
+                tint = PrimaryGreen,
+                modifier = Modifier.size(18.dp) // Slightly smaller icon
+            )
             Spacer(Modifier.width(8.dp))
-            Text("Làm mới mã", color = PrimaryGreen)
+            Text("Làm mới mã", color = PrimaryGreen, fontSize = 14.sp) // Slightly smaller text
         }
     }
 }

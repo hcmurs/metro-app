@@ -92,7 +92,12 @@ fun OrderFareInfoScreen(
     entryStationId: Int,
     exitStationId: Int,
     fareMatrixViewModel: FareMatrixViewModel,
-    stationViewModel: StationSelectionViewModel
+    stationViewModel: StationSelectionViewModel,
+    paymentMethods: List<LocalPaymentMethod> = listOf(
+        LocalPaymentMethod(1, "VNPAY", R.drawable.ic_vnpay),
+        LocalPaymentMethod(2, "Stripe", R.drawable.ic_stripe),
+        LocalPaymentMethod(3, "Momo", R.drawable.ic_momo),
+    )
 ) {
     val uiState by fareMatrixViewModel.uiState.collectAsState()
     val stationUiState by stationViewModel.uiState.collectAsState()
@@ -105,29 +110,25 @@ fun OrderFareInfoScreen(
     var showPaymentSheet by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
 
-    val paymentMethods = listOf(
-        LocalPaymentMethod(1,"VNPAY", R.drawable.ic_vnpay),
-        LocalPaymentMethod(2,"Stripe",   R.drawable.ic_momo)
-    )
-    var selectedPaymentMethod by remember { mutableStateOf(paymentMethods.first()) }
+    var selectedPaymentMethod by remember { mutableStateOf(paymentMethods[1]) }
     val context = LocalContext.current
 
     val paymentSheet = rememberPaymentSheet(
-        paymentResultCallback = object : PaymentSheetResultCallback {
-            override fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
-                when (paymentSheetResult) {
-                    is PaymentSheetResult.Completed -> {
-                        fareMatrixViewModel.verifyPaymentSuccess()
-                        navController.navigate(Screen.MyTicket.route) {
-                            popUpTo(Screen.Home.route) { inclusive = true }
-                        }
+        paymentResultCallback = { paymentSheetResult ->
+            when (paymentSheetResult) {
+                is PaymentSheetResult.Completed -> {
+                    fareMatrixViewModel.verifyPaymentSuccess()
+                    navController.navigate(Screen.MyTicket.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
-                    is PaymentSheetResult.Canceled -> {
-                        fareMatrixViewModel.verifyPaymentFailed()
-                    }
-                    is PaymentSheetResult.Failed -> {
-                        fareMatrixViewModel.verifyPaymentFailed()
-                    }
+                }
+
+                is PaymentSheetResult.Canceled -> {
+                    fareMatrixViewModel.verifyPaymentFailed()
+                }
+
+                is PaymentSheetResult.Failed -> {
+                    fareMatrixViewModel.verifyPaymentFailed()
                 }
             }
         })
