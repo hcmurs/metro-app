@@ -35,6 +35,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.screens.news.BlogViewModel
+import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.LightBeige
 
 @Composable
 fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewModel = hiltViewModel()) {
@@ -62,7 +64,7 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
                         title = blog.title ?: "",
                         subtitle = blog.date ?: "",
                         thumbnailUrl = blog.image,
-                        color = Color(0xFF2196F3),
+                        color = LightBeige,
                         modifier = Modifier.width(300.dp)
                     ) {
                         navController.navigate("blog_detail/${blog.id}")

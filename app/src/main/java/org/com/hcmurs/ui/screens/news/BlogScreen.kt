@@ -40,18 +40,22 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
+import org.com.hcmurs.ui.theme.LightBeige
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BlogTile(
     blog: BlogResponse,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    color: Color = LightBeige,
+    textColor: Color = Color.White
 ) {
     Card(
         modifier = Modifier
             .width(280.dp)
             .height(160.dp)
             .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -78,6 +82,7 @@ fun BlogTile(
                 Text(
                     text = blog.title,
                     fontWeight = FontWeight.Bold,
+                    color = textColor,
                     fontSize = 14.sp,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -124,7 +129,7 @@ fun BlogSection(
             TextButton(onClick = {
                 navController.navigate("blog_list")
             }) {
-                Text(stringResource(R.string.see_all))
+                Text(stringResource(R.string.see_all), fontSize = 14.sp, color = Color(0xFF2196F3))
             }
         }
 
@@ -139,6 +144,7 @@ fun BlogSection(
                     CircularProgressIndicator()
                 }
             }
+
             is BlogUiState.Error -> {
                 Text(
                     text = "Failed to load blogs",
@@ -146,6 +152,7 @@ fun BlogSection(
                     modifier = Modifier.padding(16.dp)
                 )
             }
+
             is BlogUiState.Success -> {
                 val scrollState = rememberScrollState()
                 Row(

@@ -1,9 +1,12 @@
 package org.com.hcmurs.ui.screens.scanqr
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
-import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
@@ -16,13 +19,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -30,6 +37,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -96,7 +104,7 @@ fun ScanQRScreen(
     var showResultDialog by remember { mutableStateOf(false) }
     var scannedResponse by remember { mutableStateOf<ScanQRResponse?>(null) }
 
-    val launcher = rememberLauncherForActivityResult(
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasCameraPermission = isGranted
@@ -104,7 +112,7 @@ fun ScanQRScreen(
 
     LaunchedEffect(key1 = true) {
         if (!hasCameraPermission) {
-            launcher.launch(Manifest.permission.CAMERA)
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -192,34 +200,19 @@ fun ScanQRScreen(
 
                 CameraPreview(
                     onQRCodeScanned = { qrCode ->
-                        if (!isProcessing) {
-                            isProcessing = true
-                            scannedText = qrCode
-                            Log.d("QR_SCANNER", "QR Code Scanned: $qrCode")
-
-                            // Validate QR code format
-                            try {
-                                val gson = Gson()
-                                val response = gson.fromJson(qrCode, ScanQRResponse::class.java)
-                                if (response != null) {
-                                    scannedResponse = response
-
-                                    // Call the API with scanned data and stationId
-                                    if (actionType == ActionType.ENTRY) {
-                                        viewModel.scanTicketEntry(response, stationId)
-                                    } else {
-                                        viewModel.scanTicketExit(response, stationId)
-                                    }
-                                    showResultDialog = true
-                                } else {
-                                    throw Exception("Invalid QR format")
-                                }
-                            } catch (e: Exception) {
-                                Log.e("QR_SCANNER", "Invalid QR format: ${e.message}")
-                                showInvalidQRDialog = true
-                                isProcessing = false
-                            }
-                        }
+                        handleQRCodeScanned(
+                            qrCode = qrCode,
+                            isProcessing = isProcessing,
+                            onStartProcessing = { isProcessing = true },
+                            onScannedTextChange = { scannedText = it },
+                            onScannedResponseChange = { scannedResponse = it },
+                            onShowResultDialog = { showResultDialog = true },
+                            onShowInvalidDialog = { showInvalidQRDialog = true },
+                            onStopProcessing = { isProcessing = false },
+                            actionType = actionType,
+                            stationId = stationId,
+                            viewModel = viewModel
+                        )
                     },
                     lifecycleOwner = lifecycleOwner
                 )
@@ -244,7 +237,7 @@ fun ScanQRScreen(
                         ScanningFrame()
                     }
 
-                    // Bottom info and scanned result
+                    // Bottom info and controls
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "Place the QR code inside the frame",
@@ -293,13 +286,117 @@ fun ScanQRScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
-                        onClick = { launcher.launch(Manifest.permission.CAMERA) }
+                        onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
                     ) {
                         Text("Grant Permission")
                     }
                 }
             }
         }
+    }
+}
+
+// Helper function to handle QR code processing
+private fun handleQRCodeScanned(
+    qrCode: String,
+    isProcessing: Boolean,
+    onStartProcessing: () -> Unit,
+    onScannedTextChange: (String) -> Unit,
+    onScannedResponseChange: (ScanQRResponse?) -> Unit,
+    onShowResultDialog: () -> Unit,
+    onShowInvalidDialog: () -> Unit,
+    onStopProcessing: () -> Unit,
+    actionType: ActionType,
+    stationId: Int,
+    viewModel: ScanQRViewModel
+) {
+    if (!isProcessing) {
+        onStartProcessing()
+        onScannedTextChange(qrCode)
+        Log.d("QR_SCANNER", "QR Code Scanned: $qrCode")
+
+        // Validate QR code format
+        try {
+            val gson = Gson()
+            val response = gson.fromJson(qrCode, ScanQRResponse::class.java)
+            if (response != null) {
+                onScannedResponseChange(response)
+
+                // Call the API with scanned data and stationId
+                if (actionType == ActionType.ENTRY) {
+                    viewModel.scanTicketEntry(response, stationId)
+                } else {
+                    viewModel.scanTicketExit(response, stationId)
+                }
+                onShowResultDialog()
+            } else {
+                throw Exception("Invalid QR format")
+            }
+        } catch (e: Exception) {
+            Log.e("QR_SCANNER", "Invalid QR format: ${e.message}")
+            onShowInvalidDialog()
+            onStopProcessing()
+        }
+    }
+}
+
+// Function to process image from URI
+private fun processImageFromUri(
+    context: Context,
+    imageUri: Uri,
+    onQRCodeScanned: (String) -> Unit,
+    onError: (String) -> Unit
+) {
+    try {
+        val inputStream = context.contentResolver.openInputStream(imageUri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        if (bitmap != null) {
+            val image = InputImage.fromBitmap(bitmap, 0)
+
+            // Enhanced barcode scanner options for better detection
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(
+                    Barcode.FORMAT_QR_CODE,
+                    Barcode.FORMAT_AZTEC,
+                    Barcode.FORMAT_DATA_MATRIX,
+                    Barcode.FORMAT_PDF417,
+                    Barcode.FORMAT_CODE_128,
+                    Barcode.FORMAT_CODE_39,
+                    Barcode.FORMAT_CODE_93,
+                    Barcode.FORMAT_CODABAR,
+                    Barcode.FORMAT_EAN_13,
+                    Barcode.FORMAT_EAN_8,
+                    Barcode.FORMAT_ITF,
+                    Barcode.FORMAT_UPC_A,
+                    Barcode.FORMAT_UPC_E
+                )
+                .build()
+
+            val scanner = BarcodeScanning.getClient(options)
+
+            scanner.process(image)
+                .addOnSuccessListener { barcodes ->
+                    if (barcodes.isNotEmpty()) {
+                        barcodes.firstOrNull()?.rawValue?.let { value ->
+                            Log.d("QR_SCANNER", "QR Code from image: $value")
+                            onQRCodeScanned(value)
+                        }
+                    } else {
+                        onError("No QR code found in the image")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("QR_SCANNER", "QR Code scanning from image failed", exception)
+                    onError("Failed to scan QR code from image: ${exception.message}")
+                }
+        } else {
+            onError("Failed to decode image")
+        }
+    } catch (e: Exception) {
+        Log.e("QR_SCANNER", "Error processing image", e)
+        onError("Error processing image: ${e.message}")
     }
 }
 
@@ -328,8 +425,8 @@ fun CameraPreview(
 
                 val imageAnalyzer = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .setTargetResolution(Size(1280, 720))
-                    .setTargetRotation(previewView.display.rotation)
+                    // Enhanced resolution for better QR detection
+                    .setTargetResolution(android.util.Size(1920, 1080))
                     .build()
                     .also {
                         it.setAnalyzer(cameraExecutor, QRCodeAnalyzer(onQRCodeScanned))
@@ -339,12 +436,13 @@ fun CameraPreview(
 
                 try {
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(
+                    val camera = cameraProvider.bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,
                         preview,
                         imageAnalyzer
                     )
+                    camera.cameraControl.enableTorch(false) // Disable torch by default
                 } catch (exc: Exception) {
                     Log.e("CameraPreview", "Use case binding failed", exc)
                 }
@@ -367,21 +465,21 @@ class QRCodeAnalyzer(
     private val onQRCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
 
+    // Enhanced barcode scanner options for better detection
     private val options = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(
             Barcode.FORMAT_QR_CODE,
-            Barcode.FORMAT_AZTEC,
-            Barcode.FORMAT_DATA_MATRIX
         )
         .build()
 
     private val scanner = BarcodeScanning.getClient(options)
     private var lastScannedTime = 0L
-    private val scanCooldown = 1000L // Reduced to 1 second
+    private val scanCooldown = 1500L // Increased to 2 seconds for better stability
 
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
         if (mediaImage != null) {
+            // Create input image with proper rotation
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
             scanner.process(image)
@@ -392,11 +490,16 @@ class QRCodeAnalyzer(
                             barcodes.firstOrNull()?.rawValue?.let { value ->
                                 Log.d("QR_SCANNER", "QR Code detected: $value")
                                 Log.d("QR_SCANNER", "QR Code format: ${barcodes.first().format}")
-                                Log.d("QR_SCANNER", "QR Code value type: ${barcodes.first().valueType}")
                                 Log.d("QR_SCANNER", "Image rotation: ${imageProxy.imageInfo.rotationDegrees}")
+                                Log.d("QR_SCANNER", "Image size: ${mediaImage.width}x${mediaImage.height}")
 
-                                onQRCodeScanned(value)
-                                lastScannedTime = currentTime
+                                // Additional validation for screen scanning
+                                if (isValidQRContent(value)) {
+                                    onQRCodeScanned(value)
+                                    lastScannedTime = currentTime
+                                } else {
+                                    Log.w("QR_SCANNER", "Invalid QR content format")
+                                }
                             }
                         }
                     }
@@ -410,6 +513,17 @@ class QRCodeAnalyzer(
         } else {
             Log.w("QR_SCANNER", "MediaImage is null")
             imageProxy.close()
+        }
+    }
+
+    private fun isValidQRContent(content: String): Boolean {
+        return try {
+            // Check if it's valid JSON (your expected format)
+            val gson = Gson()
+            val response = gson.fromJson(content, ScanQRResponse::class.java)
+            response != null && response.toString().isNotEmpty()
+        } catch (e: Exception) {
+            false
         }
     }
 }
