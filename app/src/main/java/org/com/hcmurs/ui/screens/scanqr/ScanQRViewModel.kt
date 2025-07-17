@@ -23,58 +23,66 @@ class ScanQRViewModel @Inject constructor(
     fun scanTicketEntry(scanResponse: ScanQRResponse, stationId: Int) {
         viewModelScope.launch {
             _scanState.value = ScanState.Loading
+            try {
+                val gson = Gson()
+                val jsonString = gson.toJson(scanResponse)
 
-            val gson = Gson()
-            val jsonString = gson.toJson(scanResponse)
+                Log.d("ScanQRViewModel", "Scanning ticket with data: $jsonString at station ID: $stationId")
 
-            Log.d("ScanQRViewModel", "Scanning ticket with data: $jsonString at station ID: $stationId")
+                val request = ScanTicketRequest(
+                    stationId = stationId,
+                    qrCodeJsonData = jsonString
+                )
 
-            val request = ScanTicketRequest(
-                stationId = stationId,
-                qrCodeJsonData = jsonString
-            )
-
-            ticketRepository.scanTicketEntry(request).fold(
-                onSuccess = { response ->
-                    if (response.isSuccessful) {
-                        _scanState.value = ScanState.Success("Ticket scanned successfully")
-                    } else {
-                        _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                ticketRepository.scanTicketEntry(request).fold(
+                    onSuccess = { response ->
+                        if (response.isSuccessful) {
+                            _scanState.value = ScanState.Success("Ticket scanned successfully")
+                        } else {
+                            _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                        }
+                    },
+                    onFailure = { exception ->
+                        _scanState.value = ScanState.Error("Error: ${exception.message}")
                     }
-                },
-                onFailure = { exception ->
-                    _scanState.value = ScanState.Error("Error: ${exception.message}")
-                }
-            )
+                )
+            } catch (e: Exception) {
+                Log.e("ScanQRViewModel", "Unexpected error in scanTicketEntry", e)
+                _scanState.value = ScanState.Error("Unexpected error: ${e.message}")
+            }
         }
     }
 
     fun scanTicketExit(scanResponse: ScanQRResponse, stationId: Int) {
         viewModelScope.launch {
             _scanState.value = ScanState.Loading
+            try {
+                val gson = Gson()
+                val jsonString = gson.toJson(scanResponse)
 
-            val gson = Gson()
-            val jsonString = gson.toJson(scanResponse)
+                Log.d("ScanQRViewModel", "Scanning ticket with data: $jsonString at station ID: $stationId")
 
-            Log.d("ScanQRViewModel", "Scanning ticket with data: $jsonString at station ID: $stationId")
+                val request = ScanTicketRequest(
+                    stationId = stationId,
+                    qrCodeJsonData = jsonString
+                )
 
-            val request = ScanTicketRequest(
-                stationId = stationId,
-                qrCodeJsonData = jsonString
-            )
-
-            ticketRepository.scanTicketExit(request).fold(
-                onSuccess = { response ->
-                    if (response.isSuccessful) {
-                        _scanState.value = ScanState.Success("Ticket scanned successfully")
-                    } else {
-                        _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                ticketRepository.scanTicketExit(request).fold(
+                    onSuccess = { response ->
+                        if (response.isSuccessful) {
+                            _scanState.value = ScanState.Success("Ticket scanned successfully")
+                        } else {
+                            _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                        }
+                    },
+                    onFailure = { exception ->
+                        _scanState.value = ScanState.Error("Error: ${exception.message}")
                     }
-                },
-                onFailure = { exception ->
-                    _scanState.value = ScanState.Error("Error: ${exception.message}")
-                }
-            )
+                )
+            } catch (e: Exception) {
+                Log.e("ScanQRViewModel", "Unexpected error in scanTicketExit", e)
+                _scanState.value = ScanState.Error("Unexpected error: ${e.message}")
+            }
         }
     }
 
