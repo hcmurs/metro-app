@@ -1,6 +1,7 @@
 package org.com.hcmurs.repositories.apis.ticket
 
 import okhttp3.ResponseBody
+import org.com.hcmurs.repositories.apis.request.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,12 +18,12 @@ interface TicketApi {
     @POST ("/api/ts/tickets/scan/entry")
     suspend fun scanTicketEntry(
         @Body request: ScanTicketRequest
-    ): Response<ResponseBody>
+    ): Response<ApiResponse<TicketRes>>
 
     @POST ("/api/ts/tickets/scan/exit")
     suspend fun scanTicketExit(
         @Body request: ScanTicketRequest
-    ): Response<ResponseBody>
+    ): Response<ApiResponse<TicketRes>>
 
 }
 data class TicketTypeResponse(
@@ -56,4 +57,39 @@ data class ScanQRResponse(
 data class ScanTicketRequest(
     val stationId: Int,
     val qrCodeJsonData: String
+)
+
+/*
+* Long id,
+        Long fareMatrixId,
+        Long ticketTypeId,
+        String name,
+        String ticketCode,
+        float actualPrice,
+        LocalDateTime validFrom,
+        LocalDateTime validUntil,
+        TicketStatus status,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt*/
+
+enum class TicketStatus {
+    USED,
+    EXPIRED,
+    NOT_USED,
+    PENDING,
+    CANCELLED,
+}
+
+data class TicketRes(
+    val id: Long,
+    val fareMatrixId: Long,
+    val ticketTypeId: Long,
+    val name: String,
+    val ticketCode: String,
+    val actualPrice: Float,
+    val validFrom: String, // Use String for JSON serialization
+    val validUntil: String, // Use String for JSON serialization
+    val status: TicketStatus,
+    val createdAt: String, // Use String for JSON serialization
+    val updatedAt: String // Use String for JSON serialization
 )

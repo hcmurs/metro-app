@@ -36,10 +36,10 @@ class ScanQRViewModel @Inject constructor(
 
                 ticketRepository.scanTicketEntry(request).fold(
                     onSuccess = { response ->
-                        if (response.isSuccessful) {
+                        if (response.body()?.status == 200) {
                             _scanState.value = ScanState.Success("Ticket scanned successfully")
                         } else {
-                            _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                            _scanState.value = ScanState.Error("Failed: ${response.body()?.message}")
                         }
                     },
                     onFailure = { exception ->
@@ -69,10 +69,10 @@ class ScanQRViewModel @Inject constructor(
 
                 ticketRepository.scanTicketExit(request).fold(
                     onSuccess = { response ->
-                        if (response.isSuccessful) {
+                        if (response.body()?.status == 200) {
                             _scanState.value = ScanState.Success("Ticket scanned successfully")
                         } else {
-                            _scanState.value = ScanState.Error("Failed: ${response.code()} - ${response.message()}")
+                            _scanState.value = ScanState.Error("Failed: ${response.body()?.message}")
                         }
                     },
                     onFailure = { exception ->

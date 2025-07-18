@@ -168,7 +168,7 @@ fun TicketCard(order: OrderWithTicketDetails,
             Row (verticalAlignment = Alignment.CenterVertically) {
                 // Icon vé
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_ticket_info), // Thay bằng icon vé của bạn
+                    painter = painterResource(id = R.drawable.ic_ticket_info),
                     contentDescription = "Ticket Icon",
                     tint = PrimaryGreen,
                     modifier = Modifier.size(32.dp)
@@ -193,7 +193,7 @@ fun TicketCard(order: OrderWithTicketDetails,
             Divider(Modifier.padding(vertical = 12.dp), color = LightGreenBackground)
             // Thông tin chi tiết
             InfoRow(label = "Mã đơn hàng:",
-                    value = "#${order.orderId}")
+                    value = "#${order.ticket.ticketCode}")
 
             Spacer(Modifier.height(4.dp))
 //
@@ -218,16 +218,18 @@ fun TicketCard(order: OrderWithTicketDetails,
 
 
                 Spacer(Modifier.height(16.dp))
-                Button (
-                    onClick = {
-                        navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
-                ) {
-                    Text("SỬ DỤNG VÉ", color = Color.White, fontWeight = FontWeight.Bold)
-                }
 
+                if(ticket.status.equals("NOT_USED") || ticket.status.equals("USED")) {
+                    Button(
+                        onClick = {
+                            navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                    ) {
+                        Text("SỬ DỤNG VÉ", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
         }
     }
 }

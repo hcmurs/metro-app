@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -61,6 +62,8 @@ import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.stripe.android.paymentsheet.PaymentSheetResultCallback
 import com.stripe.android.paymentsheet.rememberPaymentSheet
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
+import org.com.hcmurs.ui.theme.DarkGreen
 
 data class OrderInfo(
     val ticketType: String,
@@ -136,17 +139,6 @@ fun OrderInfoScreen(
         listOf(
 
             PaymentMethod(
-                id = "vnpay",
-                name = "VNPay",
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.CreditCard,
-                        contentDescription = "VNPay",
-                        tint = Color(0xFF1976D2),
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            ), PaymentMethod(
                 id = "stripe",
                 name = "Stripe",
                 icon = {
@@ -186,7 +178,6 @@ fun OrderInfoScreen(
                 note = noteText
             )
         } else {
-            // Default or loading state for OrderInfo
             OrderInfo(
                 ticketType = "Đang tải...",
                 unitPrice = "0đ",
@@ -211,7 +202,7 @@ fun OrderInfoScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Color(0xFFF5F5F5))   // color background
+                .background(Color(0xFFF5F5F5))
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -237,7 +228,7 @@ fun OrderInfoScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
+            var showDialog by remember { mutableStateOf(false) }
             // Terms Text
             Text(
                 text = "Bằng việc bấm thanh toán, bạn đồng ý với điều khoản của Metro",
@@ -247,8 +238,13 @@ fun OrderInfoScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .clickable { /* Handle terms click */ }
+                    .clickable {
+                        showDialog = true
+                    }
             )
+            if (showDialog) {
+                TermsAndConditionsDialog(onDismiss = { showDialog = false })
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -630,7 +626,30 @@ fun TicketDetailRow(
         )
     }
 }
-
+@Composable
+private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Điều khoản dịch vụ", fontWeight = FontWeight.Bold, color = DarkGreen) },
+        text = {
+            Text(
+                "Bằng việc sử dụng dịch vụ, bạn đồng ý tuân thủ tất cả các quy định về vận chuyển hành khách công cộng. " +
+                        "Vé đã mua không thể hoàn trả. Vui lòng giữ vé cẩn thận để xuất trình khi có yêu cầu. " +
+                        "Mọi hành vi gian lận sẽ bị xử lý theo quy định của pháp luật. " +
+                        "Cảm ơn bạn đã sử dụng dịch vụ của Metro.",
+                fontSize = 14.sp
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+            ) {
+                Text("Đã hiểu")
+            }
+        }
+    )
+}
 @Preview(showBackground = true)
 @Composable
 fun OrderInfoScreenPreview() {

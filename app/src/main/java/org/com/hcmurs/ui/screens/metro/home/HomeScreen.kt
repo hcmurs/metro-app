@@ -79,7 +79,7 @@ fun HomeScreen(navController: NavHostController,
         item {
             Spacer(modifier = Modifier.height(10.dp))
             Box(modifier = Modifier.padding(start = 16.dp)) {
-                BlogSection(navController)
+                    BlogSection(navController)
             }
         }
     }
