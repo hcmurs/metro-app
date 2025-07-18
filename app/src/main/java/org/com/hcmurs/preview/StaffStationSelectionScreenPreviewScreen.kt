@@ -50,7 +50,7 @@
 //import androidx.navigation.compose.rememberNavController
 //import org.com.hcmurs.R
 //import org.com.hcmurs.Screen
-//import org.com.hcmurs.ui.theme.GreenPrimary
+//import org.com.hcmurs.ui.theme.PrimaryGreen
 //import org.osmdroid.util.GeoPoint
 //
 //data class MetroStation(
@@ -104,7 +104,7 @@
 //                    }
 //                },
 //                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-//                    containerColor = GreenPrimary,
+//                    containerColor = PrimaryGreen,
 //                    titleContentColor = Color.White
 //                )
 //            )
@@ -121,7 +121,7 @@
 //                            )
 //                        )
 //                    },
-//                    containerColor = GreenPrimary
+//                    containerColor = PrimaryGreen
 //                ) {
 //                    Icon(
 //                        imageVector = Icons.Default.ArrowForward,
@@ -180,7 +180,7 @@
 //                            text = selectedStation!!.name,
 //                            fontSize = 18.sp,
 //                            fontWeight = FontWeight.Bold,
-//                            color = GreenPrimary
+//                            color = PrimaryGreen
 //                        )
 //                        Button(
 //                            onClick = {
@@ -190,7 +190,7 @@
 //                                .fillMaxWidth()
 //                                .padding(top = 12.dp),
 //                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = GreenPrimary
+//                                containerColor = PrimaryGreen
 //                            )
 //                        ) {
 //                            Text("Continue to Scan QR")
@@ -214,9 +214,9 @@
 //            .height(100.dp)
 //            .clickable(onClick = onClick),
 //        colors = CardDefaults.cardColors(
-//            containerColor = if (isSelected) GreenPrimary.copy(alpha = 0.1f) else Color.White
+//            containerColor = if (isSelected) PrimaryGreen.copy(alpha = 0.1f) else Color.White
 //        ),
-//        border = if (isSelected) BorderStroke(2.dp, GreenPrimary) else null,
+//        border = if (isSelected) BorderStroke(2.dp, PrimaryGreen) else null,
 //        elevation = CardDefaults.cardElevation(
 //            defaultElevation = if (isSelected) 8.dp else 2.dp
 //        )
@@ -244,14 +244,14 @@
 //                Text(
 //                    text = "Station ${station.id}",
 //                    fontSize = 12.sp,
-//                    color = if (isSelected) GreenPrimary else Color.Gray
+//                    color = if (isSelected) PrimaryGreen else Color.Gray
 //                )
 //                Text(
 //                    text = station.name,
 //                    fontSize = 14.sp,
 //                    fontWeight = FontWeight.SemiBold,
 //                    textAlign = TextAlign.Center,
-//                    color = if (isSelected) GreenPrimary else Color.Black,
+//                    color = if (isSelected) PrimaryGreen else Color.Black,
 //                    maxLines = 2,
 //                    overflow = TextOverflow.Ellipsis
 //                )

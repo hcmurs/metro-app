@@ -52,7 +52,7 @@ import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
 import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,7 +126,7 @@ fun StationSelectionScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = GreenPrimary,
+                    containerColor = PrimaryGreen,
                     titleContentColor = Color.White
                 )
             )
@@ -145,7 +145,7 @@ fun StationSelectionScreen(
                             )
                         }
                     },
-                    containerColor = GreenPrimary
+                    containerColor = PrimaryGreen
                 ) {
                     // Thêm logic hiển thị loading
                     if (fareMatrixUiState.isLoading && isNavigationTriggered) {
@@ -176,7 +176,7 @@ fun StationSelectionScreen(
                 text = if (selectedAction == "Entry") "Please select your ENTRY station" else "Please select your EXIT station",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = GreenPrimary
+                color = PrimaryGreen
             )
             Spacer(modifier = Modifier.height(8.dp))
             SwitchEntryExit(
@@ -192,7 +192,7 @@ fun StationSelectionScreen(
             when {
                 uiState.isLoading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = GreenPrimary)
+                        CircularProgressIndicator(color = PrimaryGreen)
                     }
                 }
                 uiState.errorMessage != null -> {
@@ -263,7 +263,7 @@ fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
                     text = entryStation?.name ?: "Not Selected",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (entryStation != null) GreenPrimary else Color.Gray,
+                    color = if (entryStation != null) PrimaryGreen else Color.Gray,
                     textAlign = TextAlign.Center
                 )
             }

@@ -11,13 +11,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun FloatingButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier.shadow(8.dp, CircleShape),
-    containerColor: Color = GreenPrimary,
+    containerColor: Color = PrimaryGreen,
     contentColor: Color = Color.White,
     icon: ImageVector = Icons.Default.Leaderboard,
     contentDescription: String = "Floating Action Button",

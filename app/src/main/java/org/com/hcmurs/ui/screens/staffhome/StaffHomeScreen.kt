@@ -73,7 +73,7 @@ fun StaffHomeScreen(
             item {
                 Box(modifier = Modifier.height(400.dp)) {
                     AsyncImage(
-                        model = R.drawable.login_banner,
+                        model = R.drawable.metro3,
                         contentDescription = "Staff Banner",
                         modifier = Modifier
                             .fillMaxWidth()

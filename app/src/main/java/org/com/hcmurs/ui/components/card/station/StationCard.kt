@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.com.hcmurs.Station
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun StationCard(
@@ -31,12 +31,12 @@ fun StationCard(
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
-        isSelected -> GreenPrimary.copy(alpha = 0.2f)
+        isSelected -> PrimaryGreen.copy(alpha = 0.2f)
         !isEnabled -> Color.LightGray.copy(alpha = 0.5f) // Màu cho card bị vô hiệu hóa
         else -> Color.White
     }
     val contentColor = when {
-        isSelected -> GreenPrimary
+        isSelected -> PrimaryGreen
         !isEnabled -> Color.Gray
         else -> Color.Black
     }
@@ -47,7 +47,7 @@ fun StationCard(
             .height(100.dp)
             .clickable(enabled = isEnabled, onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
-        border = if (isSelected) BorderStroke(2.dp, GreenPrimary) else null,
+        border = if (isSelected) BorderStroke(2.dp, PrimaryGreen) else null,
         elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
     ) {
         Box(
@@ -60,7 +60,7 @@ fun StationCard(
                 Text(
                     text = "Station ${station.sequenceOrder}",
                     fontSize = 12.sp,
-                    color = if (isSelected) GreenPrimary else Color.Gray
+                    color = if (isSelected) PrimaryGreen else Color.Gray
                 )
                 Text(
                     text = station.name,

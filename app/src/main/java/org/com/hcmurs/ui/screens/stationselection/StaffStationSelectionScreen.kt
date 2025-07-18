@@ -44,7 +44,7 @@ import androidx.navigation.NavController
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
 import org.com.hcmurs.ui.screens.scanqr.ActionType
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +72,7 @@ fun StaffStationSelectionScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = GreenPrimary,
+                    containerColor = PrimaryGreen,
                     titleContentColor = Color.White
                 )
             )
@@ -84,7 +84,7 @@ fun StaffStationSelectionScreen(
                         // Navigate to QR scan screen with selected station data
                         navController.navigate("scanQR/${selectedStation!!.stationId}/${selectedStation!!.name}/${actionType.name}")
                     },
-                    containerColor = GreenPrimary
+                    containerColor = PrimaryGreen
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
@@ -143,7 +143,7 @@ fun StaffStationSelectionScreen(
                             text = selectedStation!!.name,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = GreenPrimary
+                            color = PrimaryGreen
                         )
                         Button(
                             onClick = {
@@ -153,7 +153,7 @@ fun StaffStationSelectionScreen(
                                 .fillMaxWidth()
                                 .padding(top = 12.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = GreenPrimary
+                                containerColor = PrimaryGreen
                             )
                         ) {
                             Text("Continue to Scan QR")

@@ -68,7 +68,7 @@ fun AppHomeScreen(
             item {
                 Box(modifier = Modifier.height(450.dp)) {
                     AsyncImage(
-                        model = R.drawable.login_banner,
+                        model = R.drawable.metro1,
                         contentDescription = "Social link",
                         modifier = Modifier
                             .fillMaxWidth()

@@ -35,7 +35,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.screens.news.BlogViewModel
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.ui.theme.LightBeige
 
 @Composable

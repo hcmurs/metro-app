@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.com.hcmurs.R
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun GuideTile(
@@ -104,7 +105,7 @@ fun GuideSection() {
                 title = stringResource(R.string.account_guide_title),
                 thumbnail = painterResource(id = R.drawable.home_guide_2),
                 subtitle = stringResource(R.string.tap_to_view),
-                color = Color(0xFF4CAF50),
+                color = PrimaryGreen,
                 modifier = Modifier.width(300.dp)
             ) {
                 // TODO: Navigation

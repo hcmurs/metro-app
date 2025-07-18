@@ -150,7 +150,7 @@ private fun LoginScreenContent(
     ) {
         // Background Image
         AsyncImage(
-            model = R.drawable.login_banner,
+            model = R.drawable.metro2,
             contentDescription = "Social link",
             modifier = Modifier
                 .fillMaxWidth()

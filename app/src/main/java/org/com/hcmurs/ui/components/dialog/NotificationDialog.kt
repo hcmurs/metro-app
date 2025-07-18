@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun NotificationDialog(
@@ -24,7 +24,7 @@ fun NotificationDialog(
             TextButton(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = GreenPrimary,
+                    containerColor = PrimaryGreen,
                     contentColor = Color.White
                 )
             ) {

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,6 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun SettingsItem(
@@ -44,7 +48,7 @@ fun SettingsItem(
     subtitle: String? = null,
     onClick: () -> Unit
 ) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable() { onClick() }
@@ -88,80 +92,92 @@ fun SettingsItem(
         )
     }
 }
-@Preview(showBackground = true)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen() {
-    Column (modifier = Modifier.fillMaxSize()
-        .background(Color(0xFFF5F5F5))) {
+fun SettingScreen(
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+    ) {
         //Top app bar
         CenterAlignedTopAppBar(
             title = {
-                Text(text="Cài đặt",
-                    color =Color.White,
-                    fontSize =18.sp,
+                Text(
+                    text = "Cài đặt",
+                    color = Color.White,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    textAlign= TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             },
 
             navigationIcon = {
-                IconButton (onClick = { /* Handle back navigation */ }) {
-                    Icon(Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White)
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFF1976D2)
+                containerColor = PrimaryGreen
             )
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Setting card
-        Card (
-            modifier = Modifier.fillMaxWidth()
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            shape= RoundedCornerShape(12.dp)
-        ){
-              Column {
-                  SettingsItem(
-                    icon=Icons.Default.Notifications,
-                      title="Thông báo",
-                      onClick={ }
-                  )
-                  Divider(
-                      modifier = Modifier.fillMaxWidth()
-                          .padding(start = 56.dp),
-                      color = Color(0xFFE0E0E0),
-                      thickness = 0.5.dp
-                  )
-                  SettingsItem(
-                      icon = Icons.Default.Lock,
-                      title = "Quyền truy cập",
-                      onClick = { /* Handle privacy */ }
-                  )
-                  Divider(
-                      modifier = Modifier.fillMaxWidth()
-                          .padding(start = 56.dp),
-                      color = Color(0xFFE0E0E0),
-                      thickness = 0.5.dp
-                  )
-                  SettingsItem(
-                      icon = Icons.Default.Language,
-                      title = "Ngôn ngữ",
-                      subtitle = "Tiếng Việt",
-                      onClick = { /* Handle language */ }
-                  )
-              }
-
-
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+            ) {
+                SettingsItem(
+                    icon = Icons.Default.Notifications,
+                    title = "Thông báo",
+                    onClick = { }
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 56.dp),
+                    color = Color(0xFFE0E0E0),
+                    thickness = 0.5.dp
+                )
+                SettingsItem(
+                    icon = Icons.Default.Lock,
+                    title = "Quyền truy cập",
+                    onClick = { /* Handle privacy */ }
+                )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 56.dp),
+                    color = Color(0xFFE0E0E0),
+                    thickness = 0.5.dp
+                )
+                SettingsItem(
+                    icon = Icons.Default.Language,
+                    title = "Ngôn ngữ",
+                    subtitle = "Tiếng Việt",
+                    onClick = { /* Handle language */ }
+                )
+            }
 
         }
 
-
-
     }
 
+}
 
+@Preview(showBackground = true)
+@Composable
+fun SettingScreenPreview() {
+    SettingScreen(navController = rememberNavController()) // Replace with actual NavController in real use
 }

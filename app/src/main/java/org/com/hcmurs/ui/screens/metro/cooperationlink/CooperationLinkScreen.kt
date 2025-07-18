@@ -43,10 +43,10 @@ import org.com.hcmurs.ui.components.topbar.CooperationLinkTopBar
 fun CooperationLinkScreen(navController: NavHostController) {
     val context = LocalContext.current
     val items = listOf(
-        CooperationLink("1", "Go!Bus HCM", R.drawable.hurc, "https://preview.page.link/gobus.vn/app/home"),
-        CooperationLink("2", "TTGT Tp Hồ Chí Minh", R.drawable.hurc, "https://giaothong.hochiminhcity.gov.vn/"),
-        CooperationLink("3", "Công dân số TPHCM", R.drawable.hurc, "https://congdanso.tphcm.gov.vn/cds-tphcm"),
-        CooperationLink("4", "TNGo", R.drawable.hurc, "https://onelink.to/tngo")
+        CooperationLink("1", "Go!Bus HCM", R.drawable.gobus, "https://preview.page.link/gobus.vn/app/home"),
+        CooperationLink("2", "TTGT Tp Hồ Chí Minh", R.drawable.ttgt, "https://giaothong.hochiminhcity.gov.vn/"),
+        CooperationLink("3", "Công dân số TPHCM", R.drawable.congdanso, "https://congdanso.tphcm.gov.vn/cds-tphcm"),
+        CooperationLink("4", "TNGo", R.drawable.tngo, "https://onelink.to/tngo")
     )
 
     Scaffold(

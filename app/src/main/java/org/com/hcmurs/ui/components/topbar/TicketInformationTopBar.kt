@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.ui.components.common.CommonTopBar
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> Unit = {}) {
@@ -34,7 +34,7 @@ fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> 
         title = "Thông tin vé",
         bottomContent = {
             Surface(
-                color = GreenPrimary,
+                color = PrimaryGreen,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
@@ -55,7 +55,7 @@ fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> 
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Tìm kiếm",
-                                tint = GreenPrimary
+                                tint = PrimaryGreen
                             )
                         },
                         colors = TextFieldDefaults.colors(

@@ -41,7 +41,7 @@
 //import androidx.navigation.compose.rememberNavController
 //import org.com.hcmurs.Screen
 //import org.com.hcmurs.ui.theme.DarkGreen
-//import org.com.hcmurs.ui.theme.GreenPrimary
+//import org.com.hcmurs.ui.theme.PrimaryGreen
 //import org.com.hcmurs.ui.theme.LightBeige
 //import org.com.hcmurs.utils.navigateToHome
 //
@@ -194,7 +194,7 @@
 //    onClick: () -> Unit,
 //    modifier: Modifier = Modifier // Add this parameter with default value
 //) {
-//    val backgroundColor = if (selected) GreenPrimary else Color.White
+//    val backgroundColor = if (selected) PrimaryGreen else Color.White
 //    val textColor = if (selected) Color.White else Color(0xFF2D1E66)
 //
 //    Button(

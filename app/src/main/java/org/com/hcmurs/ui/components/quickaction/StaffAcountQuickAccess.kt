@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun StaffAccountQuickAccess(
@@ -62,14 +63,14 @@ fun StaffAccountQuickAccess(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF4CAF50).copy(alpha = 0.2f)),
+                    .background(PrimaryGreen.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "Staff Avatar",
                     modifier = Modifier.size(32.dp),
-                    tint = Color(0xFF4CAF50)
+                    tint = PrimaryGreen
                 )
             }
 

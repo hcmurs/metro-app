@@ -30,16 +30,19 @@ import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
+import org.com.hcmurs.ui.screens.metro.constructionimage.ConstructionImageScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
 import org.com.hcmurs.ui.screens.metro.event.EventScreen
 import org.com.hcmurs.ui.screens.metro.feedback.CreateFeedbackScreen
 import org.com.hcmurs.ui.screens.metro.feedback.FeedbackScreen
 import org.com.hcmurs.ui.screens.metro.home.HomeScreen
+import org.com.hcmurs.ui.screens.metro.introduction.IntroductionScreen
 import org.com.hcmurs.ui.screens.metro.maps.MapScreen
 import org.com.hcmurs.ui.screens.metro.myticket.MyTicketScreen
 import org.com.hcmurs.ui.screens.metro.myticket.TicketQRCodeScreen
 import org.com.hcmurs.ui.screens.metro.redeemcodeforticket.RedeemCodeForTicketScreen
 import org.com.hcmurs.ui.screens.metro.route.RouteScreen
+import org.com.hcmurs.ui.screens.metro.setting.SettingScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.news.BlogDetailScreen
 import org.com.hcmurs.ui.screens.news.BlogListScreen
@@ -382,11 +385,11 @@ fun Navigation(
         }
 
         composable(Screen.ConstructionImage.route) {
-            PlaceholderScreen(navController, "Construction Image Screen")
+            ConstructionImageScreen(navController)
         }
 
         composable(Screen.Setting.route) {
-            PlaceholderScreen(navController, "Setting Screen")
+            SettingScreen(navController)
         }
 
         composable(Screen.CooperationLink.route) {
@@ -394,7 +397,7 @@ fun Navigation(
         }
 
         composable(Screen.Introduction.route) {
-            PlaceholderScreen(navController, "Introduction Screen")
+            IntroductionScreen(navController)
         }
     }
 }

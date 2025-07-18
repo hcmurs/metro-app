@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,22 +24,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConstructionImageScreenWithTopBar() {
+fun ConstructionImageScreen(
+    navController: NavController
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Metro Construction Images") },
+                title = { Text("Hình ảnh công trình") },
                 scrollBehavior = scrollBehavior,
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
+                    containerColor = PrimaryGreen
                 )
             )
         },
@@ -43,7 +56,12 @@ fun ConstructionImageScreenWithTopBar() {
     ) { paddingValues ->
         // Sample image resources from drawable
         val imageList = listOf(
-            R.drawable.hurc,
+            R.drawable.metro1,
+            R.drawable.metro2,
+            R.drawable.metro3,
+            R.drawable.metro4,
+            R.drawable.metro5,
+            R.drawable.metro6,
         )
 
         val fullList = List(33) { index -> imageList[index % imageList.size] }
@@ -74,6 +92,6 @@ fun ConstructionImageScreenWithTopBar() {
 @Composable
 fun ConstructionImageScreenPreview() {
     MaterialTheme {
-        ConstructionImageScreenWithTopBar()
+        ConstructionImageScreen(rememberNavController())
     }
 }

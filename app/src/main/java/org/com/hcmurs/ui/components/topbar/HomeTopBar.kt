@@ -26,7 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import org.com.hcmurs.ui.components.dropdown.LanguageDropdown
 import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.weather.WeatherViewModel
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,7 +73,7 @@ fun HomeTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             // Use semi-transparent background when not scrolled for floating effect
             containerColor = if (isScrolled) {
-                GreenPrimary
+                PrimaryGreen
             } else {
                 Color.Black.copy(alpha = 0.3f) // Semi-transparent overlay
             }

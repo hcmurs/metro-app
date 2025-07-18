@@ -61,9 +61,6 @@ fun PlaceholderScreen(navController: NavController, title: String) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(onClick = { navController.navigateUp() }) {
-                    Text("Go Back")
-                }
             }
         }
     }

@@ -24,14 +24,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import org.com.hcmurs.ui.theme.GreenPrimary
+import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.ui.theme.LightOrange
 
 @Composable
 fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) {
     val backgroundColor = Color(0xFFE0E0E0)
     val indicatorColor = when (selectedAction) {
-        "Entry" -> GreenPrimary
+        "Entry" -> PrimaryGreen
         "Exit" -> LightOrange
         else -> Color.Gray
     }

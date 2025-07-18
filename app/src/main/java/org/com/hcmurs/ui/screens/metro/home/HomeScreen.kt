@@ -29,23 +29,29 @@ import org.com.hcmurs.ui.components.dialog.LoginRequiredDialog
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavHostController,
-                loginViewModel: LoginViewModel = hiltViewModel()
-)
- {
+fun HomeScreen(
+    navController: NavHostController,
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
     var showLoginDialog by remember { mutableStateOf(false) }
 
-    val checkAuthAndNavigate: (String) -> Unit = { route ->
-        if (isAuthenticated) {
-            navController.navigate(route)
-        } else {
-            showLoginDialog = true
+    val protectedRoutesWithDialog = setOf(
+        Screen.RedeemCodeForTicket.route,
+        Screen.BuyTicket.route,
+        Screen.MyTicket.route,
+        Screen.Feedback.route
+    )
+
+    fun handleNavigation(screen: String) {
+        when {
+            screen in protectedRoutesWithDialog && !isAuthenticated -> showLoginDialog = true
+            else -> navController.navigate(screen)
         }
     }
 
     if (showLoginDialog) {
-        LoginRequiredDialog (
+        LoginRequiredDialog(
             onDismissRequest = { showLoginDialog = false },
             onLoginClick = {
                 showLoginDialog = false
@@ -59,16 +65,9 @@ fun HomeScreen(navController: NavHostController,
         showFloatingButton = true,
         role = UserRole.USER,
         onGridItemClick = { screen ->
-            when (screen) {
-                Screen.RedeemCodeForTicket.route,
-                Screen.BuyTicket.route,
-                Screen.MyTicket.route,
-                Screen.Feedback.route,
-                Screen.Account.route -> checkAuthAndNavigate(screen)
-                else -> navController.navigate(screen)
-            }
+            handleNavigation(screen)
         }
-        ) {
+    ) {
         item {
             Spacer(modifier = Modifier.height(30.dp))
             Box(modifier = Modifier.padding(start = 16.dp)) {
@@ -79,11 +78,12 @@ fun HomeScreen(navController: NavHostController,
         item {
             Spacer(modifier = Modifier.height(10.dp))
             Box(modifier = Modifier.padding(start = 16.dp)) {
-                    BlogSection(navController)
+                BlogSection(navController)
             }
         }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)

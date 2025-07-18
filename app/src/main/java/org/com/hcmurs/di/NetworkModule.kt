@@ -49,7 +49,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-   // private val BASE_URL = "http://10.0.2.2:4003/"
+    private val BASE_URL = "http://10.0.2.2:4003/"
 //    private val BASE_URL = "http://192.168.88.172:4003/"
     // private val BASE_URL = "http://172.20.10.9:4003/"
     private val BASE_BLOG = "http://10.0.2.2:4007/"
@@ -57,7 +57,7 @@ class NetworkModule {
     private val BASE_PHONE = "http://192.168.1.14:4003/"
     private val BASE_STATION_ = "http://10.0.2.2:4004/"
     private val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
-    private val BASE_URL= "http://10.87.15.67:4003/"
+//    private val BASE_URL= "http://10.87.15.67:4003/"
 
     @Provides
     @Singleton

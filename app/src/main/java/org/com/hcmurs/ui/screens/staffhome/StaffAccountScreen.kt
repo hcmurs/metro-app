@@ -52,8 +52,8 @@ import androidx.navigation.NavController
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
-import org.com.hcmurs.ui.theme.GreenPrimary
 import org.com.hcmurs.ui.theme.PaleYellow
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 data class StaffMenuItem(
     val icon: ImageVector,
@@ -93,7 +93,7 @@ fun StaffMenuItemRow(
                     contentDescription = null,
                     tint = when {
                         item.isDestructive -> Color(0xFFE53935)
-                        item.icon == Icons.Default.QrCodeScanner -> Color(0xFF4CAF50)
+                        item.icon == Icons.Default.QrCodeScanner -> PrimaryGreen
                         else -> Color(0xFF2196F3)
                     },
                     modifier = Modifier.size(24.dp)
@@ -139,7 +139,7 @@ fun StaffBadge() {
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = RoundedCornerShape(20.dp),
-        color = Color(0xFF4CAF50).copy(alpha = 0.1f)
+        color = PrimaryGreen.copy(alpha = 0.1f)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -148,13 +148,13 @@ fun StaffBadge() {
             Icon(
                 imageVector = Icons.Outlined.Badge,
                 contentDescription = "Staff Badge",
-                tint = Color(0xFF4CAF50),
+                tint = PrimaryGreen,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "NHÂN VIÊN",
-                color = Color(0xFF4CAF50),
+                color = PrimaryGreen,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -235,7 +235,7 @@ fun StaffAccountScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        GreenPrimary,
+                        PrimaryGreen,
                         PaleYellow,
                         DarkGreen
                     )
@@ -290,14 +290,14 @@ fun StaffAccountScreen(
                     Box(
                         modifier = Modifier
                             .size(64.dp)
-                            .background(Color(0xFF4CAF50).copy(alpha = 0.2f), CircleShape),
+                            .background(PrimaryGreen.copy(alpha = 0.2f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Staff Avatar",
                             modifier = Modifier.size(48.dp),
-                            tint = Color(0xFF4CAF50)
+                            tint = PrimaryGreen
                         )
                     }
                 }
