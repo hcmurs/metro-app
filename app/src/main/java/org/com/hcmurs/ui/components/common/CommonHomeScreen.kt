@@ -17,17 +17,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
@@ -35,16 +42,18 @@ import org.com.hcmurs.constant.UserRole
 import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
+import org.com.hcmurs.ui.screens.login.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppHomeScreen(
     navController: NavHostController,
+    loginViewModel: LoginViewModel,
     showFloatingButton: Boolean = true,
     role: UserRole = UserRole.GUEST,
     onGridItemClick: (String) -> Unit,
     contentAfterBanner: LazyListScope.() -> Unit,
-    ) {
+) {
     val listState = rememberLazyListState()
     val isScrolled by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset > 0 }
@@ -52,6 +61,7 @@ fun AppHomeScreen(
 
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
+    val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -96,7 +106,7 @@ fun AppHomeScreen(
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
-        if (showFloatingButton) {
+        if (isAuthenticated) {
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -112,14 +122,14 @@ fun AppHomeScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.End
                     ) {
-                        PhoneOptionButton("1900 1234") {
-                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:19001234"))
+                        PhoneOptionButton("Lịch trình và thời gian tàu chạy","028 7300 6659") {
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:02873006659"))
                             context.startActivity(intent)
                             expanded = false
                         }
 
-                        PhoneOptionButton("028 5678") {
-                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:0285678"))
+                        PhoneOptionButton("Vé và các dịch vụ hành khách","028 7300 3885") {
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:02873003885"))
                             context.startActivity(intent)
                             expanded = false
                         }
@@ -141,16 +151,36 @@ fun AppHomeScreen(
 
 @Composable
 fun PhoneOptionButton(
+    label: String,
     phoneNumber: String,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF4CAF50),
+            contentColor = Color.White
+        ),
         modifier = Modifier
-            .width(180.dp)
-            .height(48.dp)
+            .width(250.dp)
+            .height(56.dp)
+            .shadow(8.dp, RoundedCornerShape(24.dp)) // Shadow cho hiệu ứng nổi
     ) {
-        Text(text = phoneNumber)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = label, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall)
+            Text(text = phoneNumber, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PhoneOptionButtonPreview() {
+    PhoneOptionButton(
+        phoneNumber = "028 7300 6659",
+        label = "Lịch trình và thời gian tàu chạy"
+    ) {
+        // Handle click
     }
 }

@@ -61,6 +61,7 @@ fun HomeScreen(
     }
 
     AppHomeScreen(
+        loginViewModel = loginViewModel,
         navController = navController,
         showFloatingButton = true,
         role = UserRole.USER,

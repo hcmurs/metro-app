@@ -62,9 +62,9 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
                 featuredBlogs.value.forEach { blog ->
                     BlogTile(
                         title = blog.title ?: "",
-                        subtitle = blog.date ?: "",
+                        subtitle = blog.excerpt ?: "",
                         thumbnailUrl = blog.image,
-                        color = LightBeige,
+                        color = Color.White,
                         modifier = Modifier.width(300.dp)
                     ) {
                         navController.navigate("blog_detail/${blog.id}")
@@ -98,7 +98,7 @@ fun BlogLoadingPlaceholder(modifier: Modifier) {
                 text = "Loading...",
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -143,7 +143,6 @@ fun BlogTile(
                     .fillMaxWidth()
                     .height(170.dp),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.hurc)
             )
 
             // Blog info
@@ -154,16 +153,16 @@ fun BlogTile(
             ) {
                 Text(
                     text = title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = Color.Black,
                     fontSize = 13.sp
                 )
             }

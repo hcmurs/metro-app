@@ -47,8 +47,8 @@ import org.com.hcmurs.ui.theme.LightBeige
 fun BlogTile(
     blog: BlogResponse,
     onClick: () -> Unit = {},
-    color: Color = LightBeige,
-    textColor: Color = Color.White
+    color: Color = Color.White,
+    textColor: Color = Color.Black
 ) {
     Card(
         modifier = Modifier
@@ -97,7 +97,7 @@ fun BlogTile(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = blog.date ?: "",
+                    text = blog.readTime ?: "",
                     fontSize = 10.sp,
                     color = Color.Gray
                 )
