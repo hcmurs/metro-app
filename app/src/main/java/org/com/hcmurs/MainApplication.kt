@@ -1,6 +1,7 @@
 package org.com.hcmurs
 
 import android.app.Application
+import android.content.Context
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
@@ -12,6 +13,9 @@ import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import okio.Path.Companion.toPath
 import javax.inject.Inject
+import android.content.res.Configuration
+import org.com.hcmurs.utils.LanguageManager
+import java.util.Locale
 
 @HiltAndroidApp
 class MainApplication : Application() {
@@ -22,6 +26,9 @@ class MainApplication : Application() {
     @OptIn(ExperimentalCoilApi::class)
     override fun onCreate() {
         super.onCreate()
+
+        val currentLang = LanguageManager.getLocale(this)
+        LanguageManager.setLocale(this, currentLang)
 
         // Method 1: Using setSafe (recommended)
         SingletonImageLoader.setSafe {
@@ -42,6 +49,19 @@ class MainApplication : Application() {
                 }
                 .crossfade(true)
                 .build()
+        }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        if (base != null) {
+            val languageCode = LanguageManager.getLocale(base)
+            val locale = Locale(languageCode)
+            val config = Configuration(base.resources.configuration)
+            config.setLocale(locale)
+            val context = base.createConfigurationContext(config)
+            super.attachBaseContext(context)
+        } else {
+            super.attachBaseContext(base)
         }
     }
 }

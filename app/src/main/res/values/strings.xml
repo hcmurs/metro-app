@@ -11,6 +11,10 @@ and secure shopping experience</string>
     <string name="letgo">"Let's Get Started"</string>
     <string name="auth_navigation">Already have an account?</string>
     <string name="sign">"Sign in"</string>
+    <string name="change_language">Change Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="language_note_title">Language Selection</string>
+    <string name="language_note_description">Choose your preferred language for a personalized experience.</string>
 
      <!-- Screen Titles -->
     <string name="buy_ticket">Buy Ticket</string>
@@ -32,7 +36,7 @@ and secure shopping experience</string>
     <!-- Home Screen -->
     <string name="news">News</string>
     <string name="see_all">See all</string>
-    <string name="vietnamese">Vietnamese</string>
+    <string name="vietnamese">Tiếng Việt</string>
     <string name="english">English</string>
     <string name="metro_upgrade_title">New Metro system upgraded</string>
     <string name="metro_guide_title">GO!METRO with diverse travel modes</string>

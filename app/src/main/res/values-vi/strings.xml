@@ -11,6 +11,10 @@ and secure shopping experience</string>
     <string name="letgo">"Let's Get Started"</string>
     <string name="auth_navigation">Already have an account?</string>
     <string name="sign">"Sign in"</string>
+    <string name="change_language">Thay đổi ngôn ngữ</string>
+    <string name="select_language">Chọn ngôn ngữ</string>
+    <string name="language_note_title">Lựa chọn ngôn ngữ</string>
+    <string name="language_note_description">Chọn ngôn ngữ bạn muốn sử dụng để có trải nghiệm cá nhân hóa.</string>
 
   <!-- Screen Titles -->
     <string name="buy_ticket">Mua vé</string>
@@ -27,8 +31,10 @@ and secure shopping experience</string>
     <string name="setting">Cài đặt</string>
     <string name="cooperation_link">Liên kết hợp tác</string>
     <string name="introduction">Giới thiệu</string>
+    <string name="scan_qr_code">Quét QR</string>
 
-        <!-- Home Screen -->
+
+    <!-- Home Screen -->
     <string name="news">Tin tức</string>
     <string name="see_all">Xem tất cả</string>
     <string name="vietnamese">Tiếng Việt</string>

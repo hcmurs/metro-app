@@ -104,6 +104,7 @@ fun StaffHomeScreen(
         }
 
         HomeTopBar(
+            navController = navController,
             modifier = Modifier.align(Alignment.TopCenter)
         )
 

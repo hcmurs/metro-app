@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.components.dropdown
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.com.hcmurs.R
@@ -38,9 +40,11 @@ fun LanguageDropdown(
     val vietnameseFlag = "\uD83C\uDDFB\uD83C\uDDF3"
     val englishFlag = "\uD83C\uDDFA\uD83C\uDDF8"
 
-    val currentDisplayText = when (selected) {
-        "Vietnamese" -> "$vietnameseFlag ${stringResource(R.string.vietnamese)}"
-        "English" -> "$englishFlag ${stringResource(R.string.english)}"
+    // Get current language from LanguageManager, not from selected parameter
+    val currentLang = LanguageManager.getLocale(context)
+    val currentDisplayText = when (currentLang) {
+        "vi" -> "$vietnameseFlag ${stringResource(R.string.vietnamese)}"
+        "en" -> "$englishFlag ${stringResource(R.string.english)}"
         else -> "$vietnameseFlag ${stringResource(R.string.vietnamese)}"
     }
 
@@ -50,14 +54,14 @@ fun LanguageDropdown(
         Card(
             modifier = Modifier.clickable { expanded = true },
             colors = CardDefaults.cardColors(
-                containerColor = if (isScrolled) Color.White.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.3f)
+                containerColor = if (isScrolled) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.8f)
             ),
             shape = RoundedCornerShape(20.dp)
         ) {
             Text(
                 text = currentDisplayText,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                color = if (isScrolled) Color.White else Color.Black,
+                color = Color.Black, // Make it always visible
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -78,6 +82,7 @@ fun LanguageDropdown(
                         Text("$flag $displayName")
                     },
                     onClick = {
+                        Log.d("LanguageDropdown", "Language selected: $langName ($langCode)")
                         LanguageManager.setLocale(context, langCode)
                         onLanguageChange(langName)
                         expanded = false
@@ -88,4 +93,14 @@ fun LanguageDropdown(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LanguageDropdownPreview() {
+    LanguageDropdown(
+        selected = "Vietnamese",
+        onLanguageChange = {},
+        isScrolled = false
+    )
 }

@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import org.com.hcmurs.ui.screens.changelanguage.ChangeLanguageScreen
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.screens.metro.PlaceholderScreen
@@ -132,6 +133,8 @@ sealed class Screen(val route: String) {
         fun createRoute(stationId: Int, stationName: String) = "scanQR/$stationId/$stationName"
         const val defaultRoute = "scanQR/0/None"
     }
+
+    object ChangeLanguage : Screen("changeLanguage")
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
@@ -398,6 +401,10 @@ fun Navigation(
 
         composable(Screen.Introduction.route) {
             IntroductionScreen(navController)
+        }
+
+        composable(Screen.ChangeLanguage.route){
+            ChangeLanguageScreen(navController)
         }
     }
 }

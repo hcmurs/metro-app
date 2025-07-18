@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.logging.interceptor)
+    implementation(libs.androidx.work.runtime.ktx)
 
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)

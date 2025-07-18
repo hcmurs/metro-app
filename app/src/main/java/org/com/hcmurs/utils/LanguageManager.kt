@@ -11,13 +11,21 @@ object LanguageManager {
     fun setLocale(context: Context, languageCode: String) {
         val prefs = context.getSharedPreferences("language_prefs", Context.MODE_PRIVATE)
         prefs.edit().putString(LANGUAGE_KEY, languageCode).apply()
-        
+
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
-        
+
         val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
+
+        // Update configuration for current context
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
+
+        // Also update application context if available
+        val appContext = context.applicationContext
+        if (appContext != context) {
+            appContext.resources.updateConfiguration(config, appContext.resources.displayMetrics)
+        }
     }
 
     fun getLocale(context: Context): String {
