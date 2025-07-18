@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -52,25 +53,22 @@ fun StaffQRSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Increased height to accommodate buttons
             .padding(horizontal = 10.dp)
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .wrapContentHeight()
                 .align(Alignment.Center),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Icon section
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -86,7 +84,6 @@ fun StaffQRSection(
                     )
                 }
 
-                // Text section
                 Text(
                     text = localizedTitle,
                     fontSize = 16.sp,
@@ -103,25 +100,20 @@ fun StaffQRSection(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Action buttons
-                Row(
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
                         onClick = {
-                            try {
-                                navController.navigate(
-                                    Screen.StaffStationSelectionScreen.createRoute(ActionType.ENTRY)
-                                )
-                            } catch (e: Exception) {
-                                Log.d("StaffQRSection", "Navigation error: ${e.message}")
-                            }
+                            navController.navigate(
+                                Screen.StaffStationSelectionScreen.createRoute(ActionType.ENTRY)
+                            )
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50)
-                        ),
-                        modifier = Modifier.weight(1f)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp) // Set fixed button height
                     ) {
                         Text(
                             text = "ENTRY",
@@ -130,22 +122,16 @@ fun StaffQRSection(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
-
                     Button(
                         onClick = {
-                            try {
-                                navController.navigate(
-                                    Screen.StaffStationSelectionScreen.createRoute(ActionType.EXIT)
-                                )
-                            } catch (e: Exception) {
-                                Log.d("StaffQRSection", "Navigation error: ${e.message}")
-                            }
+                            navController.navigate(
+                                Screen.StaffStationSelectionScreen.createRoute(ActionType.EXIT)
+                            )
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFFF5722)
-                        ),
-                        modifier = Modifier.weight(1f)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5722)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp) // Set fixed button height
                     ) {
                         Text(
                             text = "EXIT",
@@ -158,6 +144,7 @@ fun StaffQRSection(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

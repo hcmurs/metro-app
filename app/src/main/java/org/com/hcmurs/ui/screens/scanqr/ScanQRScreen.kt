@@ -70,6 +70,8 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import org.com.hcmurs.repositories.apis.ticket.ScanQRResponse
 import org.com.hcmurs.ui.components.topbar.ScanQRTopBar
+import org.com.hcmurs.utils.vibrateOnError
+import org.com.hcmurs.utils.vibrateOnSuccess
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -113,6 +115,21 @@ fun ScanQRScreen(
     LaunchedEffect(key1 = true) {
         if (!hasCameraPermission) {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    LaunchedEffect(scanState) {
+        when (scanState) {
+            is ScanQRViewModel.ScanState.Success -> {
+                // Vibrate on successful scan only
+                vibrateOnSuccess(context)
+                showResultDialog = true
+            }
+            is ScanQRViewModel.ScanState.Error -> {
+                vibrateOnError(context)
+                showResultDialog = true
+            }
+            else -> { /* No action needed */ }
         }
     }
 
@@ -185,7 +202,12 @@ fun ScanQRScreen(
                                     }) {
                                         Text("OK")
                                     }
-                                }
+                                },
+                                // Apply different container colors based on success/error
+                                containerColor = if (isSuccess) Color.White else Color(0xFFFBE9E7), // Light red for error
+                                titleContentColor = if (isSuccess) Color.Black else Color(0xFFD32F2F), // Red for error title
+                                textContentColor = if (isSuccess) Color.DarkGray else Color(0xFFD32F2F), // Red for error text
+                                iconContentColor = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFD32F2F) // Green for success, red for error
                             )
                         }
                     }
@@ -245,22 +267,22 @@ fun ScanQRScreen(
                             fontSize = 14.sp
                         )
 
-                        if (scannedText.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Card(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color.White.copy(alpha = 0.9f)
-                                )
-                            ) {
-                                Text(
-                                    text = "Scanned: $scannedText",
-                                    modifier = Modifier.padding(16.dp),
-                                    fontSize = 12.sp,
-                                    color = Color.Black
-                                )
-                            }
-                        }
+//                        if (scannedText.isNotEmpty()) {
+//                            Spacer(modifier = Modifier.height(16.dp))
+//                            Card(
+//                                modifier = Modifier.padding(horizontal = 16.dp),
+//                                colors = CardDefaults.cardColors(
+//                                    containerColor = Color.White.copy(alpha = 0.9f)
+//                                )
+//                            ) {
+//                                Text(
+//                                    text = "Scanned: $scannedText",
+//                                    modifier = Modifier.padding(16.dp),
+//                                    fontSize = 12.sp,
+//                                    color = Color.Black
+//                                )
+//                            }
+//                        }
 
                         Spacer(modifier = Modifier.height(40.dp))
                     }
@@ -328,7 +350,7 @@ private fun handleQRCodeScanned(
                 } else {
                     viewModel.scanTicketExit(response, stationId)
                 }
-                onShowResultDialog()
+//                onShowResultDialog()
             } else {
                 throw Exception("Invalid QR format")
             }
