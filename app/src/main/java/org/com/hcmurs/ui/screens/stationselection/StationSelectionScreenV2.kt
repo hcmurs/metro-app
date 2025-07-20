@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -25,6 +26,8 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,14 +50,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import org.com.hcmurs.RouteResponse
 import org.com.hcmurs.Screen
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
 import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.theme.PrimaryGreen
-
-
+import androidx.compose.foundation.lazy.items
+import org.com.hcmurs.ui.theme.LightOrange
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StationSelectionScreen(
@@ -64,7 +68,6 @@ fun StationSelectionScreen(
 ) {
     val uiState by stationViewModel.uiState.collectAsState()
 
-    // THAY ĐỔI: Sử dụng 2 state để lưu ga Entry và Exit
     var selectedEntryStation by remember { mutableStateOf<Station?>(null) }
     var selectedExitStation by remember { mutableStateOf<Station?>(null) }
     val fareMatrixUiState by fareMatrixViewModel.uiState.collectAsState()
@@ -102,7 +105,6 @@ fun StationSelectionScreen(
 
     }
 
-    // MỚI: Xử lý khi có lỗi tính giá vé
     LaunchedEffect(fareMatrixUiState.errorMessage) {
         Log.d(TAG, "Error message changed. Value: ${fareMatrixUiState.errorMessage}. Triggered: $isNavigationTriggered")
         if(isNavigationTriggered && fareMatrixUiState.errorMessage != null) {
@@ -111,18 +113,19 @@ fun StationSelectionScreen(
         }
     }
 
+    LaunchedEffect(uiState.selectedRoute) {
+        selectedEntryStation = null
+        selectedExitStation = null
+    }
+
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Select Entry & Exit Stations") },
+                title = { Text("Select Route & Stations") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -132,11 +135,10 @@ fun StationSelectionScreen(
             )
         },
         floatingActionButton = {
-
+            // Chỉ hiển thị nút khi đã chọn đủ cả 2 ga
             if (selectedEntryStation != null && selectedExitStation != null) {
                 FloatingActionButton(
                     onClick = {
-
                         if (!fareMatrixUiState.isLoading) {
                             isNavigationTriggered = true
                             fareMatrixViewModel.getFareForStations(
@@ -147,19 +149,10 @@ fun StationSelectionScreen(
                     },
                     containerColor = PrimaryGreen
                 ) {
-                    // Thêm logic hiển thị loading
                     if (fareMatrixUiState.isLoading && isNavigationTriggered) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
-                        )
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                     } else {
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Get Fare",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.ArrowForward, "Get Fare", tint = Color.White)
                     }
                 }
             }
@@ -172,71 +165,78 @@ fun StationSelectionScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = if (selectedAction == "Entry") "Please select your ENTRY station" else "Please select your EXIT station",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = PrimaryGreen
-            )
+            SectionTitle(text = "1. Select your route")
             Spacer(modifier = Modifier.height(8.dp))
-            SwitchEntryExit(
-                selectedAction = selectedAction,
-                onActionSelected = { newAction -> selectedAction = newAction }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // MỚI: Component hiển thị thông tin các ga đã chọn
-            SelectedStationsSummary(entryStation = selectedEntryStation, exitStation = selectedExitStation)
-
 
             when {
-                uiState.isLoading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = PrimaryGreen)
-                    }
+                uiState.isLoadingRoutes -> CircularProgressIndicator(color = PrimaryGreen)
+                uiState.errorMessage != null && uiState.routes.isEmpty() -> {
+                    Text("Error: ${uiState.errorMessage}", color = Color.Red)
                 }
-                uiState.errorMessage != null -> {
-                    Text(text = "Error: ${uiState.errorMessage}", color = Color.Red)
+                uiState.routes.isNotEmpty() -> {
+                    RouteSelector(
+                        routes = uiState.routes,
+                        selectedRoute = uiState.selectedRoute,
+                        onRouteSelected = { stationViewModel.onRouteSelected(it) }
+                    )
                 }
-                else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f) // Cho phép grid co giãn
-                            .padding(top = 16.dp),
-                        contentPadding = PaddingValues(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(uiState.stations) { station ->
-                            // THAY ĐỔI: Logic chọn và vô hiệu hóa card
-                            val isSelected = when (selectedAction) {
-                                "Entry" -> station == selectedEntryStation
-                                "Exit" -> station == selectedExitStation
-                                else -> false
-                            }
-                            // Ga Exit không được trùng với ga Entry
-                            val isEnabled = !(selectedAction == "Exit" && station == selectedEntryStation)
 
-                            StationCard(
-                                station = station,
-                                isSelected = isSelected,
-                                isEnabled = isEnabled,
-                                onClick = {
-                                    if (isEnabled) {
-                                        if (selectedAction == "Entry") {
-                                            selectedEntryStation = station
-                                            // Tự động chuyển sang chọn Exit nếu chưa có
-                                            if (selectedExitStation == null) {
-                                                selectedAction = "Exit"
+            }
+
+            // -- PHẦN 2: CHỌN GA (chỉ hiển thị sau khi đã chọn tuyến) --
+            if (uiState.selectedRoute != null) {
+                Spacer(modifier = Modifier.height(24.dp))
+                SectionTitle(text = if (selectedAction == "Entry") "2. Select your ENTRY station" else "2. Select your EXIT station")
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SwitchEntryExit(
+                    selectedAction = selectedAction,
+                    onActionSelected = { newAction -> selectedAction = newAction }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SelectedStationsSummary(entryStation = selectedEntryStation, exitStation = selectedExitStation)
+
+                when {
+                    uiState.isLoadingStations -> {
+                        Box(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = PrimaryGreen)
+                        }
+                    }
+                    uiState.errorMessage != null && uiState.stations.isEmpty() -> {
+                        Text("Error: ${uiState.errorMessage}", color = Color.Red, textAlign = TextAlign.Center)
+                    }
+                    else -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.weight(1f).padding(top = 16.dp),
+                            contentPadding = PaddingValues(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(uiState.stations.filterNotNull()) { station ->
+                                val isSelected = when (selectedAction) {
+                                    "Entry" -> station.stationId == selectedEntryStation?.stationId
+                                    "Exit" -> station.stationId == selectedExitStation?.stationId
+                                    else -> false
+                                }
+                                val isEnabled = !(selectedAction == "Exit" && station.stationId == selectedEntryStation?.stationId)
+
+                                StationCard(
+                                    station = station,
+                                    isSelected = isSelected,
+                                    isEnabled = isEnabled,
+                                    onClick = {
+                                        if (isEnabled) {
+                                            if (selectedAction == "Entry") {
+                                                selectedEntryStation = station
+                                                if (selectedExitStation == null) selectedAction = "Exit"
+                                            } else {
+                                                selectedExitStation = station
                                             }
-                                        } else { // "Exit"
-                                            selectedExitStation = station
                                         }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -246,41 +246,82 @@ fun StationSelectionScreen(
 }
 
 @Composable
-fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFF5F5F5))
+private fun SectionTitle(text: String) {
+    Text(
+        text = text,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold,
+        color = PrimaryGreen
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RouteSelector(
+    routes: List<RouteResponse>,
+    selectedRoute: RouteResponse?,
+    onRouteSelected: (RouteResponse) -> Unit
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                Text("ENTRY", fontSize = 14.sp, color = Color.Gray)
-                Text(
-                    text = entryStation?.name ?: "Not Selected",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (entryStation != null) PrimaryGreen else Color.Gray,
-                    textAlign = TextAlign.Center
+        items(
+            items = routes,
+            key = { route -> route.routeId }
+        ) { route ->
+            FilterChip(
+                selected = route.routeId == selectedRoute?.routeId,
+                onClick = { onRouteSelected(route) },
+                label = { Text(route.routeName) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = PrimaryGreen,
+                    selectedLabelColor = Color.White
                 )
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                Text("EXIT", fontSize = 14.sp, color = Color.Gray)
-                Text(
-                    text = exitStation?.name ?: "Not Selected",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (exitStation != null) LightOrange else Color.Gray, // Giả sử LightOrange đã được định nghĩa
-                    textAlign = TextAlign.Center
-                )
-            }
+            )
         }
     }
 }
-
+    @Composable
+    fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFF5F5F5))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("ENTRY", fontSize = 14.sp, color = Color.Gray)
+                    Text(
+                        text = entryStation?.name ?: "Not Selected",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (entryStation != null) PrimaryGreen else Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("EXIT", fontSize = 14.sp, color = Color.Gray)
+                    Text(
+                        text = exitStation?.name ?: "Not Selected",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (exitStation != null) LightOrange else Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
 val LightOrange = Color(0xFFFFA726)
 //
 //@Preview(showBackground = true)

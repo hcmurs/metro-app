@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -324,7 +325,7 @@ fun RouteCard(fareMatrix: FareMatrix) {
     }
 }
 
-// --- CÁC SECTION CHÍNH ---
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun TicketOptionsSection(
     navController: NavHostController,
@@ -382,7 +383,6 @@ fun TicketOptionsSection(
 
 @Composable
 fun RoutesSection(viewModel: FareMatrixViewModel) {
-    // LOGIC GỐC: Được giữ nguyên
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
