@@ -125,7 +125,7 @@ fun BlogTile(
 ) {
     Card(
         modifier = modifier
-            .wrapContentHeight()
+            .height(300.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -163,7 +163,8 @@ fun BlogTile(
                 Text(
                     text = subtitle,
                     color = Color.Black,
-                    fontSize = 13.sp
+                    fontSize = 13.sp,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

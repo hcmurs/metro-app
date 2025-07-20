@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -40,7 +41,7 @@ fun ConstructionImageScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hình ảnh công trình") },
+                title = { Text(stringResource(R.string.construction_topbar)) },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {

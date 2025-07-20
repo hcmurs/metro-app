@@ -16,7 +16,7 @@ and secure shopping experience</string>
     <string name="language_note_title">Lựa chọn ngôn ngữ</string>
     <string name="language_note_description">Chọn ngôn ngữ bạn muốn sử dụng để có trải nghiệm cá nhân hóa.</string>
 
-  <!-- Screen Titles -->
+    <!-- Screen Titles -->
     <string name="buy_ticket">Mua vé</string>
     <string name="route">Tuyến đường</string>
     <string name="my_ticket">Vé của tôi</string>
@@ -43,5 +43,52 @@ and secure shopping experience</string>
     <string name="metro_guide_title">GO!METRO với đa dạng hình thức đi tàu</string>
     <string name="account_guide_title">Hướng dẫn sử dụng tài khoản</string>
     <string name="tap_to_view">Nhấn để xem ngay bạn nhé</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Chào mừng đến với HCMURS</string>
+    <string name="login_introduction">Hệ thống đường sắt đô thị Hồ Chí Minh</string>
+    <string name="continue_with_google">Tiếp tục với Google</string>
+    //student_account
+    <string name="continue_with_facebook">Tiếp tục với Facebook</string>
+
+    <!--  Account Screen  -->
+    <string name="account_information">Thông tin tài khoản</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="account_verification">Xác thực tài khoản</string>
+    <string name="student_account">Bạn đang là sinh viên</string>
+    <string name="logout">Đăng xuất</string>
+
+    <!-- Blog Screen -->
+    <string name="blog_detail">Chi tiết bài viết</string>
+
+    <!--  ConstructionImageScreen  -->
+    <string name="construction_topbar">Hình ảnh công trình</string>
+
+    <!-- Ticket Information - Vietnamese -->
+    <string name="ticket_title_1">GO!METRO với đa dạng hình thức đi tàu</string>
+    <string name="ticket_desc_1">Hành trình di chuyển trong thành phố chưa bao giờ thuận tiện đến thế</string>
+    <string name="ticket_time_1">4 tháng trước</string>
+
+    <string name="ticket_title_2">Bảng giá vé tuyến metro số 1 Bến Thành - Suối Tiên</string>
+    <string name="ticket_desc_2">🔊 Học sinh, sinh viên được giảm 50%, chỉ còn 150.000 đồng/tháng</string>
+    <string name="ticket_time_2">6 tháng trước</string>
+
+    <string name="ticket_title_3">Đề xuất giá vé tuyến metro Bến Thành - Suối Tiên</string>
+    <string name="ticket_desc_3">Vé tàu metro Bến Thành - Suối Tiên cao nhất 24.000 đồng/lượt</string>
+    <string name="ticket_time_3">khoảng 1 năm trước</string>
+
+    <!--  QR Screen -->
+    <string name="place_qr_code">Vui lòng đặt mã QR vào khung hình</string>
+    <string name="camera_permission_required"> Cần quyền truy cập camera để quét mã QR</string>
+    <string name="grant_permission">Cấp quyền</string>
+
+    <!-- Utilities-->
+    <string name="authentication_loading">Đang xác thực...</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error">Đã xảy ra lỗi</string>
+    <string name="not_updated">Chưa cập nhật</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="not_found">Không tìm thấy kết quả</string>
+    <string name="try_search_again">Thử tìm kiếm với từ khóa khác</string>
 
 </resources>
