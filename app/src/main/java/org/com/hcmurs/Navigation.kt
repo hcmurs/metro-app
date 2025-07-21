@@ -251,6 +251,7 @@ fun Navigation(
             route = Screen.TicketFlow.route,
             startDestination = Screen.RouteSelection.route
         ) {
+
             composable(route = Screen.RouteSelection.route) { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screen.TicketFlow.route)
@@ -262,7 +263,6 @@ fun Navigation(
                     stationViewModel = stationViewModel
                 )
             }
-
             composable(route = Screen.StationSelection.route) { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screen.TicketFlow.route)
@@ -298,7 +298,6 @@ fun Navigation(
                 )
             }
 
-            // Màn hình 3: THÔNG TIN ĐƠN HÀNG
             composable(
                 route = Screen.OrderFareInfo.route,
                 arguments = listOf(
