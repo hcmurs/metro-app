@@ -59,7 +59,7 @@ class NetworkModule {
     private val BASE_STATION_ = "http://10.0.2.2:4004/"
     private val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
     private val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
-//    private val BASE_URL= "http://10.87.15.67:4003/"
+  //  private val BASE_URL= "http://192.168.1.13:4003/"
 
     @Provides
     @Singleton

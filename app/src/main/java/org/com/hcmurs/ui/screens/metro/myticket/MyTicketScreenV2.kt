@@ -34,6 +34,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
@@ -86,7 +90,9 @@ fun MyTicketScreen(
     LaunchedEffect(Unit) {
         currencyManager.updateExchangeRate()
     }
-
+   OnScreenResumed {
+        viewModel.fetchUserOrders()
+    }
 
     val filteredOrders = remember(uiState.orders, selectedTab.value) {
         uiState.orders.filter { order ->
@@ -317,4 +323,23 @@ fun MyTicketTopBar(navController: NavController) {
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
     )
+}
+
+@Composable
+fun OnScreenResumed(action: () -> Unit) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect (lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                action()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 }

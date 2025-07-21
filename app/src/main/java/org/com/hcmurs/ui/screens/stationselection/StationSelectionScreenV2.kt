@@ -114,7 +114,7 @@ fun StationSelectionScreen(
                 )            }
         } else if (fareMatrixUiState.errorMessage != null) {
             Log.e(TAG, "Fare calculation failed: ${fareMatrixUiState.errorMessage}")
-            isNavigationTriggered = false // Reset trigger
+            isNavigationTriggered = false
         }
         isNavigationTriggered = false
 

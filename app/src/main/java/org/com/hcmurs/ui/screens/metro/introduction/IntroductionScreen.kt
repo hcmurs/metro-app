@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +43,7 @@ fun IntroductionScreen(navController: NavHostController) {
                 }
             )
         },
-        modifier = Modifier.background(Color.White)
+        modifier = Modifier.background(PrimaryGreen)
 
     ) { padding ->
         Column(
@@ -61,7 +62,6 @@ fun IntroductionScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
-                .verticalScroll(rememberScrollState())
         ) {
             // Main title
             Text(
