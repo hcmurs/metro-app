@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -141,7 +142,7 @@ fun RouteScreen(
 
     Scaffold(
         topBar = {
-            CommonTopBar(navController, "Hành trình")
+            CommonTopBar(navController, stringResource(R.string.journey_title))
         }
     ) { paddingValues ->
         Box(
@@ -529,7 +530,7 @@ fun RouteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showStartStationDialog = false }) {
-                        Text("Hủy")
+                        Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                     }
                 }
             )
@@ -554,7 +555,7 @@ fun RouteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showEndStationDialog = false }) {
-                        Text("Hủy")
+                        Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                     }
                 }
             )

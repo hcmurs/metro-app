@@ -1,5 +1,6 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -112,7 +113,7 @@ class FareMatrixViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isProcessing = true, processMessage = "Đang tạo đơn hàng...") }
+            _uiState.update { it.copy(isProcessing = true, processMessage = "We are creating your order...") }
 
             val orderRequest = CreateOrderRequest(
                 fareMatrixId = FareMatrixIdObject(id = currentFareMatrix.fareMatrixId),
@@ -123,7 +124,7 @@ class FareMatrixViewModel @Inject constructor(
             orderResult.onSuccess { orderResponse ->
                 val orderData = orderResponse.data
                 if ((orderResponse.status == 200 || orderResponse.status == 0) && orderData != null) {
-                    _uiState.update { it.copy(processMessage = "Đang tạo PaymentIntent...") }
+                    _uiState.update { it.copy(processMessage = "We are creating your order...") }
                     delay(300)
                     val checkoutResult = paymentRepository.createStripeCheckoutSession(orderData.orderId)
 

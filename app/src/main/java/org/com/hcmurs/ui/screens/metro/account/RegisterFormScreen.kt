@@ -261,7 +261,7 @@ private fun DatePicker(
                 }) { Text("Chọn") }
             },
             dismissButton = {
-                Button (onClick = { showDialog = false }) { Text("Hủy") }
+                Button (onClick = { showDialog = false }) { Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel)) }
             }
         ) {
             DatePicker (state = datePickerState)

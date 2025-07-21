@@ -19,6 +19,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+import org.com.hcmurs.MainActivity
+import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.ui.screens.changelanguage.ChangeLanguageScreen
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
@@ -59,6 +65,11 @@ import org.com.hcmurs.ui.screens.stationselection.StaffStationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
 
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface CurrencyManagerEntryPoint {
+    fun currencyManager(): CurrencyManager
+}
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -213,7 +224,19 @@ fun Navigation(
         }
 
         composable(Screen.MyTicket.route) {
-            MyTicketScreen(navController)
+            // Get CurrencyManager from the calling activity through the NavBackStackEntry
+            val activity = LocalContext.current as? MainActivity
+            val currencyManager = activity?.currencyManager 
+            if (currencyManager != null) {
+                MyTicketScreen(navController, currencyManager)
+            } else {
+                // Fallback - try to get from Hilt container directly
+                val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
+                    LocalContext.current.applicationContext,
+                    CurrencyManagerEntryPoint::class.java
+                ).currencyManager()
+                MyTicketScreen(navController, fallbackManager)
+            }
         }
 
         composable(Screen.Feedback.route) {
@@ -330,13 +353,37 @@ fun Navigation(
         // Add placeholder screens for the new routes
         // Replace these with your actual screen implementations
         composable(Screen.BuyTicket.route) {
-            BuyTicketScreen(navController)
+            // Get CurrencyManager from the calling activity through the NavBackStackEntry
+            val activity = LocalContext.current as? MainActivity
+            val currencyManager = activity?.currencyManager 
+            if (currencyManager != null) {
+                BuyTicketScreen(navController, currencyManager)
+            } else {
+                // Fallback - try to get from Hilt container directly
+                val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
+                    LocalContext.current.applicationContext,
+                    CurrencyManagerEntryPoint::class.java
+                ).currencyManager()
+                BuyTicketScreen(navController, fallbackManager)
+            }
         }
         composable(Screen.BuyTicketDetail.route) {
             TicketDetailScreen(navController)
         }
         composable(Screen.OrderInfo.route) {
-            OrderInfoScreen(navController)
+            // Get CurrencyManager from the calling activity through the NavBackStackEntry
+            val activity = LocalContext.current as? MainActivity
+            val currencyManager = activity?.currencyManager 
+            if (currencyManager != null) {
+                OrderInfoScreen(navController, currencyManager)
+            } else {
+                // Fallback - try to get from Hilt container directly
+                val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
+                    LocalContext.current.applicationContext,
+                    CurrencyManagerEntryPoint::class.java
+                ).currencyManager()
+                OrderInfoScreen(navController, fallbackManager)
+            }
         }
         composable(Screen.Route.route) {
             RouteScreen(navController)
@@ -404,7 +451,19 @@ fun Navigation(
         }
 
         composable(Screen.ChangeLanguage.route){
-            ChangeLanguageScreen(navController)
+            // Get CurrencyManager from the calling activity through the NavBackStackEntry
+            val activity = LocalContext.current as? MainActivity
+            val currencyManager = activity?.currencyManager 
+            if (currencyManager != null) {
+                ChangeLanguageScreen(navController, currencyManager)
+            } else {
+                // Fallback - try to get from Hilt container directly
+                val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
+                    LocalContext.current.applicationContext,
+                    CurrencyManagerEntryPoint::class.java
+                ).currencyManager()
+                ChangeLanguageScreen(navController, fallbackManager)
+            }
         }
     }
 }

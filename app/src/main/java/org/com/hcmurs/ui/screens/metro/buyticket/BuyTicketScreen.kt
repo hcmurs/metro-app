@@ -28,6 +28,8 @@ import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WavingHand
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -52,6 +54,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,9 +63,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.FareMatrix
+import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import org.com.hcmurs.ui.screens.login.LoginViewModel
+import org.com.hcmurs.utils.CurrencyManager
+import org.com.hcmurs.utils.TranslationHelper
 import androidx.compose.runtime.setValue
 
 data class TicketOption(
@@ -69,6 +76,7 @@ data class TicketOption(
     val price: String,
     val icon: ImageVector = Icons.Default.ConfirmationNumber
 )
+
 data class RouteInfo(
     val from: String,
     val to: String,
@@ -88,7 +96,7 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "Mua vé",
+                text = stringResource(R.string.buy_ticket),
                 color = PrimaryGreen,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -133,13 +141,13 @@ fun WelcomeCard() {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    text = "Chào mừng!",
+                    text = stringResource(R.string.welcome_message),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Trải nghiệm mới cùng Metro ngay hôm nay!",
+                    text = stringResource(R.string.welcome_subtitle),
                     fontSize = 14.sp,
                     color = Color(0xB3FFFFFF) // White with 70% opacity
                 )
@@ -178,18 +186,32 @@ fun SectionHeader(title: String, icon: ImageVector) {
 fun TicketCard(
     ticket: TicketType,
     navController: NavHostController,
-    viewModel : LoginViewModel
+    viewModel: LoginViewModel,
+    currencyManager: CurrencyManager
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val userProfile by viewModel.userProfile.collectAsState()
+    val context = LocalContext.current
+    val currentLanguage = org.com.hcmurs.utils.LanguageManager.getLocale(context)
+    val exchangeRate by currencyManager.exchangeRate.collectAsState()
+    val isLoadingRate by currencyManager.isLoading.collectAsState()
+
+    // Initialize currency manager on first load
+    LaunchedEffect(Unit) {
+        currencyManager.updateExchangeRate()
+    }
+
     if (showDialog) {
-        AlertDialog (
+        AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Thông báo") },
-            text = { Text("Bạn không phải là sinh viên, vui lòng xác thực để tiếp tục.") },
+            title = { Text(stringResource(R.string.notification)) },
+            text = { Text(stringResource(R.string.student_verification_required)) },
             confirmButton = {
-                TextButton (onClick = { showDialog = false }) {
-                    Text("OK")
+                Button(
+                    onClick = { showDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = org.com.hcmurs.ui.screens.metro.account.PrimaryGreen),
+                ) {
+                    Text(stringResource(R.string.ok))
                 }
             }
         )
@@ -240,24 +262,43 @@ fun TicketCard(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = ticket.description,
+                        text = TranslationHelper.getLocalizedTicketName(
+                            ticket.description,
+                            currentLanguage
+                        ),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = TextPrimaryColor
                     )
-                    if( ticket.name != "Vé đơn") {
-                        Text(
-                            text = "${ticket.price} đ",
-                            fontSize = 14.sp,
-                            color = TextSecondaryColor
-                        )
-                    }
+                    if (ticket.name != "Vé đơn") {
+                        // Convert price based on current language
+                        val vndPrice = when (val price = ticket.price) {
+                            is Number -> price.toDouble()
+                            else -> 0.0
+                        }
+                        val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (isLoadingRate && currentLanguage == "en") {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(12.dp),
+                                    color = TextSecondaryColor,
+                                    strokeWidth = 1.dp
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Text(
+                                text = convertedPrice,
+                                fontSize = 14.sp,
+                                color = TextSecondaryColor
+                            )
+                        }
+                    }
                 }
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Mua vé",
+                contentDescription = stringResource(R.string.buy_ticket),
                 tint = TextSecondaryColor.copy(alpha = 0.7f)
             )
         }
@@ -266,11 +307,20 @@ fun TicketCard(
 
 // --- ROUTE CARD ---
 @Composable
-fun RouteCard(fareMatrix: FareMatrix) {
+fun RouteCard(fareMatrix: FareMatrix, currencyManager: CurrencyManager) {
+    val context = LocalContext.current
+    val currentLanguage = org.com.hcmurs.utils.LanguageManager.getLocale(context)
+    val exchangeRate by currencyManager.exchangeRate.collectAsState()
+    val isLoadingRate by currencyManager.isLoading.collectAsState()
+
+    // Convert price based on current language
+    val vndPrice = fareMatrix.price.toDouble()
+    val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {  },
+            .clickable { },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -301,24 +351,34 @@ fun RouteCard(fareMatrix: FareMatrix) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = "Tuyến: ${fareMatrix.name}",
+                        text = "${stringResource(R.string.route_label)} ${fareMatrix.name}",
                         color = TextPrimaryColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-                    Text(
-                        text = "Giá: ${fareMatrix.price} đ",
-                        fontSize = 14.sp,
-                        color = TextSecondaryColor
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isLoadingRate && currentLanguage == "en") {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(12.dp),
+                                color = TextSecondaryColor,
+                                strokeWidth = 1.dp
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                        Text(
+                            text = "${stringResource(R.string.price_label)} $convertedPrice",
+                            fontSize = 14.sp,
+                            color = TextSecondaryColor
+                        )
+                    }
                 }
             }
             Text(
-                text = "Xem",
+                text = stringResource(R.string.view),
                 color = PrimaryGreen,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable {  }
+                modifier = Modifier.clickable { }
             )
         }
     }
@@ -329,51 +389,86 @@ fun RouteCard(fareMatrix: FareMatrix) {
 fun TicketOptionsSection(
     navController: NavHostController,
     viewModel: BuyTicketViewModel,
-    loginViewModel: LoginViewModel
+    loginViewModel: LoginViewModel,
+    currencyManager: CurrencyManager
 ) {
     val ticketOptions by viewModel.ticketTypes.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
 
-        LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         if (ticketOptions.isEmpty() && !isLoading && errorMessage == null) {
             viewModel.fetchTicketTypes()
         }
     }
 
     if (isLoading) {
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator(color = PrimaryGreen)
         }
     } else if (errorMessage != null) {
-        Text(text = "Lỗi tải dữ liệu: $errorMessage", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(
+            text = stringResource(R.string.error_loading_tickets, errorMessage!!),
+            color = Color.Red,
+            modifier = Modifier.padding(16.dp)
+        )
     } else {
 
         val ticketSingle = ticketOptions.find { it.name == "Vé đơn" }
         val ticketStudent = ticketOptions.find { it.name == "Vé sinh viên" }
-        val otherTickets = ticketOptions.filterNot { it.name == "Vé đơn" || it.name == "Vé sinh viên"}
+        val otherTickets =
+            ticketOptions.filterNot { it.name == "Vé đơn" || it.name == "Vé sinh viên" }
 
 
 
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             ticketSingle?.let {
-                SectionHeader(title = "Mua vé theo tuyến ", icon = Icons.Default.Route)
+                SectionHeader(
+                    title = stringResource(R.string.route_ticket_section),
+                    icon = Icons.Default.Route
+                )
 
-                TicketCard(ticket = it, navController = navController, viewModel = loginViewModel)
+                TicketCard(
+                    ticket = it,
+                    navController = navController,
+                    viewModel = loginViewModel,
+                    currencyManager = currencyManager
+                )
             }
 
             ticketStudent?.let {
-                SectionHeader(title = "Vé dành cho sinh viên theo tháng", icon = Icons.Default.School)
+                SectionHeader(
+                    title = stringResource(R.string.student_ticket_section),
+                    icon = Icons.Default.School
+                )
 
-                TicketCard(ticket = it, navController = navController, viewModel = loginViewModel)
+                TicketCard(
+                    ticket = it,
+                    navController = navController,
+                    viewModel = loginViewModel,
+                    currencyManager = currencyManager
+                )
             }
 
             if (otherTickets.isNotEmpty()) {
-                SectionHeader(title = "Các loại vé khác", icon = Icons.Default.LocalActivity)
+                SectionHeader(
+                    title = stringResource(R.string.other_tickets_section),
+                    icon = Icons.Default.LocalActivity
+                )
 
                 otherTickets.forEach { ticket ->
-                    TicketCard(ticket = ticket, navController = navController, viewModel = loginViewModel)
+                    TicketCard(
+                        ticket = ticket,
+                        navController = navController,
+                        viewModel = loginViewModel,
+                        currencyManager = currencyManager
+                    )
                 }
             }
         }
@@ -381,7 +476,7 @@ fun TicketOptionsSection(
 }
 
 @Composable
-fun RoutesSection(viewModel: FareMatrixViewModel) {
+fun RoutesSection(viewModel: FareMatrixViewModel, currencyManager: CurrencyManager) {
     // LOGIC GỐC: Được giữ nguyên
     val uiState by viewModel.uiState.collectAsState()
 
@@ -392,15 +487,24 @@ fun RoutesSection(viewModel: FareMatrixViewModel) {
     }
 
     if (uiState.isLoading) {
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator(color = PrimaryGreen)
         }
     } else if (uiState.errorMessage != null) {
-        Text(text = "Lỗi tải tuyến đường: ${uiState.errorMessage}", color = Color.Red, modifier = Modifier.padding(16.dp))
+        Text(
+            text = stringResource(R.string.error_loading_routes, uiState.errorMessage!!),
+            color = Color.Red,
+            modifier = Modifier.padding(16.dp)
+        )
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             uiState.fareMatrices.forEach { fareMatrix ->
-                RouteCard(fareMatrix = fareMatrix)
+                RouteCard(fareMatrix = fareMatrix, currencyManager = currencyManager)
             }
         }
     }
@@ -411,6 +515,7 @@ fun RoutesSection(viewModel: FareMatrixViewModel) {
 @Composable
 fun BuyTicketScreen(
     navController: NavHostController,
+    currencyManager: CurrencyManager,
     buyTicketViewModel: BuyTicketViewModel = hiltViewModel(),
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -437,7 +542,7 @@ fun BuyTicketScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Spacer(modifier = Modifier.height(12.dp))
-            TicketOptionsSection(navController, buyTicketViewModel,loginViewModel)
+            TicketOptionsSection(navController, buyTicketViewModel, loginViewModel, currencyManager)
 
         }
     }
@@ -446,8 +551,22 @@ fun BuyTicketScreen(
 @Preview(showBackground = true)
 @Composable
 fun BuyTicketScreenPreview() {
-    val navController = rememberNavController()
-    BuyTicketScreen(navController = navController)
+    // Preview shows welcome card only to avoid requiring CurrencyManager
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.White, LightGreenBackground),
+                    startY = 0f,
+                    endY = 1500f
+                )
+            )
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        WelcomeCard()
+    }
 }
 
 

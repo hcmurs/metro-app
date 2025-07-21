@@ -2,11 +2,20 @@ package org.com.hcmurs.utils
 
 import android.content.Context
 import android.content.res.Configuration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 object LanguageManager {
     private const val LANGUAGE_KEY = "selected_language"
     private const val DEFAULT_LANGUAGE = "vi" // Vietnamese as default
+
+    private var currencyManager: CurrencyManager? = null
+
+    fun setCurrencyManager(manager: CurrencyManager) {
+        currencyManager = manager
+    }
 
     fun setLocale(context: Context, languageCode: String) {
         val prefs = context.getSharedPreferences("language_prefs", Context.MODE_PRIVATE)
@@ -25,6 +34,13 @@ object LanguageManager {
         val appContext = context.applicationContext
         if (appContext != context) {
             appContext.resources.updateConfiguration(config, appContext.resources.displayMetrics)
+        }
+
+        // Update exchange rate when language changes
+        currencyManager?.let { manager ->
+            CoroutineScope(Dispatchers.IO).launch {
+                manager.updateExchangeRate()
+            }
         }
     }
 
