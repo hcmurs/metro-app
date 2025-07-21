@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,12 +52,12 @@ fun StaffHomeScreen(
     if (viewModel == null) {
         // Simple placeholder UI when no viewModel is provided
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Account information unavailable")
+            Text(stringResource(R.string.error))
         }
         return
     }
 
-    val userName = userProfile?.name ?: "Chưa cập nhật"
+    val userName = userProfile?.name ?: stringResource(R.string.not_updated)
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(

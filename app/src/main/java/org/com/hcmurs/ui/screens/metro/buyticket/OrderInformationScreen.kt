@@ -49,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,9 +62,13 @@ import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.stripe.android.paymentsheet.PaymentSheetResultCallback
 import com.stripe.android.paymentsheet.rememberPaymentSheet
+import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.utils.CurrencyManager
+import org.com.hcmurs.utils.LanguageManager
+import org.com.hcmurs.utils.TranslationHelper
 
 data class OrderInfo(
     val ticketType: String,
@@ -83,12 +88,35 @@ data class PaymentMethod(
 @Composable
 fun OrderInfoScreen(
     navController: NavHostController,
-    viewModel: OrderInfoViewModel  = hiltViewModel()
+    currencyManager: CurrencyManager,
+    viewModel: OrderInfoViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val currentLanguage = LanguageManager.getLocale(context)
+    val exchangeRate by currencyManager.exchangeRate.collectAsState()
+    val isLoadingRate by currencyManager.isLoading.collectAsState()
 
-    var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(null) }
+    // Initialize currency manager on first load
+    LaunchedEffect(Unit) {
+        currencyManager.updateExchangeRate()
+    }
+
+    // Set Stripe as default payment method
+    val defaultPaymentMethod = PaymentMethod(
+        id = "stripe",
+        name = "Stripe",
+        icon = {
+            Icon(
+                imageVector = Icons.Default.CreditCard,
+                contentDescription = "Stripe",
+                tint = Color(0xFFE91E63),
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    )
+    
+    var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(defaultPaymentMethod) }
     var isTicketInfoExpanded by remember { mutableStateOf(true) }
 
 
@@ -152,39 +180,38 @@ fun OrderInfoScreen(
             )
         )
     }
-    // Derive OrderInfo from fetched TicketType
-    val orderInfo = remember(uiState.ticketType) {
+    // Derive OrderInfo from fetched TicketType with currency conversion
+    val orderInfo = remember(uiState.ticketType, exchangeRate, currentLanguage) {
         val ticket = uiState.ticketType
         if (ticket != null) {
-            val validityText = when (ticket.validityDuration) {
-                "Vé 1 ngày" -> "24h kể từ thời điểm kích hoạt"
-                "Vé 3 ngày" -> "72h kể từ thời điểm kích hoạt"
-                "Vé tuần" -> "7 ngày kể từ thời điểm kích hoạt"
-                "Vé tháng" -> "30 ngày kể từ thời điểm kích hoạt"
-                "Vé đơn" -> "Sử dụng một lần"
-                else -> "Theo quy định"
+            // Convert price based on current language
+            val vndPrice = when (val price = ticket.price) {
+                is Number -> price.toDouble()
+                else -> 0.0
             }
-            val noteText = when (ticket.name) {
-                "Vé 1 ngày", "Vé 3 ngày", "Vé tuần", "Vé tháng" -> "Tự động kích hoạt sau 30 ngày kể từ ngày mua."
-                "Vé sinh viên" -> "Tự động kích hoạt sau 30 ngày. Chỉ dành cho HSSV có thẻ hợp lệ."
-                else -> "Vui lòng xem chi tiết tại quầy vé."
-            }
+            val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
+            
+            // Get localized text
+            val validityText = TranslationHelper.getLocalizedValidity(ticket.validityDuration, currentLanguage)
+            val noteText = TranslationHelper.getLocalizedNote(ticket.name, currentLanguage)
+            val ticketName = TranslationHelper.getLocalizedTicketName(ticket.description, currentLanguage)
+            
             OrderInfo(
-                ticketType = ticket.description,
-                unitPrice = "${ticket.price}đ",
+                ticketType = ticketName,
+                unitPrice = convertedPrice,
                 quantity = 1,
-                totalPrice = "${ticket.price}đ",
+                totalPrice = convertedPrice,
                 validity = validityText,
                 note = noteText
             )
         } else {
             OrderInfo(
-                ticketType = "Đang tải...",
-                unitPrice = "0đ",
+                ticketType = "Loading...",
+                unitPrice = currencyManager.convertPrice(0.0, currentLanguage),
                 quantity = 0,
-                totalPrice = "0đ",
-                validity = "Đang tải...",
-                note = "Đang tải..."
+                totalPrice = currencyManager.convertPrice(0.0, currentLanguage),
+                validity = "Loading...",
+                note = "Loading..."
             )
         }
     }
@@ -193,7 +220,7 @@ fun OrderInfoScreen(
     Scaffold(
         topBar = {
             OrderInfoTopBar(
-                title = "Thông tin đơn hàng",
+                title = stringResource(R.string.order_information),
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -231,7 +258,7 @@ fun OrderInfoScreen(
             var showDialog by remember { mutableStateOf(false) }
             // Terms Text
             Text(
-                text = "Bằng việc bấm thanh toán, bạn đồng ý với điều khoản của Metro",
+                text = stringResource(R.string.terms_agreement),
                 fontSize = 12.sp,
                 color = Color(0xFF4CAF50),
                 textAlign = TextAlign.Center,
@@ -269,10 +296,10 @@ fun OrderInfoScreen(
                 if (uiState.isProcessing) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                             Spacer(Modifier.width(8.dp))
-                            Text(uiState.processMessage ?: "Đang xử lý...", color = Color.White)
+                            Text(uiState.processMessage ?: stringResource(R.string.processing), color = Color.White)
                 } else {
                     Text(
-                        text = "Thanh toán: ${orderInfo.totalPrice}",
+                        text = stringResource(R.string.pay_amount, orderInfo.totalPrice),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
@@ -333,7 +360,7 @@ fun PaymentMethodSection(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Phương thức thanh toán",
+                text = stringResource(R.string.payment_method),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A237E)
@@ -366,7 +393,7 @@ fun PaymentMethodSection(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Chọn phương thức thanh toán",
+                            text = stringResource(R.string.select_payment_method),
                             fontSize = 14.sp,
                             color = Color(0xFF999999)
                         )
@@ -444,7 +471,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Thông tin thanh toán",
+                text = stringResource(R.string.payment_info),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF1A237E)
@@ -454,7 +481,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Product
             PaymentInfoRow(
-                label = "Sản phẩm:",
+                label = stringResource(R.string.product),
                 value = orderInfo.ticketType
             )
 
@@ -462,7 +489,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Unit Price
             PaymentInfoRow(
-                label = "Đơn giá:",
+                label = stringResource(R.string.unit_price),
                 value = orderInfo.unitPrice
             )
 
@@ -470,7 +497,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Quantity
             PaymentInfoRow(
-                label = "Số lượng:",
+                label = stringResource(R.string.quantity),
                 value = orderInfo.quantity.toString()
             )
 
@@ -478,7 +505,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Subtotal
             PaymentInfoRow(
-                label = "Thành tiền:",
+                label = stringResource(R.string.subtotal),
                 value = orderInfo.totalPrice
             )
 
@@ -490,7 +517,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Total Price
             PaymentInfoRow(
-                label = "Tổng giá tiền:",
+                label = stringResource(R.string.total_price),
                 value = orderInfo.totalPrice,
                 isTotal = true
             )
@@ -499,7 +526,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 
             // Final Amount
             PaymentInfoRow(
-                label = "Thành tiền:",
+                label = stringResource(R.string.final_amount),
                 value = orderInfo.totalPrice,
                 isTotal = true
             )
@@ -558,7 +585,7 @@ fun TicketInfoSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Thông tin ${orderInfo.ticketType}",
+                    text = stringResource(R.string.description) + " " + orderInfo.ticketType,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF1A237E)
@@ -577,7 +604,7 @@ fun TicketInfoSection(
 
                 // Ticket Type
                 TicketDetailRow(
-                    label = "Loại vé:",
+                    label = stringResource(R.string.ticket_type),
                     value = orderInfo.ticketType
                 )
 
@@ -585,7 +612,7 @@ fun TicketInfoSection(
 
                 // Validity
                 TicketDetailRow(
-                    label = "HSD:",
+                    label = stringResource(R.string.validity_period),
                     value = orderInfo.validity
                 )
 
@@ -593,7 +620,7 @@ fun TicketInfoSection(
 
                 // Note
                 TicketDetailRow(
-                    label = "Lưu ý:",
+                    label = stringResource(R.string.note),
                     value = orderInfo.note,
                     valueColor = Color(0xFFE53935)
                 )
@@ -630,13 +657,10 @@ fun TicketDetailRow(
 private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Điều khoản dịch vụ", fontWeight = FontWeight.Bold, color = DarkGreen) },
+        title = { Text(stringResource(R.string.terms_title), fontWeight = FontWeight.Bold, color = DarkGreen) },
         text = {
             Text(
-                "Bằng việc sử dụng dịch vụ, bạn đồng ý tuân thủ tất cả các quy định về vận chuyển hành khách công cộng. " +
-                        "Vé đã mua không thể hoàn trả. Vui lòng giữ vé cẩn thận để xuất trình khi có yêu cầu. " +
-                        "Mọi hành vi gian lận sẽ bị xử lý theo quy định của pháp luật. " +
-                        "Cảm ơn bạn đã sử dụng dịch vụ của Metro.",
+                stringResource(R.string.terms_content),
                 fontSize = 14.sp
             )
         },
@@ -645,7 +669,7 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
             ) {
-                Text("Đã hiểu")
+                Text(stringResource(R.string.understood))
             }
         }
     )
@@ -653,8 +677,7 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun OrderInfoScreenPreview() {
-    val navController = rememberNavController()
-    OrderInfoScreen(
-        navController = navController,
-    )
+    // OrderInfoScreen preview removed since it requires CurrencyManager
+    // Use device/emulator for testing
+    Text("OrderInfoScreen Preview - Use device for testing")
 }

@@ -121,7 +121,7 @@ fun EventScreen(navController: NavHostController) {
                         contentColor = Color.Black
                     )
                 ) {
-                    Text("Hủy")
+                    Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                 }
             }
         )

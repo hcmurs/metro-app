@@ -115,6 +115,8 @@ fun BlogSection(
 ) {
     val homeBlogsState by viewModel.homeBlogsState.collectAsState()
 
+    val featuredBlogs = viewModel.featuredBlogs.collectAsState(initial = emptyList())
+
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -155,13 +157,17 @@ fun BlogSection(
 
             is BlogUiState.Success -> {
                 val scrollState = rememberScrollState()
+                val allBlogs = (homeBlogsState as BlogUiState.Success).blogs
+                val featured = featuredBlogs.value
+                val remainingBlogs = allBlogs.filter { blog -> blog !in featured }
+
                 Row(
                     modifier = Modifier
                         .horizontalScroll(scrollState)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    (homeBlogsState as BlogUiState.Success).blogs.forEach { blog ->
+                    remainingBlogs.forEach { blog ->
                         BlogTile(
                             blog = blog,
                             onClick = { navController.navigate("blog_detail/${blog.id}") }
@@ -170,6 +176,7 @@ fun BlogSection(
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }
+
         }
     }
 }

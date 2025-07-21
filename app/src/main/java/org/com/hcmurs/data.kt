@@ -1,6 +1,8 @@
 package org.com.hcmurs
 
+import com.google.gson.annotations.SerializedName
 import org.osmdroid.util.GeoPoint
+import java.time.LocalDateTime
 
 data class FareMatricesResponse(
     val status: Int,
@@ -13,7 +15,7 @@ data class FareMatrixResponse(
     val message: String,
     val data: FareMatrix
 )
-// Represents a single fare matrix entry
+
 data class FareMatrix(
     val fareMatrixId: Int,
     val name: String,
@@ -25,14 +27,12 @@ data class FareMatrix(
 )
 
 
-// Matches the overall API response structure for stations
 data class StationResponse(
     val status: Int,
     val message: String,
     val data: List<Station>
 )
 
-// Represents a single station entry from the API
 data class Station(
     val stationId: Int,
     val stationCode: String,
@@ -40,14 +40,32 @@ data class Station(
     val address: String,
     val latitude: Double,
     val longitude: Double,
-    val sequenceOrder: Int,
     val status: String,
     val createdAt: String,
     val updatedAt: String,
-    val routeId: Int
 ) {
-    // Helper to convert to GeoPoint if needed for map integration
     fun toGeoPoint(): GeoPoint {
         return GeoPoint(latitude, longitude)
     }
 }
+    data class RouteResponse(
+        val routeId: Int,
+        val routeName: String,
+        val routeCode: String,
+        val startStationId: Int,
+        val distanceInKm: Double,
+
+    )
+
+    data class StationRouteResponse(
+        val id: Int,
+        val routeId: Int,
+        val sequenceOrder: Int,
+        val status: String,
+        val createdAt: String,
+        val updatedAt: String,
+
+        @SerializedName("stationsResponse")
+        val stationsResponse: Station
+    )
+

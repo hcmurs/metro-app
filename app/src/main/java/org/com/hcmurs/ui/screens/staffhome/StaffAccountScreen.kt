@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
 import org.com.hcmurs.ui.theme.PaleYellow
 import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.R
 
 data class StaffMenuItem(
     val icon: ImageVector,
@@ -185,8 +187,8 @@ fun StaffAccountScreen(
     }
 
     // Sử dụng thông tin profile
-    val userName = userProfile?.name ?: "Chưa cập nhật"
-    val userEmail = userProfile?.email ?: "Chưa cập nhật"
+    val userName = userProfile?.name ?: stringResource(R.string.not_updated)
+    val userEmail = userProfile?.email ?: stringResource(R.string.not_updated)
     val staffId = userProfile?.userId ?: "STAFF001" // Có thể lấy từ profile hoặc hardcode
 
     val staffMenuItems = listOf(

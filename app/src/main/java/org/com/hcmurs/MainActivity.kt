@@ -9,12 +9,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
 import com.stripe.android.PaymentConfiguration
+import kotlinx.coroutines.launch
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.AppTheme
+import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 import android.content.res.Configuration
 import java.util.Locale
+import javax.inject.Inject
 
 @dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,12 +26,23 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
 
+    @Inject
+    lateinit var currencyManager: CurrencyManager
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Initialize currency manager with language manager
+        LanguageManager.setCurrencyManager(currencyManager)
+
         val currentLang = LanguageManager.getLocale(this)
         LanguageManager.setLocale(this, currentLang)
+
+        // Initialize exchange rate on app start
+        lifecycleScope.launch {
+            currencyManager.updateExchangeRate()
+        }
 
         PaymentConfiguration.init(
             applicationContext,

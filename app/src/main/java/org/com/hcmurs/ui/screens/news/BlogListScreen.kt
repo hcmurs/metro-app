@@ -168,13 +168,13 @@ private fun BlogListContent(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Không tìm thấy kết quả",
+                            text = stringResource(R.string.not_found),
                             fontSize = 16.sp,
                             color = Color.Gray
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Thử tìm kiếm với từ khóa khác",
+                            text =  stringResource(R.string.try_search_again),
                             fontSize = 14.sp,
                             color = Color.Gray
                         )
