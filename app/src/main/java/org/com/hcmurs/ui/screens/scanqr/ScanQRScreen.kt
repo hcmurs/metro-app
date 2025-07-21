@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,6 +75,7 @@ import org.com.hcmurs.utils.vibrateOnError
 import org.com.hcmurs.utils.vibrateOnSuccess
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import org.com.hcmurs.R
 
 enum class ActionType {
     ENTRY, EXIT
@@ -130,6 +132,13 @@ fun ScanQRScreen(
                 showResultDialog = true
             }
             else -> { /* No action needed */ }
+        }
+    }
+
+    LaunchedEffect(showInvalidQRDialog) {
+        if (showInvalidQRDialog) {
+            // Vibrate on invalid QR code
+            vibrateOnError(context)
         }
     }
 
@@ -262,7 +271,7 @@ fun ScanQRScreen(
                     // Bottom info and controls
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Place the QR code inside the frame",
+                            text = stringResource(R.string.place_qr_code),
                             color = Color.White.copy(alpha = 0.8f),
                             fontSize = 14.sp
                         )
@@ -302,7 +311,7 @@ fun ScanQRScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Camera permission is required",
+                        text = stringResource(R.string.camera_permission_required),
                         color = Color.White,
                         fontSize = 16.sp
                     )
@@ -310,7 +319,7 @@ fun ScanQRScreen(
                     Button(
                         onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
                     ) {
-                        Text("Grant Permission")
+                        Text(stringResource(R.string.grant_permission))
                     }
                 }
             }
