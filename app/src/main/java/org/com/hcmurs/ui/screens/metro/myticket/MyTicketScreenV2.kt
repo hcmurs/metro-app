@@ -86,7 +86,9 @@ fun MyTicketScreen(
     LaunchedEffect(Unit) {
         currencyManager.updateExchangeRate()
     }
-
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserOrders()
+    }
 
     val filteredOrders = remember(uiState.orders, selectedTab.value) {
         uiState.orders.filter { order ->
@@ -318,3 +320,4 @@ fun MyTicketTopBar(navController: NavController) {
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
     )
 }
+

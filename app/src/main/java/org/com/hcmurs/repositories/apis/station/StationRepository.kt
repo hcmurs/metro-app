@@ -42,15 +42,14 @@ class StationRepository @Inject constructor(
         }
     }
 
-    /**
-     * MỚI: Lấy danh sách các trạm thuộc một tuyến đường cụ thể bằng routeId.
-     */
+
     suspend fun getStationsByRouteId(routeId: Long): Result<List<StationRouteResponse>> {
         return try {
-            val apiResponse = stationApi.getStationsByRouteId(routeId) //
+            val apiResponse = stationApi.getStationsByRouteId(routeId)
 
             if (apiResponse.data != null) {
-                Result.success(apiResponse.data)
+                val activeStations = apiResponse.data.filter { it.status.equals("ACTIVE", ignoreCase = true) }
+                Result.success(activeStations)
             } else {
                 Log.w("StationRepository", "getStationsByRouteId for route $routeId returned null data. Message: ${apiResponse.message}")
                 Result.success(emptyList())
@@ -60,4 +59,5 @@ class StationRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
 }
