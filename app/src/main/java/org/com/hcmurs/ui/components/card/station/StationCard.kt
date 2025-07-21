@@ -27,12 +27,12 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 fun StationCard(
     station: Station,
     isSelected: Boolean,
-    isEnabled: Boolean = true, // MỚI: Thêm tham số isEnabled
+    isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val backgroundColor = when {
         isSelected -> PrimaryGreen.copy(alpha = 0.2f)
-        !isEnabled -> Color.LightGray.copy(alpha = 0.5f) // Màu cho card bị vô hiệu hóa
+        !isEnabled -> Color.LightGray.copy(alpha = 0.5f)
         else -> Color.White
     }
     val contentColor = when {
@@ -58,7 +58,7 @@ fun StationCard(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Station ${station.sequenceOrder}",
+                    text = "Station ",
                     fontSize = 12.sp,
                     color = if (isSelected) PrimaryGreen else Color.Gray
                 )
