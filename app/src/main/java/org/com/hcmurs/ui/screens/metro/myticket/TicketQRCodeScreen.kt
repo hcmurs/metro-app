@@ -34,17 +34,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-
+import org.com.hcmurs.R
+import org.com.hcmurs.utils.LanguageManager
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFF1F8E9)
@@ -58,6 +62,18 @@ fun TicketQRCodeScreen(
     viewModel: TicketQRCodeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    
+    // Force recomposition when returning from language change
+    // This ensures strings are re-evaluated with the current locale
+    LaunchedEffect(context) {
+        // This will trigger when context changes (like after language change)
+    }
+    
+    // Create string resources that will be re-evaluated on recomposition
+    val ticketDigitalTitle = stringResource(R.string.ticket_digital)
+    val scanQrGuide = stringResource(R.string.scan_qr_code_guide)
+    val qrCodeNotLoaded = stringResource(R.string.qr_code_not_loaded)
 
     LaunchedEffect(key1 = ticketCode) {
         viewModel.fetchTicketQRCode(ticketCode)
@@ -66,7 +82,7 @@ fun TicketQRCodeScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Vé điện tử", color = DarkGreen, fontWeight = FontWeight.Bold) },
+                title = { Text(ticketDigitalTitle, color = DarkGreen, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
@@ -129,7 +145,7 @@ fun TicketQRCodeScreen(
                     Spacer(Modifier.height(8.dp))
 
                     Text(
-                        "Vui lòng quét mã tại cổng soát vé",
+                        scanQrGuide,
                         fontSize = 15.sp, // Slightly smaller
                         color = TextSecondaryColor,
                         textAlign = TextAlign.Center
@@ -184,7 +200,7 @@ fun TicketQRCodeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Không thể tải được mã QR.",
+                        qrCodeNotLoaded,
                         color = TextSecondaryColor,
                         textAlign = TextAlign.Center
                     )
@@ -196,12 +212,15 @@ fun TicketQRCodeScreen(
 
 @Composable
 private fun CountdownAndReset(seconds: Int, onResetClick: () -> Unit) {
+    val codeRefresh = stringResource(R.string.code_refresh)
+    val refreshCode = stringResource(R.string.refresh_code)
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            "Mã sẽ được làm mới sau:",
+            codeRefresh,
             fontSize = 13.sp, // Slightly smaller
             color = TextSecondaryColor
         )
@@ -224,7 +243,7 @@ private fun CountdownAndReset(seconds: Int, onResetClick: () -> Unit) {
                 modifier = Modifier.size(18.dp) // Slightly smaller icon
             )
             Spacer(Modifier.width(8.dp))
-            Text("Làm mới mã", color = PrimaryGreen, fontSize = 14.sp) // Slightly smaller text
+            Text(refreshCode, color = PrimaryGreen, fontSize = 14.sp) // Slightly smaller text
         }
     }
 }

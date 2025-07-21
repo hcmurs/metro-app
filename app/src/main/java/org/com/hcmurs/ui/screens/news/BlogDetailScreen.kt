@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +40,10 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
+import org.com.hcmurs.R
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,8 +61,8 @@ fun BlogDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Blog Detail") },
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.blog_detail)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -126,7 +131,14 @@ fun BlogDetailScreen(
 
                         Text(
                             text = blog.date?.let {
-                                SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(it)
+                                try {
+                                    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                                    val outputFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.getDefault())
+                                    val dateTime = LocalDateTime.parse(it, inputFormatter)
+                                    dateTime.format(outputFormatter)
+                                } catch (e: Exception) {
+                                    ""
+                                }
                             } ?: "",
                             fontSize = 14.sp,
                             color = Color.Gray

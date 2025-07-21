@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 
 data class LanguageOption(
@@ -36,10 +37,12 @@ data class LanguageOption(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeLanguageScreen(
-    navController: NavController
+    navController: NavController,
+    currencyManager: CurrencyManager
 ) {
     val context = LocalContext.current
     val currentLanguage = LanguageManager.getLocale(context)
+    val isUpdatingRate by currencyManager.isLoading.collectAsState()
     
     val languageOptions = listOf(
         LanguageOption(
@@ -104,6 +107,7 @@ fun ChangeLanguageScreen(
                 LanguageOptionItem(
                     language = language,
                     isSelected = currentLanguage == language.code,
+                    isUpdatingCurrency = isUpdatingRate && currentLanguage != language.code,
                     onLanguageSelected = { selectedLanguage ->
                         LanguageManager.setLocale(context, selectedLanguage.code)
                         // Recreate activity to apply language change
@@ -149,6 +153,7 @@ fun ChangeLanguageScreen(
 private fun LanguageOptionItem(
     language: LanguageOption,
     isSelected: Boolean,
+    isUpdatingCurrency: Boolean = false,
     onLanguageSelected: (LanguageOption) -> Unit
 ) {
     Card(
@@ -191,6 +196,15 @@ private fun LanguageOptionItem(
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
+                if (isUpdatingCurrency) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.updating_price),
+                        fontSize = 12.sp,
+                        color = PrimaryGreen,
+                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                    )
+                }
             }
             
             if (isSelected) {
@@ -200,6 +214,11 @@ private fun LanguageOptionItem(
                     tint = PrimaryGreen,
                     modifier = Modifier.size(24.dp)
                 )
+            } else if (isUpdatingCurrency) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = PrimaryGreen
+                )
             }
         }
     }
@@ -208,5 +227,7 @@ private fun LanguageOptionItem(
 @Preview(showBackground = true)
 @Composable
 fun ChangeLanguageScreenPreview() {
-    ChangeLanguageScreen(navController = rememberNavController())
+    // For preview, we'll create a mock CurrencyManager
+    // In real usage, this will be injected via Hilt
+    // ChangeLanguageScreen(navController = rememberNavController(), currencyManager = mockCurrencyManager)
 }

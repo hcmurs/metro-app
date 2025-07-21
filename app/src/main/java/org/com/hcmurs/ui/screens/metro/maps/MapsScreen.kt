@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -124,7 +125,7 @@ fun MapScreen(
 
     Scaffold(
         topBar = {
-            CommonTopBar(navController, "Maps")
+            CommonTopBar(navController, stringResource(R.string.map_title))
         }
     ) { paddingValues ->
 
@@ -260,32 +261,32 @@ fun MapScreen(
 
 
 
-                        // Only show bus stops based on zoom level and density
-                        if (shouldShowBusStops(currentZoom, nearbyStops.size)) {
-                            val limitedStops = if (currentZoom < 15) nearbyStops.take(25) else nearbyStops
-
-                            limitedStops.forEach { stop ->
-                                val stopMarker = Marker(mapView).apply {
-                                    position = GeoPoint(stop.latitude, stop.longitude)
-                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                    title = stop.name
-
-                                    // Use smaller bus stop icons with zoom-responsive sizing
-                                    icon = createIconDrawable(
-                                        R.drawable.ic_bus,
-                                        currentZoom,
-                                        48 // Base size 32dp * 2.67 for different densities
-                                    )
-
-                                    // Different behavior for bus stops
-                                    setOnMarkerClickListener { marker, mapView ->
-                                        // Handle bus stop click
-                                        true
-                                    }
-                                }
-                                mapView.overlays.add(stopMarker)
-                            }
-                        }
+//                        // Only show bus stops based on zoom level and density
+//                        if (shouldShowBusStops(currentZoom, nearbyStops.size)) {
+//                            val limitedStops = if (currentZoom < 15) nearbyStops.take(25) else nearbyStops
+//
+//                            limitedStops.forEach { stop ->
+//                                val stopMarker = Marker(mapView).apply {
+//                                    position = GeoPoint(stop.latitude, stop.longitude)
+//                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                                    title = stop.name
+//
+//                                    // Use smaller bus stop icons with zoom-responsive sizing
+//                                    icon = createIconDrawable(
+//                                        R.drawable.ic_bus,
+//                                        currentZoom,
+//                                        48 // Base size 32dp * 2.67 for different densities
+//                                    )
+//
+//                                    // Different behavior for bus stops
+//                                    setOnMarkerClickListener { marker, mapView ->
+//                                        // Handle bus stop click
+//                                        true
+//                                    }
+//                                }
+//                                mapView.overlays.add(stopMarker)
+//                            }
+//                        }
                     }
 
                     // Add user location marker if permission is granted

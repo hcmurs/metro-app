@@ -1,6 +1,5 @@
 package org.com.hcmurs.ui.screens.metro.account
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +19,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -43,16 +38,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
-import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.ui.theme.PaleYellow
+import org.com.hcmurs.ui.theme.PrimaryGreen
 import androidx.compose.material3.Divider as HorizontalDivider
 
 
@@ -63,15 +59,6 @@ data class MenuItem(
     val isDestructive: Boolean = false,
     val onClickAction: (() -> Unit)? = null
 )
-
-@Composable
-fun HurcLogo(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = org.com.hcmurs.R.drawable.hurc),
-        contentDescription = "HURC Logo",
-        modifier = modifier
-    )
-}
 
 @Composable
 fun MenuItemRow(
@@ -136,41 +123,6 @@ fun MenuItemRow(
 }
 
 @Composable
-fun LogoutButton(
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFE53935), // Red color for warning/destructive action
-            contentColor = Color.White
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.ExitToApp,
-                contentDescription = "Logout",
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "Đăng xuất",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-    }
-}
-
-@Composable
 fun AccountScreen(
     navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {},
@@ -179,7 +131,7 @@ fun AccountScreen(
 
     if (viewModel == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Account information unavailable")
+            Text(stringResource(R.string.error))
         }
         return
     }
@@ -197,13 +149,13 @@ fun AccountScreen(
     LaunchedEffect(Unit) {
         viewModel.refreshUserProfile()
     }
-    val userName = userProfile?.name ?: "Chưa cập nhật"
-    val userEmail = userProfile?.email ?: "Chưa cập nhật"
+    val userName = userProfile?.name ?: stringResource(R.string.not_updated)
+    val userEmail = userProfile?.email ?: stringResource(R.string.not_updated)
 
     val menuItem = listOf(
         MenuItem(
             icon = Icons.Default.Person,
-            title = "Họ tên: $userName", // Cập nhật họ tên
+            title = stringResource(R.string.full_name) + ": $userName", // Cập nhật họ tên
             hasArrow = false
         ),
         MenuItem(
@@ -214,14 +166,14 @@ fun AccountScreen(
         if( userProfile?.isStudent == false) {
             MenuItem(
                 icon = Icons.Default.Info,
-                title = "Xác thực tài khoản",
+                title = stringResource(R.string.account_verification),
                 hasArrow = true,
                 onClickAction = { navController.navigate(Screen.CCCD.route) }
             )
         } else {
             MenuItem(
                 icon = Icons.Default.Info,
-                title = "Bạn đang là sinh viên",
+                title = stringResource(R.string.student_account),
                 hasArrow = false
             )
         },
@@ -276,7 +228,7 @@ fun AccountScreen(
                     )
                 }
                 Text(
-                    text = "Thông tin tài khoản",
+                    text = stringResource(R.string.account_information),
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
@@ -358,7 +310,7 @@ fun AccountScreen(
                     MenuItemRow(
                         item = MenuItem(
                             icon = Icons.Default.ExitToApp,
-                            title = "Đăng xuất",
+                            title = stringResource(R.string.logout),
                             hasArrow = false,
                             isDestructive = false
                         ),

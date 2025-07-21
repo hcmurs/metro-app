@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -190,7 +191,7 @@ private fun LoginScreenContent(
                     }
 
                     Text(
-                        text = "Welcome to HCMURS",
+                        text = stringResource(R.string.login_title),
                         style = MaterialTheme.typography.headlineMedium,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -202,7 +203,7 @@ private fun LoginScreenContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Ho Chi Minh Urban Railway System",
+                    text = stringResource(R.string.login_introduction),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Gray,
                     modifier = Modifier.fillMaxWidth(),
@@ -228,7 +229,7 @@ private fun LoginScreenContent(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Authenticating...",
+                                    text = stringResource(R.string.authentication_loading),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = Color.DarkGray
@@ -240,7 +241,7 @@ private fun LoginScreenContent(
                     else -> {
                         LoginButton(
                             onClick = onGoogleLoginClick,
-                            text = "Continue with Google",
+                            text = stringResource(R.string.continue_with_google),
                             logoRes = R.drawable.google,
                             backgroundColor = Color.White,
                             contentColor = Color.Black
@@ -250,7 +251,7 @@ private fun LoginScreenContent(
 
                         LoginButton(
                             onClick = onFacebookLoginClick,
-                            text = "Continue with Facebook",
+                            text = stringResource(R.string.continue_with_facebook),
                             logoRes = R.drawable.fb,
                             backgroundColor = Color(0xFF1877F2),
                             contentColor = Color.White
@@ -349,7 +350,7 @@ fun LoginScreenSuccessPreview() {
 fun LoginScreenErrorPreview() {
     LoginScreenContent(
         navController = rememberNavController(),
-        status = LoadStatus.Error("An error occurred"),
+        status = LoadStatus.Error(stringResource(R.string.error)),
         onGoogleLoginClick = {},
         onFacebookLoginClick = {}
     )

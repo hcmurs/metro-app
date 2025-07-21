@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +37,7 @@ fun LoginRequiredDialog(
                     onClick = onDismissRequest,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Hủy", color = Color.Gray)
+                    Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel), color = Color.Gray)
                 }
 
                 Button(

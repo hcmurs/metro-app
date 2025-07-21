@@ -34,6 +34,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +42,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +53,9 @@ import androidx.navigation.NavController
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.order.OrderWithTicketDetails
+import org.com.hcmurs.utils.CurrencyManager
+import org.com.hcmurs.utils.LanguageManager
+import org.com.hcmurs.utils.TranslationHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -67,10 +73,19 @@ private val TextSecondaryColor = Color(0xFF757575)
 @Composable
 fun MyTicketScreen(
     navController: NavController,
+    currencyManager: CurrencyManager,
     viewModel: MyTicketViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedTab = remember { mutableStateOf("NOT_USED") }    // PENDING, FAILED, SUCCESSFUL
+    val context = LocalContext.current
+    val currentLanguage = LanguageManager.getLocale(context)
+    val exchangeRate by currencyManager.exchangeRate.collectAsState()
+
+    // Initialize currency manager on first load
+    LaunchedEffect(Unit) {
+        currencyManager.updateExchangeRate()
+    }
 
 
     val filteredOrders = remember(uiState.orders, selectedTab.value) {
@@ -109,17 +124,17 @@ fun MyTicketScreen(
                 Tab(
                     selected = selectedTab.value == "NOT_USED",
                     onClick = { selectedTab.value = "NOT_USED" },
-                    text = { Text("Chưa dùng") }
+                    text = { Text(stringResource(R.string.not_used)) }
                 )
                 Tab(
                     selected = selectedTab.value == "USED",
                     onClick = { selectedTab.value = "USED" },
-                    text = { Text("Đã dùng") }
+                    text = { Text(stringResource(R.string.used)) }
                 )
                 Tab(
                     selected = selectedTab.value == "EXPIRED",
                     onClick = { selectedTab.value = "EXPIRED" },
-                    text = { Text("Hết hạn") }
+                    text = { Text(stringResource(R.string.expired)) }
                 )
             }
 
@@ -129,13 +144,13 @@ fun MyTicketScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = PrimaryGreen)
                 } else if (uiState.errorMessage != null) {
                     Text(
-                        text = "Lỗi: ${uiState.errorMessage}",
+                        text = stringResource(R.string.error_label, uiState.errorMessage!!),
                         modifier = Modifier.align(Alignment.Center),
                         color = Color.Red
                     )
                 } else if (filteredOrders.isEmpty()) {
                     Text(
-                        text = "Bạn không có vé nào trong mục này",
+                        text = stringResource(R.string.no_tickets_in_category),
                         modifier = Modifier.align(Alignment.Center),
                         color = TextSecondaryColor
                     )
@@ -145,7 +160,7 @@ fun MyTicketScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(filteredOrders) { order ->
-                            TicketCard(order = order,navController)
+                            TicketCard(order = order, navController, currencyManager)
                         }
                     }
                 }
@@ -155,9 +170,21 @@ fun MyTicketScreen(
 }
 
 @Composable
-fun TicketCard(order: OrderWithTicketDetails,
-               navController: NavController) {
+fun TicketCard(
+    order: OrderWithTicketDetails,
+    navController: NavController,
+    currencyManager: CurrencyManager
+) {
     val ticket = order.ticket ?: return //
+    val context = LocalContext.current
+    val currentLanguage = LanguageManager.getLocale(context)
+    
+    // Convert price based on current language
+    val vndPrice = order.amount.toDouble()
+    val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
+    
+    // Get localized ticket name
+    val localizedTicketName = TranslationHelper.getLocalizedTicketName(ticket.name, currentLanguage)
     Card (
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -176,7 +203,7 @@ fun TicketCard(order: OrderWithTicketDetails,
                 Spacer(Modifier.width(12.dp))
                 // Tên vé
                 Text(
-                    text = order.ticket.name,
+                    text = localizedTicketName,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimaryColor,
@@ -192,28 +219,17 @@ fun TicketCard(order: OrderWithTicketDetails,
             }
             Divider(Modifier.padding(vertical = 12.dp), color = LightGreenBackground)
             // Thông tin chi tiết
-            InfoRow(label = "Mã đơn hàng:",
+            InfoRow(label = stringResource(R.string.order_code),
                     value = "#${order.ticket.ticketCode}")
 
             Spacer(Modifier.height(4.dp))
-//
-//            InfoRow(label = "Tuyến:", value = order.ticket.ticketCode)
-//            Spacer(Modifier.height(4.dp))
 
-
-
-//            InfoRow(label = "Trạng thái:",
-//                    value = order.status.replaceFirstChar { it.uppercase() },
-//                    valueColor = getStatusColor(order.status))
+            InfoRow(label = stringResource(R.string.ticket_price_label),
+                value = convertedPrice,)
 
             Spacer(Modifier.height(4.dp))
 
-            InfoRow(label ="Giá vé",
-                value = "${order.amount.toInt()}đ",)
-
-            Spacer(Modifier.height(4.dp))
-
-            InfoRow(label = "Hiệu lực:",
+            InfoRow(label = stringResource(R.string.validity_label),
                     value = "${formatDate(ticket.validFrom)} - ${formatDate(ticket.validUntil)}")
 
 
@@ -227,7 +243,7 @@ fun TicketCard(order: OrderWithTicketDetails,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
                     ) {
-                        Text("SỬ DỤNG VÉ", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.use_ticket), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
         }
@@ -287,7 +303,7 @@ private fun getStatusColor(status: String): Color {
 fun MyTicketTopBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
-            Text(text = "Vé của tôi",
+            Text(text = stringResource(R.string.my_ticket),
                 color = DarkGreen,
                 fontWeight = FontWeight.Bold)
                 },

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,7 @@ fun BlogLoadingPlaceholder(modifier: Modifier) {
 
             // Placeholder for title
             Text(
-                text = "Loading...",
+                text = stringResource(R.string.loading),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
@@ -125,7 +126,7 @@ fun BlogTile(
 ) {
     Card(
         modifier = modifier
-            .wrapContentHeight()
+            .height(300.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -163,7 +164,8 @@ fun BlogTile(
                 Text(
                     text = subtitle,
                     color = Color.Black,
-                    fontSize = 13.sp
+                    fontSize = 13.sp,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
