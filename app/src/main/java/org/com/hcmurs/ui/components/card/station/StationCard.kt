@@ -58,7 +58,7 @@ fun StationCard(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Station ",
+                    text = "Ga số ${station.stationId}",
                     fontSize = 12.sp,
                     color = if (isSelected) PrimaryGreen else Color.Gray
                 )

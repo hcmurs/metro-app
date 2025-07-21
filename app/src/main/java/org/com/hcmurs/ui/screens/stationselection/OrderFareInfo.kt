@@ -154,17 +154,17 @@ fun OrderFareInfoScreen(
     }
 
 
-        if (showPaymentSheet) {
-        PaymentMethodBottomSheet(
-            paymentMethods = paymentMethods,
-            selectedMethod = selectedPaymentMethod,
-            onDismiss = { showPaymentSheet = false },
-            onSelectMethod = { method ->
-                selectedPaymentMethod = method
-                showPaymentSheet = false
-            }
-        )
-    }
+//        if (showPaymentSheet) {
+//        PaymentMethodBottomSheet(
+//            paymentMethods = paymentMethods,
+//            selectedMethod = selectedPaymentMethod,
+//            onDismiss = { showPaymentSheet = false },
+//            onSelectMethod = { method ->
+//                selectedPaymentMethod = method
+//                showPaymentSheet = false
+//            }
+//        )
+//    }
 
     if (showTermsDialog) {
         TermsAndConditionsDialog(onDismiss = { showTermsDialog = false })
