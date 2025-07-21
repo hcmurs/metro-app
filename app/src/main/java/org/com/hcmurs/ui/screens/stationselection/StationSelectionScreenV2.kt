@@ -122,7 +122,7 @@ fun StationSelectionScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Select Route & Stations") },
+                title = { Text("Select Stations") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
@@ -184,8 +184,13 @@ fun StationSelectionScreen(
             }
 
             // -- PHẦN 2: CHỌN GA (chỉ hiển thị sau khi đã chọn tuyến) --
-            if (uiState.selectedRoute != null) {
-                Spacer(modifier = Modifier.height(24.dp))
+            val selectedRoute = uiState.selectedRoute
+            if (selectedRoute != null) {
+                SelectedRouteHeader(routeName = selectedRoute.routeName)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
                 SectionTitle(text = if (selectedAction == "Entry") "2. Select your ENTRY station" else "2. Select your EXIT station")
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -240,7 +245,7 @@ fun StationSelectionScreen(
                         }
                     }
                 }
-            }
+
         }
     }
 }
@@ -277,6 +282,34 @@ private fun RouteSelector(
                     selectedContainerColor = PrimaryGreen,
                     selectedLabelColor = Color.White
                 )
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun SelectedRouteHeader(routeName: String) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = PrimaryGreen.copy(alpha = 0.1f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Selected Route",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+            Text(
+                text = routeName,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = PrimaryGreen
             )
         }
     }

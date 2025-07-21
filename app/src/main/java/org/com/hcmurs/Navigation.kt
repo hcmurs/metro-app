@@ -61,6 +61,7 @@ import org.com.hcmurs.ui.screens.staffhome.StaffAccountScreen
 import org.com.hcmurs.ui.screens.staffhome.StaffHomeScreen
 import org.com.hcmurs.ui.screens.stationselection.CalculatedFareScreen
 import org.com.hcmurs.ui.screens.stationselection.OrderFareInfoScreen
+import org.com.hcmurs.ui.screens.stationselection.RouteSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StaffStationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
@@ -86,7 +87,7 @@ sealed class Screen(val route: String) {
     object BlogDetail : Screen("blog_detail/{blogId}") {
         fun createRoute(blogId: Int) = "blog_detail/$blogId"
     }
-
+    object RouteSelection : Screen("routeSelection")
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
     object MyTicket : Screen("myTicket")
@@ -248,23 +249,33 @@ fun Navigation(
         // Luồng mua vé đơn
         navigation(
             route = Screen.TicketFlow.route,
-            startDestination = Screen.StationSelection.route
+            startDestination = Screen.RouteSelection.route
         ) {
-            // Màn hình 1: Chọn ga
-            composable(route = Screen.StationSelection.route) { backStackEntry ->
-                val parentEntry =
-                    remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
-                val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
-                // CẢI TIẾN: Chia sẻ cả StationSelectionViewModel
+            composable(route = Screen.RouteSelection.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.TicketFlow.route)
+                }
                 val stationViewModel: StationSelectionViewModel = hiltViewModel(parentEntry)
+
+                RouteSelectionScreen(
+                    navController = navController,
+                    stationViewModel = stationViewModel
+                )
+            }
+
+            composable(route = Screen.StationSelection.route) { backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Screen.TicketFlow.route)
+                }
+                val fareMatrixViewModel: FareMatrixViewModel = hiltViewModel(parentEntry)
+                val stationViewModel: StationSelectionViewModel = hiltViewModel(parentEntry)
+
                 StationSelectionScreen(
                     navController = navController,
                     stationViewModel = stationViewModel,
                     fareMatrixViewModel = fareMatrixViewModel
                 )
             }
-
-            // Màn hình 2: Chi tiết giá vé
             composable(
                 route = Screen.CalculatedFare.route,
                 arguments = listOf(
