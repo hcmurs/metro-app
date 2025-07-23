@@ -160,12 +160,17 @@ fun OrderInfoScreen(
             viewModel.clearCheckoutStatus()
         }
     }
-
+    LaunchedEffect(key1 = uiState.payOSCheckoutUrl) {
+        uiState.payOSCheckoutUrl?.let { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(browserIntent)
+            viewModel.clearCheckoutStatus()
+        }
+    }
 
     // Available payment methods
     val paymentMethods = remember {
         listOf(
-
             PaymentMethod(
                 id = "stripe",
                 name = "Stripe",
@@ -174,6 +179,18 @@ fun OrderInfoScreen(
                         imageVector = Icons.Default.CreditCard,
                         contentDescription = "Stripe",
                         tint = Color(0xFFE91E63),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            ),
+            PaymentMethod(
+                id = "payos",
+                name = "PayOS",
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.CreditCard,
+                        contentDescription = "PayOS",
+                        tint = Color(0xFF1976D2), // Màu xanh đặc trưng
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -279,8 +296,11 @@ fun OrderInfoScreen(
             val currentSelectedMethod = selectedPaymentMethod
             Button(
                 onClick = {
-                    val paymentMethodId = 2
-                    viewModel.startCheckoutFlow(paymentMethodId)
+//                    val paymentMethodId = 2
+//                    viewModel.startCheckoutFlow(paymentMethodId)
+
+                    val paymentMethodId = 5
+                    viewModel.startPayOSCheckoutFlow(paymentMethodId)
                 },
                 enabled = !uiState.isProcessing,
                 modifier = Modifier

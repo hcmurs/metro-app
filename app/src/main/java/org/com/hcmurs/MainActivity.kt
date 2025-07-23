@@ -1,6 +1,7 @@
 package org.com.hcmurs
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +45,17 @@ class MainActivity : ComponentActivity() {
             currencyManager.updateExchangeRate()
         }
 
+        val appUri = intent?.data
+        if (appUri != null && appUri.scheme == "org.com.hcmurs" && appUri.host == "callback") {
+            val status = appUri.getQueryParameter("status")
+            if (status == "success") {
+                mainViewModel.setPaymentStatus(PaymentStatus.SUCCESS)
+            } else if (status == "cancel") {
+                mainViewModel.setPaymentStatus(PaymentStatus.CANCELLED)
+            }
+        }
+
+
         PaymentConfiguration.init(
             applicationContext,
             "pk_test_51RhDaTR1Z2NQalNLXVx9pppFy2tEDMw5ehfDwdeMl6K0yEcHOsR3u5UJ7kpHhHex1MPht1PaCYOGZZqTlS4lDK6c00EQJWcg0W" //
@@ -75,6 +87,19 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        val appUri = intent.data
+        if (appUri != null && appUri.scheme == "org.com.hcmurs" && appUri.host == "callback") {
+            val status = appUri.getQueryParameter("status")
+            when (status) {
+                "success" -> mainViewModel.setPaymentStatus(PaymentStatus.SUCCESS)
+                "cancel" -> mainViewModel.setPaymentStatus(PaymentStatus.CANCELLED)
+            }
+        }
+    }
 
     override fun attachBaseContext(newBase: Context?) {
         if (newBase != null) {
@@ -88,4 +113,8 @@ class MainActivity : ComponentActivity() {
             super.attachBaseContext(newBase)
         }
     }
+
+
+
+
 }

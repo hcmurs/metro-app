@@ -35,4 +35,27 @@ class PaymentRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun createPaymentLink(orderId: Int): Result<ApiResponse<PayOSCheckoutResponse>> {
+        return try {
+            val request = PayOSRequest(orderId = orderId)
+            Result.success(paymentApi.createPaymentLink(request))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateOrderStatus(orderCode: Int, status: OrderStatus): Result<Unit> {
+        return try {
+            val request = UpdateStatusRequest(orderCode = orderCode, status = status)
+            val response = paymentApi.updateOrderStatus(request)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Failed to update order status: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

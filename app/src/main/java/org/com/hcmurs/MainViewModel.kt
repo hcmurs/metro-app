@@ -3,6 +3,7 @@ package org.com.hcmurs
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
@@ -23,4 +24,17 @@ class MainViewModel @Inject constructor() : ViewModel() {
     fun setAuthenticated(isAuthenticated: Boolean) {
         _uiState.value = _uiState.value.copy(isAuthenticated = isAuthenticated)
     }
+    private val _paymentStatus = MutableStateFlow<PaymentStatus?>(null)
+    val paymentStatus: StateFlow<PaymentStatus?> = _paymentStatus
+
+    fun setPaymentStatus(status: PaymentStatus?) {
+        _paymentStatus.value = status
+    }
+
+
 }
+enum class PaymentStatus {
+    SUCCESS,
+    CANCELLED
+}
+

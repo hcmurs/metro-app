@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.order.ObjTicketId
 import org.com.hcmurs.repositories.apis.order.OrderDaysRepository
 import org.com.hcmurs.repositories.apis.order.OrderTicketDaysRequest
+import org.com.hcmurs.repositories.apis.payment.OrderStatus
 import org.com.hcmurs.repositories.apis.payment.PaymentRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketType
@@ -28,6 +29,7 @@ data class OrderInfoUiState(
     val clientSecret: String? = null,
     val processMessage: String? = null,
     val paymentIntentId: String? = null,
+    val payOSCheckoutUrl: String? = null
 )
 
 
@@ -171,6 +173,41 @@ class OrderInfoViewModel @Inject constructor(
             }.onFailure {
                 _uiState.update { it.copy(processMessage = "❌ Lỗi xác nhận thất bại") }
             }
+        }
+    }
+
+    fun startPayOSCheckoutFlow(paymentMethodId: Int) {
+        val ticketType = uiState.value.ticketType ?: return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isProcessing = true, processMessage = "Đang tạo đơn hàng...") }
+
+            val orderRequest = OrderTicketDaysRequest(ObjTicketId(ticketType.id), paymentMethodId)
+            val orderResult = orderDaysRepository.createOrderForTicketDays(orderRequest)
+
+            orderResult.onSuccess { orderResponse ->
+                val orderId = orderResponse.data?.orderId
+                if (orderId != null) {
+                    _uiState.update { it.copy(processMessage = "Đang tạo liên kết thanh toán...") }
+                    val payOSResult = paymentRepository.createPaymentLink(orderId)
+
+                    payOSResult.onSuccess { payOSResponse ->
+                        _uiState.update { it.copy(isProcessing = false, payOSCheckoutUrl = payOSResponse.data?.checkoutUrl) }
+                    }.onFailure {
+                        _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi kết nối khi tạo thanh toán.") }
+                    }
+                } else {
+                    _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi: Không tạo được đơn hàng.") }
+                }
+            }.onFailure {
+                _uiState.update { it.copy(isProcessing = false, processMessage = "Lỗi kết nối khi tạo đơn hàng.") }
+            }
+        }
+    }
+
+    fun updateOrderStatus(orderCode: Int, status: OrderStatus) {
+        viewModelScope.launch {
+            paymentRepository.updateOrderStatus(orderCode, status)
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -36,6 +37,7 @@ import org.com.hcmurs.ui.screens.metro.account.RegisterFormScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.BuyTicketScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.screens.metro.buyticket.OrderInfoScreen
+import org.com.hcmurs.ui.screens.metro.buyticket.PaymentRedirectScreen
 import org.com.hcmurs.ui.screens.metro.buyticket.TicketDetailScreen
 import org.com.hcmurs.ui.screens.metro.constructionimage.ConstructionImageScreen
 import org.com.hcmurs.ui.screens.metro.cooperationlink.CooperationLinkScreen
@@ -475,5 +477,33 @@ fun Navigation(
                 ChangeLanguageScreen(navController, fallbackManager)
             }
         }
-    }
+
+        composable(
+            route = "payment_handler?status={status}&orderCode={orderCode}",
+            arguments = listOf(
+                navArgument("status") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("orderCode") {
+                    type = NavType.IntType
+                    nullable = false
+                }
+            ),
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "org.com.hcmurs://callback?status={status}&orderCode={orderCode}"
+                }
+            )
+        ) { backStackEntry ->
+            val status = backStackEntry.arguments?.getString("status")
+            val orderCode = backStackEntry.arguments?.getInt("orderCode") ?: 0
+            PaymentRedirectScreen(
+                navController = navController,
+                status = status,
+                orderCode = orderCode
+            )
+        }}
+
+
 }
