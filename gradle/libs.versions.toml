@@ -1,6 +1,6 @@
 [versions]
 accompanistPager = "0.36.0"
-agp = "8.9.0"
+agp = "8.12.0"
 animation = "1.6.7"
 appauth = "0.11.1"
 barcodeScanning = "17.3.0"
