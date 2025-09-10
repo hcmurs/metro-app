@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.hcmurs" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.hcmurs" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@android:color/primary_text_light</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/black</item>
+    </style>
 
-    <style name="Theme.MVVM.Splash" parent="Theme.SplashScreen">
-        <!-- Đặt màu nền splash -->
-        <item name="windowSplashScreenBackground">@color/white</item>
-        <!-- Đặt icon hoặc logo -->
-        <item name="windowSplashScreenAnimatedIcon">@drawable/hurc</item>
-        <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
+    <style name="Theme.hcmurs.SplashTheme" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenBackground">#FFF</item>
         <item name="postSplashScreenTheme">@style/Theme.hcmurs</item>
     </style>
 

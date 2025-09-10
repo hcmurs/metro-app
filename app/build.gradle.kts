@@ -69,7 +69,11 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
+    // OkHttp
+    implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.okhttp.urlconnection)
+
     implementation(libs.androidx.work.runtime.ktx)
 
     ksp(libs.hilt.android.compiler)
@@ -85,12 +89,10 @@ dependencies {
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
 
-    implementation(libs.okhttp)
 
     implementation(libs.gson)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
-    implementation(libs.okhttp.urlconnection)
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil.compose)
