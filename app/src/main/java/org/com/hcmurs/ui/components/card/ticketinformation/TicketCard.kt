@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.card.ticketinformation
 
 import androidx.compose.foundation.BorderStroke
@@ -37,14 +41,14 @@ fun TicketInformationCard(event: TicketInformation) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
-            contentColor = Color.Black
+            contentColor = Color.Black,
         ),
-        border = BorderStroke(1.dp, PrimaryGreen)
+        border = BorderStroke(1.dp, PrimaryGreen),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             // Thumbnail image
             Box(
@@ -52,13 +56,13 @@ fun TicketInformationCard(event: TicketInformation) {
                     .size(80.dp)
                     .background(Color(0xFFE8F5E9), shape = RoundedCornerShape(4.dp))
                     .border(1.dp, PrimaryGreen, RoundedCornerShape(4.dp)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.Train,
                     contentDescription = null,
                     tint = PrimaryGreen,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp),
                 )
             }
 
@@ -70,24 +74,24 @@ fun TicketInformationCard(event: TicketInformation) {
                     text = event.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryGreen
+                    color = PrimaryGreen,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = event.description,
                     fontSize = 14.sp,
-                    color = Color.DarkGray
+                    color = Color.DarkGray,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
                         text = "\uD83D\uDDD3 ${event.date}",
                         fontSize = 12.sp,
                         color = Color(0xFF388E3C),
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                 }
             }

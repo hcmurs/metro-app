@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.card.station
 
 import androidx.compose.foundation.BorderStroke
@@ -28,7 +32,7 @@ fun StationCard(
     station: Station,
     isSelected: Boolean,
     isEnabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val backgroundColor = when {
         isSelected -> PrimaryGreen.copy(alpha = 0.2f)
@@ -48,19 +52,19 @@ fun StationCard(
             .clickable(enabled = isEnabled, onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         border = if (isSelected) BorderStroke(2.dp, PrimaryGreen) else null,
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Ga số ${station.stationId}",
                     fontSize = 12.sp,
-                    color = if (isSelected) PrimaryGreen else Color.Gray
+                    color = if (isSelected) PrimaryGreen else Color.Gray,
                 )
                 Text(
                     text = station.name,
@@ -69,7 +73,7 @@ fun StationCard(
                     textAlign = TextAlign.Center,
                     color = contentColor,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

@@ -1,6 +1,10 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.news
 
-//import item
+// import item
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -23,7 +27,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -31,11 +34,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,7 +57,6 @@ import coil3.compose.AsyncImage
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
 import org.com.hcmurs.ui.components.topbar.BlogListTopBar
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 import org.com.hcmurs.utils.formatDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -65,7 +64,7 @@ import org.com.hcmurs.utils.formatDate
 @Composable
 fun BlogListScreen(
     navController: NavController,
-    viewModel: BlogViewModel = hiltViewModel()
+    viewModel: BlogViewModel = hiltViewModel(),
 ) {
     val blogsState by viewModel.blogsState.collectAsState()
     val isLoadingMore by viewModel.isLoadingMore.collectAsState()
@@ -97,10 +96,11 @@ fun BlogListScreen(
                 navController = navController,
                 onSearch = { query ->
                     viewModel.searchBlogs(query)
-                }
+                },
             )
-        }
-    ) { paddingValues ->        BlogListContent(
+        },
+    ) { paddingValues ->
+        BlogListContent(
             blogsState = blogsState,
             isLoadingMore = isLoadingMore,
             paddingValues = paddingValues,
@@ -110,7 +110,7 @@ fun BlogListScreen(
             onRetry = { viewModel.loadAllBlogs(refresh = true) },
             onNavigateToBlog = { blogId ->
                 navController.navigate("blog_detail/$blogId")
-            }
+            },
         )
     }
 }
@@ -125,7 +125,7 @@ private fun BlogListContent(
     isSearchActive: Boolean,
     filteredBlogs: List<BlogResponse>,
     onRetry: () -> Unit,
-    onNavigateToBlog: (Int) -> Unit
+    onNavigateToBlog: (Int) -> Unit,
 ) {
     when {
         blogsState is BlogUiState.Loading -> {
@@ -133,7 +133,7 @@ private fun BlogListContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
@@ -143,12 +143,12 @@ private fun BlogListContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = blogsState.message,
-                        color = Color.Red
+                        color = Color.Red,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = onRetry) {
@@ -164,19 +164,19 @@ private fun BlogListContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = stringResource(R.string.not_found),
                             fontSize = 16.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text =  stringResource(R.string.try_search_again),
+                            text = stringResource(R.string.try_search_again),
                             fontSize = 14.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                     }
                 }
@@ -187,12 +187,12 @@ private fun BlogListContent(
                         .fillMaxSize()
                         .padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(filteredBlogs) { blog ->
                         BlogListItem(
                             blog = blog,
-                            onClick = { blog.id?.let { onNavigateToBlog(it) } }
+                            onClick = { blog.id?.let { onNavigateToBlog(it) } },
                         )
                     }
                 }
@@ -205,12 +205,12 @@ private fun BlogListContent(
                     .fillMaxSize()
                     .padding(paddingValues),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(blogsState.blogs) { blog ->
                     BlogListItem(
                         blog = blog,
-                        onClick = { blog.id?.let { onNavigateToBlog(it) } }
+                        onClick = { blog.id?.let { onNavigateToBlog(it) } },
                     )
                 }
 
@@ -218,7 +218,7 @@ private fun BlogListContent(
                     item {
                         Box(
                             modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                         }
@@ -233,19 +233,19 @@ private fun BlogListContent(
 @Composable
 fun BlogListItem(
     blog: BlogResponse,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             AsyncImage(
                 model = blog.image,
@@ -253,21 +253,21 @@ fun BlogListItem(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
             ) {
                 Text(
                     text = blog.title,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -277,19 +277,19 @@ fun BlogListItem(
                     fontSize = 14.sp,
                     color = Color.Gray,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccessTime,
                         contentDescription = null,
                         tint = Color.Gray,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(14.dp),
                     )
 
                     Spacer(modifier = Modifier.width(4.dp))
@@ -297,7 +297,7 @@ fun BlogListItem(
                     Text(
                         text = formatDate(blog.date), // định dạng ISO date string
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
 
                     blog.readTime?.let {
@@ -307,7 +307,7 @@ fun BlogListItem(
                             imageVector = Icons.Default.Schedule,
                             contentDescription = null,
                             tint = Color.Gray,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(14.dp),
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -315,7 +315,7 @@ fun BlogListItem(
                         Text(
                             text = it,
                             fontSize = 12.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                     }
                 }

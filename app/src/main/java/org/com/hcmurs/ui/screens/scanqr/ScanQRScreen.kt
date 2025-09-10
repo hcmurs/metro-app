@@ -1,9 +1,12 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.scanqr
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
@@ -19,25 +22,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -69,16 +65,17 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import org.com.hcmurs.R
 import org.com.hcmurs.repositories.apis.ticket.ScanQRResponse
 import org.com.hcmurs.ui.components.topbar.ScanQRTopBar
 import org.com.hcmurs.utils.vibrateOnError
 import org.com.hcmurs.utils.vibrateOnSuccess
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import org.com.hcmurs.R
 
 enum class ActionType {
-    ENTRY, EXIT
+    ENTRY,
+    EXIT,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +85,7 @@ fun ScanQRScreen(
     stationId: Int = 0,
     stationName: String = "",
     viewModel: ScanQRViewModel = hiltViewModel(),
-    actionType: ActionType
+    actionType: ActionType,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -96,8 +93,8 @@ fun ScanQRScreen(
         mutableStateOf(
             ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
+                Manifest.permission.CAMERA,
+            ) == PackageManager.PERMISSION_GRANTED,
         )
     }
     var scannedText by remember { mutableStateOf("") }
@@ -109,7 +106,7 @@ fun ScanQRScreen(
     var scannedResponse by remember { mutableStateOf<ScanQRResponse?>(null) }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         hasCameraPermission = isGranted
     }
@@ -154,23 +151,22 @@ fun ScanQRScreen(
             },
             containerColor = Color.White,
             titleContentColor = Color.Black,
-            textContentColor = Color.DarkGray
+            textContentColor = Color.DarkGray,
         )
     }
 
     Scaffold(
         topBar = {
             ScanQRTopBar(navController)
-        }
+        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color.Black.copy(alpha = 0.9f))
+                .background(Color.Black.copy(alpha = 0.9f)),
         ) {
             if (hasCameraPermission) {
-
                 when (val state = scanState) {
                     is ScanQRViewModel.ScanState.Success, is ScanQRViewModel.ScanState.Error -> {
                         if (showResultDialog) {
@@ -216,7 +212,7 @@ fun ScanQRScreen(
                                 containerColor = if (isSuccess) Color.White else Color(0xFFFBE9E7), // Light red for error
                                 titleContentColor = if (isSuccess) Color.Black else Color(0xFFD32F2F), // Red for error title
                                 textContentColor = if (isSuccess) Color.DarkGray else Color(0xFFD32F2F), // Red for error text
-                                iconContentColor = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFD32F2F) // Green for success, red for error
+                                iconContentColor = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFD32F2F), // Green for success, red for error
                             )
                         }
                     }
@@ -225,7 +221,8 @@ fun ScanQRScreen(
                         // Show loading indicator if needed
                     }
 
-                    else -> { /* Idle - no dialog */
+                    else -> {
+                        /* Idle - no dialog */
                     }
                 }
 
@@ -242,10 +239,10 @@ fun ScanQRScreen(
                             onStopProcessing = { isProcessing = false },
                             actionType = actionType,
                             stationId = stationId,
-                            viewModel = viewModel
+                            viewModel = viewModel,
                         )
                     },
-                    lifecycleOwner = lifecycleOwner
+                    lifecycleOwner = lifecycleOwner,
                 )
 
                 // Overlay UI
@@ -254,7 +251,7 @@ fun ScanQRScreen(
                         .fillMaxSize()
                         .padding(horizontal = 24.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -262,7 +259,7 @@ fun ScanQRScreen(
                     Box(
                         modifier = Modifier
                             .size(280.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         // Corner brackets
                         ScanningFrame()
@@ -273,7 +270,7 @@ fun ScanQRScreen(
                         Text(
                             text = stringResource(R.string.place_qr_code),
                             color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
                         )
 
 //                        if (scannedText.isNotEmpty()) {
@@ -301,23 +298,23 @@ fun ScanQRScreen(
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Icon(
                         imageVector = Icons.Default.QrCodeScanner,
                         contentDescription = "Camera Permission",
                         tint = Color.White,
-                        modifier = Modifier.size(64.dp)
+                        modifier = Modifier.size(64.dp),
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = stringResource(R.string.camera_permission_required),
                         color = Color.White,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
-                        onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) }
+                        onClick = { cameraPermissionLauncher.launch(Manifest.permission.CAMERA) },
                     ) {
                         Text(stringResource(R.string.grant_permission))
                     }
@@ -339,7 +336,7 @@ private fun handleQRCodeScanned(
     onStopProcessing: () -> Unit,
     actionType: ActionType,
     stationId: Int,
-    viewModel: ScanQRViewModel
+    viewModel: ScanQRViewModel,
 ) {
     if (!isProcessing) {
         onStartProcessing()
@@ -376,7 +373,7 @@ private fun processImageFromUri(
     context: Context,
     imageUri: Uri,
     onQRCodeScanned: (String) -> Unit,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
 ) {
     try {
         val inputStream = context.contentResolver.openInputStream(imageUri)
@@ -401,7 +398,7 @@ private fun processImageFromUri(
                     Barcode.FORMAT_EAN_8,
                     Barcode.FORMAT_ITF,
                     Barcode.FORMAT_UPC_A,
-                    Barcode.FORMAT_UPC_E
+                    Barcode.FORMAT_UPC_E,
                 )
                 .build()
 
@@ -435,7 +432,7 @@ private fun processImageFromUri(
 @Composable
 fun CameraPreview(
     onQRCodeScanned: (String) -> Unit,
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
 ) {
     val context = LocalContext.current
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
@@ -471,7 +468,7 @@ fun CameraPreview(
                         lifecycleOwner,
                         cameraSelector,
                         preview,
-                        imageAnalyzer
+                        imageAnalyzer,
                     )
                     camera.cameraControl.enableTorch(false) // Disable torch by default
                 } catch (exc: Exception) {
@@ -481,7 +478,7 @@ fun CameraPreview(
 
             previewView
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     )
 
     DisposableEffect(Unit) {
@@ -493,7 +490,7 @@ fun CameraPreview(
 
 @androidx.camera.core.ExperimentalGetImage
 class QRCodeAnalyzer(
-    private val onQRCodeScanned: (String) -> Unit
+    private val onQRCodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
 
     // Enhanced barcode scanner options for better detection
@@ -547,15 +544,13 @@ class QRCodeAnalyzer(
         }
     }
 
-    private fun isValidQRContent(content: String): Boolean {
-        return try {
-            // Check if it's valid JSON (your expected format)
-            val gson = Gson()
-            val response = gson.fromJson(content, ScanQRResponse::class.java)
-            response != null && response.toString().isNotEmpty()
-        } catch (e: Exception) {
-            false
-        }
+    private fun isValidQRContent(content: String): Boolean = try {
+        // Check if it's valid JSON (your expected format)
+        val gson = Gson()
+        val response = gson.fromJson(content, ScanQRResponse::class.java)
+        response != null && response.toString().isNotEmpty()
+    } catch (e: Exception) {
+        false
     }
 }
 
@@ -563,25 +558,25 @@ class QRCodeAnalyzer(
 fun ScanningFrame() {
     Box(
         modifier = Modifier
-            .size(280.dp)
+            .size(280.dp),
     ) {
         // Top-left corner
         Box(
             modifier = Modifier
                 .size(30.dp)
-                .align(Alignment.TopStart)
+                .align(Alignment.TopStart),
         ) {
             Box(
                 modifier = Modifier
                     .width(20.dp)
                     .height(3.dp)
-                    .background(Color.White)
+                    .background(Color.White),
             )
             Box(
                 modifier = Modifier
                     .width(3.dp)
                     .height(20.dp)
-                    .background(Color.White)
+                    .background(Color.White),
             )
         }
 
@@ -589,21 +584,21 @@ fun ScanningFrame() {
         Box(
             modifier = Modifier
                 .size(30.dp)
-                .align(Alignment.TopEnd)
+                .align(Alignment.TopEnd),
         ) {
             Box(
                 modifier = Modifier
                     .width(20.dp)
                     .height(3.dp)
                     .align(Alignment.TopEnd)
-                    .background(Color.White)
+                    .background(Color.White),
             )
             Box(
                 modifier = Modifier
                     .width(3.dp)
                     .height(20.dp)
                     .align(Alignment.TopEnd)
-                    .background(Color.White)
+                    .background(Color.White),
             )
         }
 
@@ -611,21 +606,21 @@ fun ScanningFrame() {
         Box(
             modifier = Modifier
                 .size(30.dp)
-                .align(Alignment.BottomStart)
+                .align(Alignment.BottomStart),
         ) {
             Box(
                 modifier = Modifier
                     .width(20.dp)
                     .height(3.dp)
                     .align(Alignment.BottomStart)
-                    .background(Color.White)
+                    .background(Color.White),
             )
             Box(
                 modifier = Modifier
                     .width(3.dp)
                     .height(20.dp)
                     .align(Alignment.BottomStart)
-                    .background(Color.White)
+                    .background(Color.White),
             )
         }
 
@@ -633,21 +628,21 @@ fun ScanningFrame() {
         Box(
             modifier = Modifier
                 .size(30.dp)
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomEnd),
         ) {
             Box(
                 modifier = Modifier
                     .width(20.dp)
                     .height(3.dp)
                     .align(Alignment.BottomEnd)
-                    .background(Color.White)
+                    .background(Color.White),
             )
             Box(
                 modifier = Modifier
                     .width(3.dp)
                     .height(20.dp)
                     .align(Alignment.BottomEnd)
-                    .background(Color.White)
+                    .background(Color.White),
             )
         }
     }

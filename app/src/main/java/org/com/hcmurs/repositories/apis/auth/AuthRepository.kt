@@ -1,17 +1,23 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.auth
 
 import android.util.Log
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import org.com.hcmurs.security.TokenProvider
 import org.com.hcmurs.utils.JwtUtils
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class AuthRepository @Inject constructor(
+class AuthRepository
+@Inject
+constructor(
     private val api: AuthApi,
     private val tokenProvider: TokenProvider,
 ) {
@@ -29,7 +35,7 @@ class AuthRepository @Inject constructor(
             } else {
                 Log.e(
                     "AuthRepository",
-                    "Received success response from backend, but access token is missing or empty. Full apiResponse object: $apiResponse"
+                    "Received success response from backend, but access token is missing or empty. Full apiResponse object: $apiResponse",
                 )
                 ""
             }
@@ -41,7 +47,6 @@ class AuthRepository @Inject constructor(
 
     private val _userProfile = MutableStateFlow<UserProfileData?>(null)
     val userProfile: StateFlow<UserProfileData?> = _userProfile
-
 
     suspend fun fetchUserProfile(): UserProfileData? {
         if (!isAuthenticated()) {
@@ -73,11 +78,10 @@ class AuthRepository @Inject constructor(
 
     fun isAuthenticated(): Boolean {
         val token = tokenProvider.getToken()
-        return !token.isNullOrEmpty() && !JwtUtils.isTokenExpired(token)    }
-
-    fun getToken(): String? {
-        return tokenProvider.getToken()
+        return !token.isNullOrEmpty() && !JwtUtils.isTokenExpired(token)
     }
+
+    fun getToken(): String? = tokenProvider.getToken()
 
     fun clearUserProfile() {
         _userProfile.value = null

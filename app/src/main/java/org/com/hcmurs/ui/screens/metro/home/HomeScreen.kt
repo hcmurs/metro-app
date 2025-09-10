@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.home
 
 import android.os.Build
@@ -8,30 +12,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 import org.com.hcmurs.constant.UserRole
 import org.com.hcmurs.ui.components.common.AppHomeScreen
+import org.com.hcmurs.ui.components.dialog.LoginRequiredDialog
 import org.com.hcmurs.ui.components.featured.FeaturedBlogsSection
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.screens.news.BlogSection
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import org.com.hcmurs.Screen
-import org.com.hcmurs.ui.components.dialog.LoginRequiredDialog
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
     var showLoginDialog by remember { mutableStateOf(false) }
@@ -40,7 +43,7 @@ fun HomeScreen(
         Screen.RedeemCodeForTicket.route,
         Screen.BuyTicket.route,
         Screen.MyTicket.route,
-        Screen.Feedback.route
+        Screen.Feedback.route,
     )
 
     fun handleNavigation(screen: String) {
@@ -56,7 +59,7 @@ fun HomeScreen(
             onLoginClick = {
                 showLoginDialog = false
                 navController.navigate(Screen.Login.route)
-            }
+            },
         )
     }
 
@@ -67,7 +70,7 @@ fun HomeScreen(
         role = UserRole.USER,
         onGridItemClick = { screen ->
             handleNavigation(screen)
-        }
+        },
     ) {
         item {
             Spacer(modifier = Modifier.height(30.dp))
@@ -84,7 +87,6 @@ fun HomeScreen(
         }
     }
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)

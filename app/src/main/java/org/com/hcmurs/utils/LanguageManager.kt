@@ -1,11 +1,15 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.utils
 
 import android.content.Context
 import android.content.res.Configuration
+import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 object LanguageManager {
     private const val LANGUAGE_KEY = "selected_language"
@@ -17,7 +21,10 @@ object LanguageManager {
         currencyManager = manager
     }
 
-    fun setLocale(context: Context, languageCode: String) {
+    fun setLocale(
+        context: Context,
+        languageCode: String,
+    ) {
         val prefs = context.getSharedPreferences("language_prefs", Context.MODE_PRIVATE)
         prefs.edit().putString(LANGUAGE_KEY, languageCode).apply()
 
@@ -49,18 +56,14 @@ object LanguageManager {
         return prefs.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
     }
 
-    fun getCurrentLanguageName(context: Context): String {
-        return when (getLocale(context)) {
-            "vi" -> "Vietnamese"
-            "en" -> "English"
-            else -> "Vietnamese"
-        }
+    fun getCurrentLanguageName(context: Context): String = when (getLocale(context)) {
+        "vi" -> "Vietnamese"
+        "en" -> "English"
+        else -> "Vietnamese"
     }
 
-    fun getAvailableLanguages(): List<Pair<String, String>> {
-        return listOf(
-            "vi" to "Vietnamese",
-            "en" to "English"
-        )
-    }
+    fun getAvailableLanguages(): List<Pair<String, String>> = listOf(
+        "vi" to "Vietnamese",
+        "en" to "English",
+    )
 }

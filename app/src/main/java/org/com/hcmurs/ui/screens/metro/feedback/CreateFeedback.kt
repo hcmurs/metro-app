@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.feedback
 
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,52 +26,44 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.material3.Button
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.draw.shadow
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import coil3.compose.AsyncImage
 
 private val PrimaryGreen = Color(0xFF4CAF50)
@@ -74,7 +77,7 @@ private val BorderColor = Color(0xFFE0E0E0)
 @Composable
 fun CreateFeedbackScreen(
     navController: NavController,
-    viewModel: FeedbackViewModel = hiltViewModel()
+    viewModel: FeedbackViewModel = hiltViewModel(),
 ) {
     var category by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -84,7 +87,7 @@ fun CreateFeedbackScreen(
     val categories = listOf("Góp ý", "Sự cố ứng dụng", "Khác")
     var expanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect (key1 = uiState.submissionMessage) {
+    LaunchedEffect(key1 = uiState.submissionMessage) {
         uiState.submissionMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
 
@@ -94,7 +97,7 @@ fun CreateFeedbackScreen(
         }
     }
 
-    Scaffold (
+    Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -102,46 +105,45 @@ fun CreateFeedbackScreen(
                         "Gửi phản ánh mới",
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
                     )
                 },
                 navigationIcon = {
-                    IconButton (onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = PrimaryGreen
-                )
+                    containerColor = PrimaryGreen,
+                ),
             )
         },
-        containerColor = BackgroundGray
+        containerColor = BackgroundGray,
     ) { padding ->
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .shadow(4.dp, RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
-                    ExposedDropdownMenuBox (
+                    ExposedDropdownMenuBox(
                         expanded = expanded,
                         onExpandedChange = { expanded = !expanded },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         OutlinedTextField(
                             value = category,
@@ -159,15 +161,15 @@ fun CreateFeedbackScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = PrimaryGreen,
                                 unfocusedBorderColor = BorderColor,
-                                cursorColor = PrimaryGreen
+                                cursorColor = PrimaryGreen,
                             ),
                             shape = RoundedCornerShape(12.dp),
-                            singleLine = true
+                            singleLine = true,
                         )
 
                         ExposedDropdownMenu(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false }
+                            onDismissRequest = { expanded = false },
                         ) {
                             categories.forEach { selectionOption ->
                                 androidx.compose.material3.DropdownMenuItem(
@@ -176,7 +178,7 @@ fun CreateFeedbackScreen(
                                         category = selectionOption
                                         expanded = false
                                     },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                 )
                             }
                         }
@@ -188,7 +190,7 @@ fun CreateFeedbackScreen(
                         .fillMaxWidth()
                         .shadow(4.dp, RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     OutlinedTextField(
                         value = content,
@@ -201,28 +203,28 @@ fun CreateFeedbackScreen(
                             Text(
                                 "Nội dung chi tiết",
                                 color = DarkGreen,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
                             )
                         },
                         placeholder = {
                             Text(
                                 "Vui lòng mô tả rõ vấn đề bạn gặp phải...",
-                                color = Color.Gray
+                                color = Color.Gray,
                             )
                         },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Message,
                                 contentDescription = "Content",
-                                tint = PrimaryGreen
+                                tint = PrimaryGreen,
                             )
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = PrimaryGreen,
                             unfocusedBorderColor = BorderColor,
-                            cursorColor = PrimaryGreen
+                            cursorColor = PrimaryGreen,
                         ),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
                     )
                 }
 
@@ -232,13 +234,13 @@ fun CreateFeedbackScreen(
                         .fillMaxWidth()
                         .shadow(4.dp, RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Box(modifier = Modifier.padding(16.dp)) {
                         ImagePicker(
                             label = "Ảnh đính kèm (tùy chọn)",
                             selectedImageUri = imageUri,
-                            onImageSelected = { imageUri = it }
+                            onImageSelected = { imageUri = it },
                         )
                     }
                 }
@@ -247,7 +249,7 @@ fun CreateFeedbackScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Enhanced Submit Button
-            Button (
+            Button(
                 onClick = {
                     viewModel.createFeedback(category, content, imageUri, context)
                 },
@@ -259,28 +261,28 @@ fun CreateFeedbackScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryGreen,
-                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-                )
+                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f),
+                ),
             ) {
                 if (uiState.isSubmitting) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(28.dp),
                         color = Color.White,
-                        strokeWidth = 3.dp
+                        strokeWidth = 3.dp,
                     )
                 } else {
                     Icon(
                         Icons.Default.Send,
                         contentDescription = "Send",
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         "Gửi đi",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                 }
             }
@@ -292,10 +294,10 @@ fun CreateFeedbackScreen(
 private fun ImagePicker(
     label: String,
     selectedImageUri: Uri?,
-    onImageSelected: (Uri?) -> Unit
+    onImageSelected: (Uri?) -> Unit,
 ) {
-    val launcher = rememberLauncherForActivityResult (
-        contract = ActivityResultContracts.GetContent()
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
     ) { uri: Uri? ->
         onImageSelected(uri)
     }
@@ -305,7 +307,7 @@ private fun ImagePicker(
             label,
             fontWeight = FontWeight.SemiBold,
             color = DarkGreen,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
         Spacer(Modifier.height(12.dp))
         Box(
@@ -314,61 +316,67 @@ private fun ImagePicker(
                 .height(180.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(
-                    if (selectedImageUri != null) Color.Transparent
-                    else LightGreen
+                    if (selectedImageUri != null) {
+                        Color.Transparent
+                    } else {
+                        LightGreen
+                    },
                 )
                 .border(
                     2.dp,
-                    if (selectedImageUri != null) PrimaryGreen
-                    else BorderColor,
-                    RoundedCornerShape(16.dp)
+                    if (selectedImageUri != null) {
+                        PrimaryGreen
+                    } else {
+                        BorderColor
+                    },
+                    RoundedCornerShape(16.dp),
                 )
                 .clickable { launcher.launch("image/*") },
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             if (selectedImageUri != null) {
                 AsyncImage(
                     model = selectedImageUri,
                     contentDescription = "Selected Image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
                 // Overlay để hiển thị có thể thay đổi ảnh
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.Black.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         "Nhấn để thay đổi",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Icon(
                         Icons.Filled.CloudUpload,
                         contentDescription = "Upload",
                         tint = PrimaryGreen,
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier.size(56.dp),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         "Nhấn để chọn ảnh",
                         color = DarkGreen,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                     Text(
                         "PNG, JPG, JPEG",
                         color = Color.Gray,
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
                     )
                 }
             }

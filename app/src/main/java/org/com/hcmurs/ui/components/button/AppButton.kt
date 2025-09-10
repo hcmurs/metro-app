@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.button
 
 import androidx.compose.material3.Button
@@ -14,12 +18,12 @@ fun AppButton(
     text: String,
     onClick: () -> Unit,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = Color.White
+    textColor: Color = Color.White,
 ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Text(text = text, color = textColor)
     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.topbar
 
 import android.os.Build
@@ -38,13 +42,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import org.com.hcmurs.ui.components.dropdown.LanguageDropdown
+import org.com.hcmurs.R
+import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.weather.WeatherViewModel
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.LanguageManager
-import org.com.hcmurs.R
-import org.com.hcmurs.Screen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +55,7 @@ import org.com.hcmurs.Screen
 fun HomeTopBar(
     navController: NavHostController,
     isScrolled: Boolean = false,
-    modifier: Modifier = Modifier // Add modifier parameter
+    modifier: Modifier = Modifier,
 ) {
     var selectedLanguage by remember { mutableStateOf("Vietnamese") }
     val context = LocalContext.current
@@ -69,29 +72,29 @@ fun HomeTopBar(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 WeatherDisplay(
                     viewModel = weatherViewModel,
-                    isScrolled = isScrolled
+                    isScrolled = isScrolled,
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     IconButton(onClick = { /* TODO: Notifications */ }) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = "Thông báo",
                             // Show notification icon in white when not scrolled for better visibility over image
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
                     LanguageButton(
                         isScrolled = isScrolled,
                         onClick = {
                             navController.navigate(Screen.ChangeLanguage.route)
-                        }
+                        },
                     )
                 }
             }
@@ -102,18 +105,18 @@ fun HomeTopBar(
                 PrimaryGreen
             } else {
                 Color.Black.copy(alpha = 0.3f) // Semi-transparent overlay
-            }
+            },
         ),
         modifier = modifier.then(
-            if (isScrolled) Modifier.shadow(4.dp) else Modifier
-        )
+            if (isScrolled) Modifier.shadow(4.dp) else Modifier,
+        ),
     )
 }
 
 @Composable
 private fun LanguageButton(
     isScrolled: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val vietnameseFlag = "\uD83C\uDDFB\uD83C\uDDF3"
@@ -130,32 +133,36 @@ private fun LanguageButton(
     Box(
         modifier = Modifier
             .wrapContentSize(Alignment.TopEnd)
-            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
     ) {
         Card(
             modifier = Modifier.clickable { onClick() },
             colors = CardDefaults.cardColors(
-                containerColor = if (isScrolled) Color.White.copy(alpha = 0.9f) else Color.White.copy(
-                    alpha = 0.8f
-                )
+                containerColor = if (isScrolled) {
+                    Color.White.copy(alpha = 0.9f)
+                } else {
+                    Color.White.copy(
+                        alpha = 0.8f,
+                    )
+                },
             ),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(20.dp),
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = currentDisplayText,
                     color = Color.Black,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
                 Icon(
                     Icons.Default.Language,
                     contentDescription = "Change Language",
                     tint = Color.Black,
-                    modifier = Modifier.padding(start = 4.dp)
+                    modifier = Modifier.padding(start = 4.dp),
                 )
             }
         }

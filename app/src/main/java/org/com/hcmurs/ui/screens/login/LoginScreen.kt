@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.login
 
 import android.app.Activity
@@ -65,7 +69,7 @@ fun LoginScreen(
 
     // Create launcher for Google Sign-In
     val googleSignInLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
+        contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
         Log.d("LoginFlow", "Google sign-in activity result: ${result.resultCode}")
         if (result.resultCode == Activity.RESULT_OK) {
@@ -133,7 +137,7 @@ fun LoginScreen(
         onFacebookLoginClick = {
             // Add Facebook login logic here if needed
             // For now, this is a placeholder since your original code only had Google login
-        }
+        },
     )
 }
 
@@ -142,12 +146,12 @@ private fun LoginScreenContent(
     navController: NavController,
     status: LoadStatus,
     onGoogleLoginClick: () -> Unit,
-    onFacebookLoginClick: () -> Unit
+    onFacebookLoginClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color.White),
     ) {
         // Background Image
         AsyncImage(
@@ -157,7 +161,7 @@ private fun LoginScreenContent(
                 .fillMaxWidth()
                 .height(300.dp)
                 .align(Alignment.TopCenter),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         // White surface that floats at the bottom of the image
@@ -168,17 +172,17 @@ private fun LoginScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
-                .padding(top = 250.dp)
+                .padding(top = 250.dp),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = {
                         navController.navigate(Screen.Home.route)
@@ -186,7 +190,7 @@ private fun LoginScreenContent(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     }
 
@@ -194,7 +198,7 @@ private fun LoginScreenContent(
                         text = stringResource(R.string.login_title),
                         style = MaterialTheme.typography.headlineMedium,
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
 
                     Spacer(modifier = Modifier.width(48.dp))
@@ -207,7 +211,7 @@ private fun LoginScreenContent(
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Gray,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -218,21 +222,21 @@ private fun LoginScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 32.dp),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 CircularProgressIndicator(
                                     color = MaterialTheme.colorScheme.primary,
-                                    strokeWidth = 3.dp
+                                    strokeWidth = 3.dp,
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
                                     text = stringResource(R.string.authentication_loading),
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color.DarkGray
+                                    color = Color.DarkGray,
                                 )
                             }
                         }
@@ -244,7 +248,7 @@ private fun LoginScreenContent(
                             text = stringResource(R.string.continue_with_google),
                             logoRes = R.drawable.google,
                             backgroundColor = Color.White,
-                            contentColor = Color.Black
+                            contentColor = Color.Black,
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -254,7 +258,7 @@ private fun LoginScreenContent(
                             text = stringResource(R.string.continue_with_facebook),
                             logoRes = R.drawable.fb,
                             backgroundColor = Color(0xFF1877F2),
-                            contentColor = Color.White
+                            contentColor = Color.White,
                         )
 
                         // Show error message if there's an error
@@ -265,7 +269,7 @@ private fun LoginScreenContent(
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
                             )
                         }
                     }
@@ -281,7 +285,7 @@ private fun LoginButton(
     text: String,
     logoRes: Int,
     backgroundColor: Color,
-    contentColor: Color
+    contentColor: Color,
 ) {
     Button(
         onClick = onClick,
@@ -290,23 +294,23 @@ private fun LoginButton(
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor),
         shape = RoundedCornerShape(8.dp),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Image(
                 painter = painterResource(id = logoRes),
                 contentDescription = "$text logo",
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = text,
                 color = contentColor,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         }
     }
@@ -319,7 +323,7 @@ fun LoginScreenInitPreview() {
         navController = rememberNavController(),
         status = LoadStatus.Init(),
         onGoogleLoginClick = {},
-        onFacebookLoginClick = {}
+        onFacebookLoginClick = {},
     )
 }
 
@@ -330,7 +334,7 @@ fun LoginScreenLoadingPreview() {
         navController = rememberNavController(),
         status = LoadStatus.Loading(),
         onGoogleLoginClick = {},
-        onFacebookLoginClick = {}
+        onFacebookLoginClick = {},
     )
 }
 
@@ -341,7 +345,7 @@ fun LoginScreenSuccessPreview() {
         navController = rememberNavController(),
         status = LoadStatus.Success(),
         onGoogleLoginClick = {},
-        onFacebookLoginClick = {}
+        onFacebookLoginClick = {},
     )
 }
 
@@ -352,6 +356,6 @@ fun LoginScreenErrorPreview() {
         navController = rememberNavController(),
         status = LoadStatus.Error(stringResource(R.string.error)),
         onGoogleLoginClick = {},
-        onFacebookLoginClick = {}
+        onFacebookLoginClick = {},
     )
 }

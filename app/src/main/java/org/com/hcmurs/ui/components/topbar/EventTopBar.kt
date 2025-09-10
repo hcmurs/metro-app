@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.topbar
 
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +22,6 @@ fun EventTopBar(navController: NavController, onAddEvent: () -> Unit) {
             TextButton(onClick = onAddEvent) {
                 Text("Nhập mã", color = Color.White)
             }
-        }
+        },
     )
 }

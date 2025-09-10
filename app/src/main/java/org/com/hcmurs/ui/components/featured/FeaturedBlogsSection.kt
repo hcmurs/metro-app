@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.featured
 
 import androidx.compose.foundation.clickable
@@ -23,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,8 +39,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
 import org.com.hcmurs.ui.screens.news.BlogViewModel
-import org.com.hcmurs.ui.theme.PrimaryGreen
-import org.com.hcmurs.ui.theme.LightBeige
 
 @Composable
 fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewModel = hiltViewModel()) {
@@ -52,7 +53,7 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
                 .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (featuredBlogs.value.isEmpty()) {
                 // Loading state
@@ -66,7 +67,7 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
                         subtitle = blog.excerpt ?: "",
                         thumbnailUrl = blog.image,
                         color = Color.White,
-                        modifier = Modifier.width(300.dp)
+                        modifier = Modifier.width(300.dp),
                     ) {
                         navController.navigate("blog_detail/${blog.id}")
                     }
@@ -78,18 +79,17 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
 
 @Composable
 fun BlogLoadingPlaceholder(modifier: Modifier) {
-
     Card(
         modifier = modifier
             .wrapContentHeight(),
         colors = CardDefaults.cardColors(containerColor = Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
+                .padding(12.dp),
         ) {
             // Placeholder for image
             Spacer(modifier = Modifier.height(170.dp))
@@ -101,18 +101,17 @@ fun BlogLoadingPlaceholder(modifier: Modifier) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(4.dp))
             // Placeholder for subtitle
             Text(
                 text = "Please wait...",
                 color = Color.White.copy(alpha = 0.8f),
-                fontSize = 13.sp
+                fontSize = 13.sp,
             )
         }
     }
-
 }
 
 @Composable
@@ -122,7 +121,7 @@ fun BlogTile(
     subtitle: String,
     color: Color,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -130,7 +129,7 @@ fun BlogTile(
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
     ) {
         Column {
             // Blog thumbnail
@@ -150,7 +149,7 @@ fun BlogTile(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
+                    .padding(12.dp),
             ) {
                 Text(
                     text = title,
@@ -158,14 +157,14 @@ fun BlogTile(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
                     color = Color.Black,
                     fontSize = 13.sp,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

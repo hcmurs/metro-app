@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +26,7 @@ import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 @Composable
 fun LoginRequiredDialog(
     onDismissRequest: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -31,11 +35,11 @@ fun LoginRequiredDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedButton(
                     onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel), color = Color.Gray)
                 }
@@ -43,7 +47,7 @@ fun LoginRequiredDialog(
                 Button(
                     onClick = onLoginClick,
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Text("Đăng nhập", color = Color.White)
                 }
@@ -55,26 +59,24 @@ fun LoginRequiredDialog(
                 fontWeight = FontWeight.Bold,
                 color = DarkGreen,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         text = {
             Text(
                 text = "Vui lòng đăng nhập để sử dụng tính năng này.",
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
+        },
     )
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
 fun LoginRequiredDialogPreview() {
     LoginRequiredDialog(
         onDismissRequest = {},
-        onLoginClick = {}
+        onLoginClick = {},
     )
 }

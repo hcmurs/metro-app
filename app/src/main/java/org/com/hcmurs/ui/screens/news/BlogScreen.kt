@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.news
 
 import android.os.Build
@@ -40,7 +44,6 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
-import org.com.hcmurs.ui.theme.LightBeige
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -48,7 +51,7 @@ fun BlogTile(
     blog: BlogResponse,
     onClick: () -> Unit = {},
     color: Color = Color.White,
-    textColor: Color = Color.Black
+    textColor: Color = Color.Black,
 ) {
     Card(
         modifier = Modifier
@@ -57,27 +60,27 @@ fun BlogTile(
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
                     model = blog.image,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp)
+                    .padding(12.dp),
             ) {
                 Text(
                     text = blog.title,
@@ -85,7 +88,7 @@ fun BlogTile(
                     color = textColor,
                     fontSize = 14.sp,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -93,25 +96,24 @@ fun BlogTile(
                     fontSize = 11.sp,
                     color = Color.Gray,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = blog.readTime ?: "",
                     fontSize = 10.sp,
-                    color = Color.Gray
+                    color = Color.Gray,
                 )
             }
         }
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BlogSection(
     navController: NavController,
-    viewModel: BlogViewModel = hiltViewModel()
+    viewModel: BlogViewModel = hiltViewModel(),
 ) {
     val homeBlogsState by viewModel.homeBlogsState.collectAsState()
 
@@ -121,12 +123,12 @@ fun BlogSection(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.news),
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             TextButton(onClick = {
                 navController.navigate("blog_list")
@@ -141,7 +143,7 @@ fun BlogSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(160.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -151,7 +153,7 @@ fun BlogSection(
                 Text(
                     text = "Failed to load blogs",
                     color = Color.Red,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 )
             }
 
@@ -165,18 +167,17 @@ fun BlogSection(
                     modifier = Modifier
                         .horizontalScroll(scrollState)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     remainingBlogs.forEach { blog ->
                         BlogTile(
                             blog = blog,
-                            onClick = { navController.navigate("blog_detail/${blog.id}") }
+                            onClick = { navController.navigate("blog_detail/${blog.id}") },
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }
-
         }
     }
 }

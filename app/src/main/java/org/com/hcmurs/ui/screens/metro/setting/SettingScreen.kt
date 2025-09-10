@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.setting
 
 import androidx.compose.foundation.background
@@ -46,31 +50,31 @@ fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable() { onClick() }
+            .clickable { onClick() }
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = Color(0xFF666666),
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             Text(
                 text = title,
                 fontSize = 16.sp,
-                color = Color(0xFF424242)
+                color = Color(0xFF424242),
             )
         }
 
@@ -79,7 +83,7 @@ fun SettingsItem(
                 text = subtitle,
                 fontSize = 16.sp,
                 color = Color(0xFF1976D2),
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -88,7 +92,7 @@ fun SettingsItem(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = "Navigate",
             tint = Color(0xFF999999),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -96,14 +100,14 @@ fun SettingsItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
-    navController: NavController
+    navController: NavController,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(Color(0xFFF5F5F5)),
     ) {
-        //Top app bar
+        // Top app bar
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -111,7 +115,7 @@ fun SettingScreen(
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
 
@@ -121,8 +125,8 @@ fun SettingScreen(
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = PrimaryGreen
-            )
+                containerColor = PrimaryGreen,
+            ),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -134,46 +138,42 @@ fun SettingScreen(
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
         ) {
-            Column(
-            ) {
+            Column {
                 SettingsItem(
                     icon = Icons.Default.Notifications,
                     title = "Thông báo",
-                    onClick = { }
+                    onClick = { },
                 )
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 56.dp),
                     color = Color(0xFFE0E0E0),
-                    thickness = 0.5.dp
+                    thickness = 0.5.dp,
                 )
                 SettingsItem(
                     icon = Icons.Default.Lock,
                     title = "Quyền truy cập",
-                    onClick = { /* Handle privacy */ }
+                    onClick = { /* Handle privacy */ },
                 )
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 56.dp),
                     color = Color(0xFFE0E0E0),
-                    thickness = 0.5.dp
+                    thickness = 0.5.dp,
                 )
                 SettingsItem(
                     icon = Icons.Default.Language,
                     title = "Ngôn ngữ",
                     subtitle = "Tiếng Việt",
-                    onClick = { /* Handle language */ }
+                    onClick = { /* Handle language */ },
                 )
             }
-
         }
-
     }
-
 }
 
 @Preview(showBackground = true)

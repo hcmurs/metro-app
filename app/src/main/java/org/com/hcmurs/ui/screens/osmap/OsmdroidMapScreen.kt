@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.osmap
 
 import android.Manifest
@@ -40,7 +44,7 @@ fun OsmdroidMapScreen(navController: NavController) {
     var hasLocationPermission by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
+        ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         hasLocationPermission = isGranted
     }
@@ -48,7 +52,7 @@ fun OsmdroidMapScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         hasLocationPermission = ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasLocationPermission) {
@@ -60,14 +64,14 @@ fun OsmdroidMapScreen(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
         ) {
             AndroidView(
                 factory = { context ->
                     // Initialize OSMdroid configuration
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
 
                     // Create and configure the map view
@@ -109,7 +113,7 @@ fun OsmdroidMapScreen(navController: NavController) {
                 modifier = Modifier.fillMaxSize(),
                 update = { mapView ->
                     // This block will be called on recomposition
-                }
+                },
             )
         }
     }
@@ -121,7 +125,7 @@ fun OsmdroidMapScreen(navController: NavController) {
                 Lifecycle.Event.ON_RESUME -> {
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
                 }
                 Lifecycle.Event.ON_PAUSE -> {

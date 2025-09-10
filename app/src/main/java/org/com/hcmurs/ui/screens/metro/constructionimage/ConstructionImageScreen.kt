@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.constructionimage
 
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +24,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +37,7 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConstructionImageScreen(
-    navController: NavController
+    navController: NavController,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -49,11 +52,11 @@ fun ConstructionImageScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = PrimaryGreen
-                )
+                    containerColor = PrimaryGreen,
+                ),
             )
         },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         // Sample image resources from drawable
         val imageList = listOf(
@@ -74,7 +77,7 @@ fun ConstructionImageScreen(
                 .padding(paddingValues)
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(fullList) { resId ->
                 AsyncImage(
@@ -82,7 +85,7 @@ fun ConstructionImageScreen(
                     contentDescription = "Image $resId",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
+                        .aspectRatio(1f),
                 )
             }
         }

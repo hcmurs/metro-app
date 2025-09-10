@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.setting
 
 import androidx.compose.foundation.background
@@ -58,25 +62,25 @@ import org.com.hcmurs.ui.screens.metro.account.SecondaryGreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(navController: NavController) {
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         "Thông báo",
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = PrimaryGreen
+                    containerColor = PrimaryGreen,
                 ),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
                 },
@@ -85,53 +89,53 @@ fun NotificationScreen(navController: NavController) {
                         Icon(
                             Icons.Default.DoneAll,
                             contentDescription = "Mark all read",
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
         ) {
             // Header Stats
-            Card (
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = LightGreen),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
-                Row (
+                Row(
                     modifier = Modifier.padding(20.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Column (
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Icon(
                             Icons.Default.Notifications,
                             contentDescription = null,
                             modifier = Modifier.size(32.dp),
-                            tint = PrimaryGreen
+                            tint = PrimaryGreen,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             "5",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = DarkGreen
+                            color = DarkGreen,
                         )
                         Text(
                             "Mới",
                             fontSize = 12.sp,
-                            color = Color(0xFF666666)
+                            color = Color(0xFF666666),
                         )
                     }
 
@@ -139,29 +143,29 @@ fun NotificationScreen(navController: NavController) {
                         modifier = Modifier
                             .height(60.dp)
                             .width(1.dp),
-                        color = PrimaryGreen.copy(alpha = 0.3f)
+                        color = PrimaryGreen.copy(alpha = 0.3f),
                     )
 
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Icon(
                             Icons.Default.Archive,
                             contentDescription = null,
                             modifier = Modifier.size(32.dp),
-                            tint = SecondaryGreen
+                            tint = SecondaryGreen,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             "12",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = DarkGreen
+                            color = DarkGreen,
                         )
                         Text(
                             "Đã đọc",
                             fontSize = 12.sp,
-                            color = Color(0xFF666666)
+                            color = Color(0xFF666666),
                         )
                     }
                 }
@@ -172,28 +176,30 @@ fun NotificationScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 FilterChip(
                     onClick = { },
                     label = {
-                        Text("Tất cả") },
+                        Text("Tất cả")
+                    },
                     selected = true,
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = PrimaryGreen,
-                        selectedLabelColor = Color.White
-                    )
+                        selectedLabelColor = Color.White,
+                    ),
                 )
                 FilterChip(
                     onClick = { },
                     label = {
-                        Text("Chưa đọc") },
-                    selected = false
+                        Text("Chưa đọc")
+                    },
+                    selected = false,
                 )
                 FilterChip(
                     onClick = { },
                     label = { Text("Quan trọng") },
-                    selected = false
+                    selected = false,
                 )
             }
 
@@ -207,7 +213,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = false,
                 isImportant = true,
                 icon = Icons.Default.CheckCircle,
-                iconColor = PrimaryGreen
+                iconColor = PrimaryGreen,
             )
 
             NotificationItem(
@@ -217,7 +223,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = false,
                 isImportant = false,
                 icon = Icons.Default.SystemUpdate,
-                iconColor = Color(0xFF2196F3)
+                iconColor = Color(0xFF2196F3),
             )
 
             NotificationItem(
@@ -227,7 +233,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = false,
                 isImportant = true,
                 icon = Icons.Default.Warning,
-                iconColor = Color(0xFFFF9800)
+                iconColor = Color(0xFFFF9800),
             )
 
             NotificationItem(
@@ -237,7 +243,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = true,
                 isImportant = false,
                 icon = Icons.Default.Build,
-                iconColor = Color(0xFF607D8B)
+                iconColor = Color(0xFF607D8B),
             )
 
             NotificationItem(
@@ -247,7 +253,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = true,
                 isImportant = false,
                 icon = Icons.Default.LocalOffer,
-                iconColor = Color(0xFFE91E63)
+                iconColor = Color(0xFFE91E63),
             )
 
             NotificationItem(
@@ -257,7 +263,7 @@ fun NotificationScreen(navController: NavController) {
                 isRead = true,
                 isImportant = false,
                 icon = Icons.Default.Security,
-                iconColor = PrimaryGreen
+                iconColor = PrimaryGreen,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -273,7 +279,7 @@ fun NotificationItem(
     isRead: Boolean,
     isImportant: Boolean,
     icon: ImageVector,
-    iconColor: Color
+    iconColor: Color,
 ) {
     Card(
         modifier = Modifier
@@ -281,31 +287,31 @@ fun NotificationItem(
             .padding(horizontal = 16.dp, vertical = 4.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isRead) Color.White else LightGreen.copy(alpha = 0.3f)
+            containerColor = if (isRead) Color.White else LightGreen.copy(alpha = 0.3f),
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isRead) 1.dp else 3.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isRead) 1.dp else 3.dp),
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
             // Icon with background
             Card(
                 shape = RoundedCornerShape(8.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = iconColor.copy(alpha = 0.1f)
+                    containerColor = iconColor.copy(alpha = 0.1f),
                 ),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         icon,
                         contentDescription = null,
                         tint = iconColor,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             }
@@ -314,17 +320,17 @@ fun NotificationItem(
 
             // Content
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         title,
                         fontSize = 14.sp,
                         fontWeight = if (isRead) FontWeight.Medium else FontWeight.Bold,
                         color = DarkGreen,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
 
                     if (isImportant) {
@@ -332,7 +338,7 @@ fun NotificationItem(
                             Icons.Default.PriorityHigh,
                             contentDescription = "Important",
                             tint = Color(0xFFFF5722),
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                     }
@@ -343,8 +349,8 @@ fun NotificationItem(
                                 .size(8.dp)
                                 .background(
                                     PrimaryGreen,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
+                                    shape = RoundedCornerShape(4.dp),
+                                ),
                         )
                     }
                 }
@@ -354,14 +360,14 @@ fun NotificationItem(
                     fontSize = 13.sp,
                     color = Color(0xFF666666),
                     lineHeight = 18.sp,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 4.dp),
                 )
 
                 Text(
                     time,
                     fontSize = 11.sp,
                     color = Color(0xFF999999),
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }
@@ -372,5 +378,6 @@ fun NotificationItem(
 @Composable
 fun NotificationScreenPreview() {
     NotificationScreen(
-        navController = NavController(LocalContext.current)) // Replace with actual NavController context
+        navController = NavController(LocalContext.current),
+    ) // Replace with actual NavController context
 }

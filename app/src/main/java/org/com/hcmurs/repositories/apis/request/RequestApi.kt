@@ -1,24 +1,26 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.request
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-
-
 data class RequestCreationRequest(
     val content: String?,
     val studentCardImage: String,
     val citizenIdentityCardImage: String,
-    val citizenIdNumber : String,
+    val citizenIdNumber: String,
     @JsonFormat(pattern = "dd/MM/yyyy")
-    val endDate: String
+    val endDate: String,
 )
 
 enum class RequestStatus {
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
 }
 
 data class RequestDto(
@@ -33,18 +35,18 @@ data class RequestDto(
     val endDate: String,
     val userId: Long,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 data class ApiResponse<T>(
     val status: Int,
     val message: String,
-    val data: T?
+    val data: T?,
 )
 
 interface RequestApi {
     @POST("/api/users/requests")
-    suspend fun createRequest(@Body request: RequestCreationRequest): ApiResponse<RequestDto>
+    suspend fun createRequest(
+        @Body request: RequestCreationRequest,
+    ): ApiResponse<RequestDto>
 }
-
-

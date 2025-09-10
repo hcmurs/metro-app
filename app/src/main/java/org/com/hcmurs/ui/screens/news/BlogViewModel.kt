@@ -1,33 +1,50 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.news
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.model.BlogResponse
 import org.com.hcmurs.repositories.apis.blog.BlogRepository
-import javax.inject.Inject
 
 sealed class BlogUiState {
     object Loading : BlogUiState()
-    data class Success(val blogs: List<BlogResponse>) : BlogUiState()
-    data class Error(val message: String) : BlogUiState()
+
+    data class Success(
+        val blogs: List<BlogResponse>,
+    ) : BlogUiState()
+
+    data class Error(
+        val message: String,
+    ) : BlogUiState()
 }
 
 sealed class BlogDetailUiState {
     object Loading : BlogDetailUiState()
-    data class Success(val blog: BlogResponse) : BlogDetailUiState()
-    data class Error(val message: String) : BlogDetailUiState()
+
+    data class Success(
+        val blog: BlogResponse,
+    ) : BlogDetailUiState()
+
+    data class Error(
+        val message: String,
+    ) : BlogDetailUiState()
 }
 
 @HiltViewModel
-class BlogViewModel @Inject constructor(
-    private val repository: BlogRepository
+class BlogViewModel
+@Inject
+constructor(
+    private val repository: BlogRepository,
 ) : ViewModel() {
-
     // Home screen blogs (limited)
     private val _homeBlogsState = MutableStateFlow<BlogUiState>(BlogUiState.Loading)
     val homeBlogsState: StateFlow<BlogUiState> = _homeBlogsState.asStateFlow()
@@ -99,11 +116,12 @@ class BlogViewModel @Inject constructor(
             }
 
             try {
-                val response = repository.getBlogs(
-                    page = _currentPage.value,
-                    size = 10,
-                    sort = "createdAt,desc"
-                )
+                val response =
+                    repository.getBlogs(
+                        page = _currentPage.value,
+                        size = 10,
+                        sort = "createdAt,desc",
+                    )
 
                 if (response.isSuccessful) {
                     val pageData = response.body()?.data
@@ -132,11 +150,12 @@ class BlogViewModel @Inject constructor(
             viewModelScope.launch {
                 _isLoadingMore.value = true
                 try {
-                    val response = repository.getBlogs(
-                        page = _currentPage.value,
-                        size = 10,
-                        sort = "createdAt,desc"
-                    )
+                    val response =
+                        repository.getBlogs(
+                            page = _currentPage.value,
+                            size = 10,
+                            sort = "createdAt,desc",
+                        )
 
                     if (response.isSuccessful) {
                         val pageData = response.body()?.data
@@ -178,7 +197,7 @@ class BlogViewModel @Inject constructor(
         }
     }
 
-    fun getFeaturedBlogs(quantity: Int){
+    fun getFeaturedBlogs(quantity: Int) {
         viewModelScope.launch {
             try {
                 val response = repository.getBlogs(page = 0, size = quantity, sort = "createdAt,desc")
@@ -203,15 +222,16 @@ class BlogViewModel @Inject constructor(
     fun searchBlogs(query: String) {
         _searchQuery.value = query
         _isSearchActive.value = query.isNotBlank()
-        
+
         if (query.isBlank()) {
             _filteredBlogs.value = emptyList()
         } else {
-            val filtered = allBlogs.filter { blog ->
-                blog.title.contains(query, ignoreCase = true) ||
-                blog.content.contains(query, ignoreCase = true) ||
-                (blog.excerpt?.contains(query, ignoreCase = true) == true)
-            }
+            val filtered =
+                allBlogs.filter { blog ->
+                    blog.title.contains(query, ignoreCase = true) ||
+                        blog.content.contains(query, ignoreCase = true) ||
+                        (blog.excerpt?.contains(query, ignoreCase = true) == true)
+                }
             _filteredBlogs.value = filtered
         }
     }
@@ -224,11 +244,9 @@ class BlogViewModel @Inject constructor(
     }
 
     // Get display blogs (either filtered or all blogs)
-    fun getDisplayBlogs(): List<BlogResponse> {
-        return if (_isSearchActive.value) {
-            _filteredBlogs.value
-        } else {
-            allBlogs.toList()
-        }
+    fun getDisplayBlogs(): List<BlogResponse> = if (_isSearchActive.value) {
+        _filteredBlogs.value
+    } else {
+        allBlogs.toList()
     }
 }

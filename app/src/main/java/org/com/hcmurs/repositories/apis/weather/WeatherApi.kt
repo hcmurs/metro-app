@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.weather
 
 import org.com.hcmurs.model.HourlyWeatherResponse
@@ -9,6 +13,6 @@ interface WeatherApi {
     suspend fun getWeather(
         @Query("latitude") lat: Double,
         @Query("longitude") lon: Double,
-        @Query("hourly") hourly: String = "temperature_2m,wind_speed_10m"
+        @Query("hourly") hourly: String = "temperature_2m,wind_speed_10m",
     ): HourlyWeatherResponse
 }

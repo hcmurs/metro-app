@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.notification
 
 import androidx.compose.foundation.background
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.lazy.items
 // --- Định nghĩa màu sắc chủ đạo ---
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
@@ -60,7 +64,7 @@ data class NotificationItem(
     val message: String,
     val time: String,
     val icon: ImageVector,
-    val iconBackgroundColor: Color
+    val iconBackgroundColor: Color,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +78,7 @@ fun NotificationScreen(navController: NavController) {
             message = "Giảm giá 20% cho tất cả các loại vé tháng. Đừng bỏ lỡ!",
             time = "2 giờ trước",
             icon = Icons.Filled.Discount,
-            iconBackgroundColor = Color(0xFFE3F2FD) // Light Blue
+            iconBackgroundColor = Color(0xFFE3F2FD), // Light Blue
         ),
         NotificationItem(
             id = 2,
@@ -82,7 +86,7 @@ fun NotificationScreen(navController: NavController) {
             message = "Đơn hàng #12093 cho vé lượt đã được tạo thành công.",
             time = "Hôm qua",
             icon = Icons.Filled.ConfirmationNumber,
-            iconBackgroundColor = LightGreenBackground
+            iconBackgroundColor = LightGreenBackground,
         ),
         NotificationItem(
             id = 3,
@@ -90,32 +94,36 @@ fun NotificationScreen(navController: NavController) {
             message = "Hệ thống sẽ tạm ngưng để bảo trì từ 23:00 hôm nay.",
             time = "2 ngày trước",
             icon = Icons.Filled.Campaign,
-            iconBackgroundColor = Color(0xFFFFF3E0) // Light Orange
-        )
+            iconBackgroundColor = Color(0xFFFFF3E0), // Light Orange
+        ),
     )
 
-    Scaffold (
+    Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Thông báo",
-                    fontWeight = FontWeight.Bold,
-                    color = DarkGreen) },
+                title = {
+                    Text(
+                        "Thông báo",
+                        fontWeight = FontWeight.Bold,
+                        color = DarkGreen,
+                    )
+                },
                 navigationIcon = {
-                    IconButton (onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = DarkGreen)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor),
             )
         },
-        containerColor = LightGreenBackground
+        containerColor = LightGreenBackground,
     ) { padding ->
-        LazyColumn (
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(items = notifications, key = { it.id }) { notification ->
                 NotificationCard(notification = notification)
@@ -126,15 +134,15 @@ fun NotificationScreen(navController: NavController) {
 
 @Composable
 fun NotificationCard(notification: NotificationItem) {
-    Card (
+    Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
-        Row (
+        Row(
             modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
             // Icon
             Box(
@@ -142,32 +150,32 @@ fun NotificationCard(notification: NotificationItem) {
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(notification.iconBackgroundColor),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = notification.icon,
                     contentDescription = notification.title,
                     tint = DarkGreen,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
 
             Spacer(Modifier.width(16.dp))
 
             // Nội dung thông báo
-            Column (modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = notification.title,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = TextPrimaryColor
+                    color = TextPrimaryColor,
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = notification.message,
                     fontSize = 14.sp,
                     color = TextSecondaryColor,
-                    lineHeight = 20.sp // Giúp dễ đọc hơn
+                    lineHeight = 20.sp, // Giúp dễ đọc hơn
                 )
             }
 
@@ -177,7 +185,7 @@ fun NotificationCard(notification: NotificationItem) {
             Text(
                 text = notification.time,
                 fontSize = 12.sp,
-                color = TextSecondaryColor
+                color = TextSecondaryColor,
             )
         }
     }

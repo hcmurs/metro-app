@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.myticket
 
 import androidx.compose.foundation.background
@@ -54,17 +58,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.order.OrderWithTicketDetails
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 import org.com.hcmurs.utils.TranslationHelper
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
-
 
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
@@ -72,16 +75,15 @@ private val LightGreenBackground = Color(0xFFF1F8E9)
 private val TextPrimaryColor = Color(0xFF212121)
 private val TextSecondaryColor = Color(0xFF757575)
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTicketScreen(
     navController: NavController,
     currencyManager: CurrencyManager,
-    viewModel: MyTicketViewModel = hiltViewModel()
+    viewModel: MyTicketViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val selectedTab = remember { mutableStateOf("NOT_USED") }    // PENDING, FAILED, SUCCESSFUL
+    val selectedTab = remember { mutableStateOf("NOT_USED") } // PENDING, FAILED, SUCCESSFUL
     val context = LocalContext.current
     val currentLanguage = LanguageManager.getLocale(context)
     val exchangeRate by currencyManager.exchangeRate.collectAsState()
@@ -90,7 +92,7 @@ fun MyTicketScreen(
     LaunchedEffect(Unit) {
         currencyManager.updateExchangeRate()
     }
-   OnScreenResumed {
+    OnScreenResumed {
         viewModel.fetchUserOrders()
     }
 
@@ -105,16 +107,15 @@ fun MyTicketScreen(
         }
     }
 
-
-    Scaffold (
+    Scaffold(
         topBar = { MyTicketTopBar(navController) },
-        containerColor = Color.Transparent
+        containerColor = Color.Transparent,
     ) { padding ->
-        Column (
+        Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(LightGreenBackground)
+                .background(LightGreenBackground),
         ) {
             // Tabs
             TabRow(
@@ -125,22 +126,22 @@ fun MyTicketScreen(
                     else -> 0
                 },
                 containerColor = Color.White,
-                contentColor = DarkGreen
+                contentColor = DarkGreen,
             ) {
                 Tab(
                     selected = selectedTab.value == "NOT_USED",
                     onClick = { selectedTab.value = "NOT_USED" },
-                    text = { Text(stringResource(R.string.not_used)) }
+                    text = { Text(stringResource(R.string.not_used)) },
                 )
                 Tab(
                     selected = selectedTab.value == "USED",
                     onClick = { selectedTab.value = "USED" },
-                    text = { Text(stringResource(R.string.used)) }
+                    text = { Text(stringResource(R.string.used)) },
                 )
                 Tab(
                     selected = selectedTab.value == "EXPIRED",
                     onClick = { selectedTab.value = "EXPIRED" },
-                    text = { Text(stringResource(R.string.expired)) }
+                    text = { Text(stringResource(R.string.expired)) },
                 )
             }
 
@@ -152,18 +153,18 @@ fun MyTicketScreen(
                     Text(
                         text = stringResource(R.string.error_label, uiState.errorMessage!!),
                         modifier = Modifier.align(Alignment.Center),
-                        color = Color.Red
+                        color = Color.Red,
                     )
                 } else if (filteredOrders.isEmpty()) {
                     Text(
                         text = stringResource(R.string.no_tickets_in_category),
                         modifier = Modifier.align(Alignment.Center),
-                        color = TextSecondaryColor
+                        color = TextSecondaryColor,
                     )
                 } else {
-                    LazyColumn (
+                    LazyColumn(
                         contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(filteredOrders) { order ->
                             TicketCard(order = order, navController, currencyManager)
@@ -179,32 +180,32 @@ fun MyTicketScreen(
 fun TicketCard(
     order: OrderWithTicketDetails,
     navController: NavController,
-    currencyManager: CurrencyManager
+    currencyManager: CurrencyManager,
 ) {
     val ticket = order.ticket ?: return //
     val context = LocalContext.current
     val currentLanguage = LanguageManager.getLocale(context)
-    
+
     // Convert price based on current language
     val vndPrice = order.amount.toDouble()
     val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
-    
+
     // Get localized ticket name
     val localizedTicketName = TranslationHelper.getLocalizedTicketName(ticket.name, currentLanguage)
-    Card (
+    Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Row (verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 // Icon vé
                 Icon(
                     painter = painterResource(id = R.drawable.ic_ticket_info),
                     contentDescription = "Ticket Icon",
                     tint = PrimaryGreen,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
                 )
                 Spacer(Modifier.width(12.dp))
                 // Tên vé
@@ -213,7 +214,7 @@ fun TicketCard(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimaryColor,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 // Giá vé
 //                Text(
@@ -225,40 +226,44 @@ fun TicketCard(
             }
             Divider(Modifier.padding(vertical = 12.dp), color = LightGreenBackground)
             // Thông tin chi tiết
-            InfoRow(label = stringResource(R.string.order_code),
-                    value = "#${order.ticket.ticketCode}")
+            InfoRow(
+                label = stringResource(R.string.order_code),
+                value = "#${order.ticket.ticketCode}",
+            )
 
             Spacer(Modifier.height(4.dp))
 
-            InfoRow(label = stringResource(R.string.ticket_price_label),
-                value = convertedPrice,)
+            InfoRow(
+                label = stringResource(R.string.ticket_price_label),
+                value = convertedPrice,
+            )
 
             Spacer(Modifier.height(4.dp))
 
-            InfoRow(label = stringResource(R.string.validity_label),
-                    value = "${formatDate(ticket.validFrom)} - ${formatDate(ticket.validUntil)}")
+            InfoRow(
+                label = stringResource(R.string.validity_label),
+                value = "${formatDate(ticket.validFrom)} - ${formatDate(ticket.validUntil)}",
+            )
 
+            Spacer(Modifier.height(16.dp))
 
-                Spacer(Modifier.height(16.dp))
-
-                if(ticket.status.equals("NOT_USED") || ticket.status.equals("USED")) {
-                    Button(
-                        onClick = {
-                            navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
-                    ) {
-                        Text(stringResource(R.string.use_ticket), color = Color.White, fontWeight = FontWeight.Bold)
-                    }
+            if (ticket.status.equals("NOT_USED") || ticket.status.equals("USED")) {
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
+                ) {
+                    Text(stringResource(R.string.use_ticket), color = Color.White, fontWeight = FontWeight.Bold)
                 }
+            }
         }
     }
 }
 
 private fun formatDate(dateString: String): String {
     return try {
-
         val cleanedDateString = dateString.replace(Regex("(\\+|\\-)\\d{2}:(\\d{2})")) {
             "${it.groupValues[1]}${it.groupValues[2]}00"
         }
@@ -282,26 +287,24 @@ private fun InfoRow(label: String, value: String, valueColor: Color = TextPrimar
             text = label,
             color = TextSecondaryColor,
             fontSize = 14.sp,
-            modifier = Modifier.width(120.dp)
+            modifier = Modifier.width(120.dp),
         )
         Text(
             text = value,
             color = valueColor,
             fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
     }
 }
 
 // Hàm helper để lấy màu theo trạng thái
 @Composable
-private fun getStatusColor(status: String): Color {
-    return when (status.uppercase()) {
-        "PENDING", "ACTIVE" -> PrimaryGreen
-        "COMPLETED" -> DarkGreen
-        "EXPIRED", "CANCELLED" -> Color.Red
-        else -> TextSecondaryColor
-    }
+private fun getStatusColor(status: String): Color = when (status.uppercase()) {
+    "PENDING", "ACTIVE" -> PrimaryGreen
+    "COMPLETED" -> DarkGreen
+    "EXPIRED", "CANCELLED" -> Color.Red
+    else -> TextSecondaryColor
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -309,19 +312,22 @@ private fun getStatusColor(status: String): Color {
 fun MyTicketTopBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
-            Text(text = stringResource(R.string.my_ticket),
+            Text(
+                text = stringResource(R.string.my_ticket),
                 color = DarkGreen,
-                fontWeight = FontWeight.Bold)
-                },
+                fontWeight = FontWeight.Bold,
+            )
+        },
         navigationIcon = {
-            IconButton (onClick = { navController.navigate(Screen.Home.route) }) {
+            IconButton(onClick = { navController.navigate(Screen.Home.route) }) {
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = DarkGreen)
+                    tint = DarkGreen,
+                )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
     )
 }
 
@@ -329,7 +335,7 @@ fun MyTicketTopBar(navController: NavController) {
 fun OnScreenResumed(action: () -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect (lifecycleOwner) {
+    DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 action()

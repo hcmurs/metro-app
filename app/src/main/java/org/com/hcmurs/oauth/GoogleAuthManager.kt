@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.oauth
 
 import android.content.Context
@@ -8,28 +12,31 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class GoogleAuthManager @Inject constructor(
-    @ApplicationContext private val context: Context
+class GoogleAuthManager
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
 ) {
     companion object {
         // Replace with your web client ID from Google Cloud Console
         private const val WEB_CLIENT_ID = "642093341387-4ts23qfc08ukhfkifq7k2d2a2nr928t5.apps.googleusercontent.com"
-       // private const val WEB_CLIENT_ID = "634675406739-vsrau9upvljnlemslcrubdad6jrngfli.apps.googleusercontent.com"
-
+        // private const val WEB_CLIENT_ID = "634675406739-vsrau9upvljnlemslcrubdad6jrngfli.apps.googleusercontent.com"
     }
 
     private val googleSignInClient: GoogleSignInClient by lazy {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(WEB_CLIENT_ID)
-            .requestEmail()
-            .build()
+        val gso =
+            GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(WEB_CLIENT_ID)
+                .requestEmail()
+                .build()
 
         GoogleSignIn.getClient(context, gso)
     }
@@ -43,6 +50,7 @@ class GoogleAuthManager @Inject constructor(
             Result.failure(e)
         }
     }
+
     // Extract the ID token from sign-in result
     suspend fun getGoogleIdToken(data: Intent?): Result<String> = withContext(Dispatchers.IO) {
         try {
@@ -82,7 +90,5 @@ class GoogleAuthManager @Inject constructor(
     }
 
     // Get sign-in intent directly (for use with ActivityResultLauncher)
-    fun getSignInIntent(): Intent {
-        return googleSignInClient.signInIntent
-    }
+    fun getSignInIntent(): Intent = googleSignInClient.signInIntent
 }

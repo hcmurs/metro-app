@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.buyticket
 import android.util.Log
 import android.widget.Toast
@@ -20,15 +24,14 @@ fun PaymentRedirectScreen(
     navController: NavHostController,
     status: String?,
     orderCode: Int,
-    viewModel: OrderInfoViewModel = hiltViewModel()
+    viewModel: OrderInfoViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(status) {
         Log.d("PaymentRedirect", "status = '$status'")
 
-        if (status?.trim()?.equals("PAID", ignoreCase = true) == true)
-        { // ✅ Gọi API update trạng thái đơn hàng
+        if (status?.trim()?.equals("PAID", ignoreCase = true) == true) { // ✅ Gọi API update trạng thái đơn hàng
             viewModel.updateOrderStatus(orderCode, OrderStatus.SUCCESSFUL)
             delay(3000)
             Toast.makeText(context, "Thanh toán thành công!", Toast.LENGTH_LONG).show()
@@ -46,7 +49,7 @@ fun PaymentRedirectScreen(
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()
     }

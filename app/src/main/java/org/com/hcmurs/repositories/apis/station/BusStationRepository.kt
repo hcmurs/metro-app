@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.station
 
-import org.com.hcmurs.model.BusStop
 import javax.inject.Inject
+import org.com.hcmurs.model.BusStop
 
-class BusStationRepository @Inject constructor(
-    private val api: BusStationApi
+class BusStationRepository
+@Inject
+constructor(
+    private val api: BusStationApi,
 ) {
     suspend fun getBusStations(): List<BusStop> {
         try {
@@ -15,7 +21,7 @@ class BusStationRepository @Inject constructor(
                         id = station.id.toIntOrNull() ?: 0,
                         name = station.name,
                         latitude = station.latitude,
-                        longitude = station.longitude
+                        longitude = station.longitude,
                     )
                 }
             } else {

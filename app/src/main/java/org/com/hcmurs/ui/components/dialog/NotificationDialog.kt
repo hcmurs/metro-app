@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.dialog
 
 import androidx.compose.material3.ButtonDefaults
@@ -14,7 +18,7 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 fun NotificationDialog(
     title: String,
     message: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
@@ -25,8 +29,8 @@ fun NotificationDialog(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryGreen,
-                    contentColor = Color.White
-                )
+                    contentColor = Color.White,
+                ),
             ) {
                 Text("OK")
             }
@@ -36,7 +40,7 @@ fun NotificationDialog(
                 Text("Cancel")
             }
         },
-        containerColor = Color.White
+        containerColor = Color.White,
     )
 }
 
@@ -46,6 +50,6 @@ fun NotificationDialogPreview() {
     NotificationDialog(
         title = "Notification Title",
         message = "This is a sample notification message.",
-        onDismiss = {}
+        onDismiss = {},
     )
 }

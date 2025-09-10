@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.staffhome
 
 import android.os.Build
@@ -66,10 +70,10 @@ fun StaffHomeScreen(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color(0xFFE8F5E8), Color.White)
-                    )
+                        colors = listOf(Color(0xFFE8F5E8), Color.White),
+                    ),
                 ),
-            contentPadding = PaddingValues(top = 0.dp, bottom = 240.dp)
+            contentPadding = PaddingValues(top = 0.dp, bottom = 240.dp),
         ) {
             item {
                 Box(modifier = Modifier.height(400.dp)) {
@@ -80,13 +84,13 @@ fun StaffHomeScreen(
                             .fillMaxWidth()
                             .height(300.dp)
                             .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
 
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y = 20.dp)
+                            .offset(y = 20.dp),
                     ) {
                         StaffQRSection(navController = navController)
                     }
@@ -95,7 +99,7 @@ fun StaffHomeScreen(
             item {
                 StaffAccountQuickAccess(
                     navController = navController,
-                    userName = userName
+                    userName = userName,
                 )
             }
             // Có thể thêm các content khác cho staff ở đây
@@ -106,7 +110,7 @@ fun StaffHomeScreen(
 
         HomeTopBar(
             navController = navController,
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.TopCenter),
         )
 
         // Optional: Floating button cho staff nếu cần
@@ -118,7 +122,7 @@ fun StaffHomeScreen(
             contentDescription = "Staff Phone",
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 50.dp, end = 16.dp)
+                .padding(bottom = 50.dp, end = 16.dp),
         )
     }
 }

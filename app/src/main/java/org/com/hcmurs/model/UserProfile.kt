@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.model
 
 data class SocialLink(
     val type: String,
     val url: String,
-    val iconUrl: String
+    val iconUrl: String,
 )
 
 data class UserProfile(
@@ -11,5 +15,5 @@ data class UserProfile(
     val avatarUrl: String,
     val githubAccount: String,
     val role: String,
-    val socialLinks: List<SocialLink>
+    val socialLinks: List<SocialLink>,
 )

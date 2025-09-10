@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.redeemcodeforticket
 
 import androidx.compose.foundation.background
@@ -53,12 +57,12 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
         topBar = { TopBar(navController) },
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color.White),
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             // Label with red asterisk
             Text(
@@ -70,7 +74,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                     pop()
                 },
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
 
             OutlinedTextField(
@@ -88,13 +92,13 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.Filled.QrCodeScanner,
                             contentDescription = "Scan QR",
-                            tint = DarkGreen
+                            tint = DarkGreen,
                         )
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
             )
 
             if (isError) {
@@ -102,7 +106,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                     text = "Vui lòng nhập mã vé.",
                     color = ErrorRed,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                    modifier = Modifier.padding(start = 4.dp, top = 2.dp),
                 )
             }
 
@@ -117,7 +121,7 @@ fun RedeemCodeForTicketScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
             ) {
                 Text("Redeem Code", color = Color.White)
             }
@@ -138,7 +142,7 @@ fun TopBar(navController: NavController) {
         title = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "Redeem",
@@ -149,18 +153,18 @@ fun TopBar(navController: NavController) {
         },
         navigationIcon = {
             IconButton(
-                onClick = {  navigateToHome(navController) }
+                onClick = { navigateToHome(navController) },
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PrimaryGreen
-        )
+            containerColor = PrimaryGreen,
+        ),
     )
 }
 

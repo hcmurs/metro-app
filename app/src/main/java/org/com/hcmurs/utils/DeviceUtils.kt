@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.utils
 
 import android.annotation.SuppressLint
@@ -9,23 +13,24 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DeviceUtils @Inject constructor(private val context: Context) {
-
+class DeviceUtils
+@Inject
+constructor(
+    private val context: Context,
+) {
     @SuppressLint("HardwareIds")
-    fun getDeviceId(): String {
-        return try {
-            // Try to get Android ID first
-            val androidId =
-                Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-            if (androidId != null && androidId != "9774d56d682e549c") {
-                androidId
-            } else {
-                // Fallback to a generated UUID stored in SharedPreferences
-                getOrCreateDeviceId()
-            }
-        } catch (e: Exception) {
+    fun getDeviceId(): String = try {
+        // Try to get Android ID first
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        if (androidId != null && androidId != "9774d56d682e549c") {
+            androidId
+        } else {
+            // Fallback to a generated UUID stored in SharedPreferences
             getOrCreateDeviceId()
         }
+    } catch (e: Exception) {
+        getOrCreateDeviceId()
     }
 
     private fun getOrCreateDeviceId(): String {
@@ -41,17 +46,12 @@ class DeviceUtils @Inject constructor(private val context: Context) {
         }
     }
 
-    fun getDeviceName(): String {
-        return "${Build.MANUFACTURER} ${Build.MODEL}".trim()
-    }
+    fun getDeviceName(): String = "${Build.MANUFACTURER} ${Build.MODEL}".trim()
 
-    fun getPlatform(): String {
-        return "ANDROID"
-    }
+    fun getPlatform(): String = "ANDROID"
 
     companion object {
         val isEmulator: Boolean
             get() = Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("Emulator")
-
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.login
 
 import android.content.Intent
@@ -5,6 +9,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,14 +20,14 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.oauth.GoogleAuthManager
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.auth.UserProfileData
-import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class LoginViewModel
+@Inject
+constructor(
     private val authRepository: AuthRepository,
-    private val googleAuthManager: GoogleAuthManager
+    private val googleAuthManager: GoogleAuthManager,
 ) : ViewModel() {
-
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -38,11 +43,12 @@ class LoginViewModel @Inject constructor(
     private val _userProfile = MutableStateFlow<UserProfileData?>(null)
     val userProfile: StateFlow<UserProfileData?> = _userProfile.asStateFlow()
 
-    val userRole: StateFlow<String?> = userProfile.map { it?.role }.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        null
-    )
+    val userRole: StateFlow<String?> =
+        userProfile.map { it?.role }.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            null,
+        )
 
     init {
         checkAuthenticationStatus()
@@ -59,7 +65,6 @@ class LoginViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
-
 
     // Initiate Google Sign-In process
     fun initiateGoogleSignIn() {
@@ -79,7 +84,7 @@ class LoginViewModel @Inject constructor(
                     onFailure = { error ->
                         Log.e("LoginFlow", "Failed to initialize sign-in", error)
                         _errorMessage.value = "Failed to initialize sign-in: ${error.message}"
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 Log.e("LoginFlow", "Exception during sign-in initialization", e)
@@ -121,13 +126,13 @@ class LoginViewModel @Inject constructor(
                         } else {
                             Log.e("LoginFlow", "Empty JWT token received from server")
                             _errorMessage.value = "Failed to get JWT token from server"
-                            _isAuthenticated.value= false
+                            _isAuthenticated.value = false
                         }
                     },
                     onFailure = { error ->
                         Log.e("LoginFlow", "Failed to get Google ID token", error)
                         _errorMessage.value = "Google Sign-In failed: ${error.message}"
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 Log.e("LoginFlow", "Exception during Google sign-in handling", e)
@@ -146,7 +151,6 @@ class LoginViewModel @Inject constructor(
             _isLoading.value = true
 
             try {
-
                 // Thực hiện signOut từ Google
                 val result = googleAuthManager.signOut()
                 result.fold(
@@ -156,7 +160,7 @@ class LoginViewModel @Inject constructor(
                     onFailure = { error ->
                         Log.w("LoginViewModel", "Google signOut failed: ${error.message}")
                         // Không hiển thị lỗi cho user vì đã xóa token local
-                    }
+                    },
                 )
                 authRepository.logout()
 
@@ -168,7 +172,6 @@ class LoginViewModel @Inject constructor(
                 _errorMessage.value = null
 
                 Log.d("LoginViewModel", "Logout completed successfully")
-
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Error during logout: ${e.message}", e)
                 _errorMessage.value = "Error during logout: ${e.message}"
@@ -179,9 +182,8 @@ class LoginViewModel @Inject constructor(
     }
 
     // For direct access with ActivityResultLauncher
-    fun signInWithGoogle(): Intent {
-        return googleAuthManager.getSignInIntent()
-    }
+    fun signInWithGoogle(): Intent = googleAuthManager.getSignInIntent()
+
     fun updateLoginError(errorMessage: String) {
         _errorMessage.value = errorMessage
         _isLoading.value = false
@@ -189,10 +191,11 @@ class LoginViewModel @Inject constructor(
 
     fun refreshUserProfile() {
         viewModelScope.launch {
-            if(authRepository.isAuthenticated()){
+            if (authRepository.isAuthenticated()) {
                 authRepository.fetchUserProfile()
                 // Cập nhật StateFlow trong ViewModel sau khi fetch
                 _userProfile.value = authRepository.userProfile.value
-            }        }
+            }
+        }
     }
 }

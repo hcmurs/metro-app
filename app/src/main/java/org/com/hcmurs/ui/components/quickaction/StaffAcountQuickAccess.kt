@@ -1,5 +1,8 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.quickaction
-
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +38,7 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 @Composable
 fun StaffAccountQuickAccess(
     navController: NavHostController,
-    userName: String = "Nhân viên"
+    userName: String = "Nhân viên",
 ) {
     Card(
         modifier = Modifier
@@ -50,13 +53,13 @@ fun StaffAccountQuickAccess(
             },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Avatar
             Box(
@@ -64,13 +67,13 @@ fun StaffAccountQuickAccess(
                     .size(48.dp)
                     .clip(CircleShape)
                     .background(PrimaryGreen.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "Staff Avatar",
                     modifier = Modifier.size(32.dp),
-                    tint = PrimaryGreen
+                    tint = PrimaryGreen,
                 )
             }
 
@@ -78,19 +81,19 @@ fun StaffAccountQuickAccess(
 
             // Info Column
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     text = "Xin chào, $userName",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.Black
+                    color = Color.Black,
                 )
                 Text(
                     text = "Nhấn để xem thông tin",
                     fontSize = 12.sp,
                     color = Color(0xFF757575),
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
                 )
             }
 
@@ -99,7 +102,7 @@ fun StaffAccountQuickAccess(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Go to Account",
                 tint = Color(0xFF9E9E9E),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }

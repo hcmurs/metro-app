@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,18 +17,16 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import com.stripe.android.PaymentConfiguration
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.AppTheme
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
-import android.content.res.Configuration
-import java.util.Locale
-import javax.inject.Inject
 
 @dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private val mainViewModel: MainViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
 
@@ -55,16 +58,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
         PaymentConfiguration.init(
             applicationContext,
-            "pk_test_51RhDaTR1Z2NQalNLXVx9pppFy2tEDMw5ehfDwdeMl6K0yEcHOsR3u5UJ7kpHhHex1MPht1PaCYOGZZqTlS4lDK6c00EQJWcg0W" //
+            "pk_test_51RhDaTR1Z2NQalNLXVx9pppFy2tEDMw5ehfDwdeMl6K0yEcHOsR3u5UJ7kpHhHex1MPht1PaCYOGZZqTlS4lDK6c00EQJWcg0W", //
         )
 
         enableEdgeToEdge()
 
         // Handle OAuth success from redirect activity
-        try{
+        try {
             intent?.let { intent ->
                 if (intent.getBooleanExtra("oauth_success", false)) {
                     // Use the new method to handle sign-in
@@ -77,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     loginViewModel.updateLoginError(error)
                 }
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.message?.let { Log.d("Main Activity:", it) }
         }
 
@@ -87,6 +89,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -113,8 +116,4 @@ class MainActivity : ComponentActivity() {
             super.attachBaseContext(newBase)
         }
     }
-
-
-
-
 }

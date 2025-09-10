@@ -1,19 +1,22 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs
 
 import com.google.gson.annotations.SerializedName
 import org.osmdroid.util.GeoPoint
-import java.time.LocalDateTime
 
 data class FareMatricesResponse(
     val status: Int,
     val message: String,
-    val data: List<FareMatrix>
+    val data: List<FareMatrix>,
 )
 
 data class FareMatrixResponse(
     val status: Int,
     val message: String,
-    val data: FareMatrix
+    val data: FareMatrix,
 )
 
 data class FareMatrix(
@@ -23,14 +26,13 @@ data class FareMatrix(
     val startStationId: Int,
     val endStationId: Int,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
-
 
 data class StationResponse(
     val status: Int,
     val message: String,
-    val data: List<Station>
+    val data: List<Station>,
 )
 
 data class Station(
@@ -44,28 +46,25 @@ data class Station(
     val createdAt: String,
     val updatedAt: String,
 ) {
-    fun toGeoPoint(): GeoPoint {
-        return GeoPoint(latitude, longitude)
-    }
+    fun toGeoPoint(): GeoPoint = GeoPoint(latitude, longitude)
 }
-    data class RouteResponse(
-        val routeId: Int,
-        val routeName: String,
-        val routeCode: String,
-        val startStationId: Int,
-        val distanceInKm: Double,
+data class RouteResponse(
+    val routeId: Int,
+    val routeName: String,
+    val routeCode: String,
+    val startStationId: Int,
+    val distanceInKm: Double,
 
-    )
+)
 
-    data class StationRouteResponse(
-        val id: Int,
-        val routeId: Int,
-        val sequenceOrder: Int,
-        val status: String,
-        val createdAt: String,
-        val updatedAt: String,
+data class StationRouteResponse(
+    val id: Int,
+    val routeId: Int,
+    val sequenceOrder: Int,
+    val status: String,
+    val createdAt: String,
+    val updatedAt: String,
 
-        @SerializedName("stationsResponse")
-        val stationsResponse: Station
-    )
-
+    @SerializedName("stationsResponse")
+    val stationsResponse: Station,
+)

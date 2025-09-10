@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.maps
 
 import android.Manifest
@@ -62,9 +66,8 @@ import org.osmdroid.views.overlay.Polyline
 fun MapScreen(
     navController: NavController,
     metroStationViewModel: MetroStationViewModel = hiltViewModel(),
-    busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>()
+    busStationViewModel: BusStationViewModel = hiltViewModel<BusStationViewModel>(),
 ) {
-
     val stations by metroStationViewModel.stations.collectAsState()
     val stationPoints by metroStationViewModel.stationGeoPoints.collectAsState()
 
@@ -78,7 +81,7 @@ fun MapScreen(
     var currentCenter by remember { mutableStateOf<GeoPoint?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
+        ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         hasLocationPermission = isGranted
     }
@@ -88,10 +91,10 @@ fun MapScreen(
         val drawable = ContextCompat.getDrawable(context, iconRes) ?: return null
 
         val iconSize = when {
-            zoomLevel < 12 -> (baseSize * 0.7).toInt()  // Smaller for far zoom
-            zoomLevel < 15 -> baseSize                  // Normal size for medium zoom
-            zoomLevel < 18 -> (baseSize * 1.3).toInt()  // Larger for close zoom
-            else -> (baseSize * 1.6).toInt()            // Largest for very close zoom
+            zoomLevel < 12 -> (baseSize * 0.7).toInt() // Smaller for far zoom
+            zoomLevel < 15 -> baseSize // Normal size for medium zoom
+            zoomLevel < 18 -> (baseSize * 1.3).toInt() // Larger for close zoom
+            else -> (baseSize * 1.6).toInt() // Largest for very close zoom
         }
 
         drawable.setBounds(0, 0, iconSize, iconSize)
@@ -99,24 +102,21 @@ fun MapScreen(
     }
 
     // Helper function to determine if icons should be shown based on zoom and density
-    fun shouldShowBusStops(zoomLevel: Double, busStopCount: Int): Boolean {
-        return when {
-            zoomLevel < 13 -> false  // Don't show bus stops when zoomed out
+    fun shouldShowBusStops(zoomLevel: Double, busStopCount: Int): Boolean = when {
+        zoomLevel < 13 -> false // Don't show bus stops when zoomed out
 //            zoomLevel < 15 -> busStopCount <= 20  // Limited bus stops for medium zoom
-            else -> true  // Show all bus stops when zoomed in
-        }
+        else -> true // Show all bus stops when zoomed in
     }
 
     LaunchedEffect(Unit) {
         hasLocationPermission = ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasLocationPermission) {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-
 
         busStationViewModel.getBusStations()
 
@@ -126,7 +126,7 @@ fun MapScreen(
     Scaffold(
         topBar = {
             CommonTopBar(navController, stringResource(R.string.map_title))
-        }
+        },
     ) { paddingValues ->
 
         // Show loading indicator if needed
@@ -146,14 +146,14 @@ fun MapScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
         ) {
             AndroidView(
                 factory = { context ->
                     // Initialize OSMdroid configuration
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
 
                     // Create and configure the map view
@@ -163,7 +163,7 @@ fun MapScreen(
                         controller.setZoom(14.0)
 
                         // Center the map on a default location
-                        //val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
+                        // val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
                         controller.setCenter(initialView)
 
                         // Add a marker at the center
@@ -224,7 +224,7 @@ fun MapScreen(
                     // Add metro stations with larger, more prominent icons
                     stations.forEachIndexed { index, stationPoint ->
                         val metroMarker = Marker(mapView).apply {
-                            position = stationPoints[index]  // Use individual point from the list
+                            position = stationPoints[index] // Use individual point from the list
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                             title = "Metro Station ${index + 1}"
 
@@ -258,8 +258,6 @@ fun MapScreen(
                             }
                         }
                         mapView.overlays.add(metroMarker)
-
-
 
 //                        // Only show bus stops based on zoom level and density
 //                        if (shouldShowBusStops(currentZoom, nearbyStops.size)) {
@@ -297,7 +295,7 @@ fun MapScreen(
 
                     // Refresh the map
                     mapView.invalidate()
-                }
+                },
             )
 
             // Floating Action Button to reset map to initial view
@@ -311,12 +309,12 @@ fun MapScreen(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primary,
             ) {
                 Icon(
                     imageVector = Icons.Default.MyLocation,
                     contentDescription = "Reset to initial view",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
 
@@ -333,12 +331,12 @@ fun MapScreen(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.secondary,
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = "Log current location",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSecondary,
                 )
             }
         }
@@ -351,7 +349,7 @@ fun MapScreen(
                 Lifecycle.Event.ON_RESUME -> {
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
                 }
 

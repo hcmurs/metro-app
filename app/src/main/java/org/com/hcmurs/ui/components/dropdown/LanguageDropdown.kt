@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.dropdown
 
 import android.util.Log
@@ -32,7 +36,7 @@ import org.com.hcmurs.utils.LanguageManager
 fun LanguageDropdown(
     selected: String,
     onLanguageChange: (String) -> Unit,
-    isScrolled: Boolean
+    isScrolled: Boolean,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -48,32 +52,33 @@ fun LanguageDropdown(
         else -> "$vietnameseFlag ${stringResource(R.string.vietnamese)}"
     }
 
-    Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)
-        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+    Box(
+        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
     ) {
         Card(
             modifier = Modifier.clickable { expanded = true },
             colors = CardDefaults.cardColors(
-                containerColor = if (isScrolled) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.8f)
+                containerColor = if (isScrolled) Color.White.copy(alpha = 0.9f) else Color.White.copy(alpha = 0.8f),
             ),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(20.dp),
         ) {
             Text(
                 text = currentDisplayText,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 color = Color.Black, // Make it always visible
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         }
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             listOf(
                 "Vietnamese" to "vi",
-                "English" to "en"
+                "English" to "en",
             ).forEach { (langName, langCode) ->
                 DropdownMenuItem(
                     text = {
@@ -88,7 +93,7 @@ fun LanguageDropdown(
                         expanded = false
                         // Recreate activity to apply language change
                         (context as? android.app.Activity)?.recreate()
-                    }
+                    },
                 )
             }
         }
@@ -101,6 +106,6 @@ fun LanguageDropdownPreview() {
     LanguageDropdown(
         selected = "Vietnamese",
         onLanguageChange = {},
-        isScrolled = false
+        isScrolled = false,
     )
 }

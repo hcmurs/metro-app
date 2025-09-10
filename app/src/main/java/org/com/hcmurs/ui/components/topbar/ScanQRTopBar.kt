@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.topbar
 
 import androidx.compose.material.icons.Icons
@@ -15,8 +19,8 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanQRTopBar(
-    navController: NavController
-){
+    navController: NavController,
+) {
     CenterAlignedTopAppBar(
         title = { Text("Scan QR Code", color = Color.White) },
         navigationIcon = {
@@ -24,12 +28,12 @@ fun ScanQRTopBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White
+                    tint = Color.White,
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Black.copy(alpha = 0.7f)
-        )
+            containerColor = Color.Black.copy(alpha = 0.7f),
+        ),
     )
 }

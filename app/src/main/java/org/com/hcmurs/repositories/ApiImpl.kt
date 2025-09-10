@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories
 
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import org.com.hcmurs.common.exception.AppException
 import org.com.hcmurs.model.NoteItem
-import javax.inject.Inject
 
-class ApiImpl @Inject constructor() : Api {
+class ApiImpl
+@Inject
+constructor() : Api {
     var notes = ArrayList<NoteItem>()
 
     init {
@@ -14,7 +20,10 @@ class ApiImpl @Inject constructor() : Api {
         notes.add(NoteItem(3, "3", "3"))
     }
 
-    override suspend fun login(username: String, password: String): Boolean {
+    override suspend fun login(
+        username: String,
+        password: String,
+    ): Boolean {
         delay(1000)
         if (username != "1" || password != "1") {
             throw AppException.InvalidCredentialsException("Wrong credentials")
@@ -27,12 +36,19 @@ class ApiImpl @Inject constructor() : Api {
         return notes
     }
 
-    override suspend fun addNote(title: String, content: String) {
+    override suspend fun addNote(
+        title: String,
+        content: String,
+    ) {
         delay(1000)
         notes.add(NoteItem(System.currentTimeMillis(), title, content))
     }
 
-    override suspend fun editNote(dt: Long, title: String, content: String) {
+    override suspend fun editNote(
+        dt: Long,
+        title: String,
+        content: String,
+    ) {
         delay(1000)
         for (i in notes.indices) {
             if (notes[i].dateTime == dt) {

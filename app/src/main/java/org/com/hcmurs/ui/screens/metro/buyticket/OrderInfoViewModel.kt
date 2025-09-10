@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -15,8 +20,6 @@ import org.com.hcmurs.repositories.apis.payment.OrderStatus
 import org.com.hcmurs.repositories.apis.payment.PaymentRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
 import org.com.hcmurs.repositories.apis.ticket.TicketType
-import javax.inject.Inject
-
 
 data class OrderInfoUiState(
     val ticketType: TicketType? = null,
@@ -29,16 +32,15 @@ data class OrderInfoUiState(
     val clientSecret: String? = null,
     val processMessage: String? = null,
     val paymentIntentId: String? = null,
-    val payOSCheckoutUrl: String? = null
+    val payOSCheckoutUrl: String? = null,
 )
-
 
 @HiltViewModel
 class OrderInfoViewModel @Inject constructor(
     private val ticketRepository: TicketRepository,
     private val orderDaysRepository: OrderDaysRepository,
     private val paymentRepository: PaymentRepository,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OrderInfoUiState())
@@ -83,7 +85,7 @@ class OrderInfoViewModel @Inject constructor(
 
             val request = OrderTicketDaysRequest(
                 ticketId = ObjTicketId(id = currentTicketType.id),
-                paymentMethodId = paymentMethodId
+                paymentMethodId = paymentMethodId,
             )
 
             val result = orderDaysRepository.createOrderForTicketDays(request)
@@ -110,7 +112,7 @@ class OrderInfoViewModel @Inject constructor(
 
             val orderRequest = OrderTicketDaysRequest(
                 ticketId = ObjTicketId(id = currentTicketType.id),
-                paymentMethodId = paymentMethodId
+                paymentMethodId = paymentMethodId,
             )
             val orderResult = orderDaysRepository.createOrderForTicketDays(orderRequest)
 
@@ -131,7 +133,7 @@ class OrderInfoViewModel @Inject constructor(
                                         isProcessing = false,
                                         processMessage = "Đã sẵn sàng thanh toán",
                                         clientSecret = clientSecret,
-                                        paymentIntentId = paymentIntentId
+                                        paymentIntentId = paymentIntentId,
                                     )
                                 }
                             } else {
