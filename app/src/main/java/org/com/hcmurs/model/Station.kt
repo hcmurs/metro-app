@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.model
 
 import org.osmdroid.util.GeoPoint
@@ -13,7 +17,7 @@ data class Station(
     val status: String,
     val createdAt: String,
     val updatedAt: String,
-    val routeId: Int
+    val routeId: Int,
 ) {
     val location: GeoPoint
         get() = GeoPoint(latitude, longitude)

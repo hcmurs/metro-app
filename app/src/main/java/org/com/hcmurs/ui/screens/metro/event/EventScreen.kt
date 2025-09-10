@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.event
 
 import androidx.compose.foundation.Image
@@ -47,15 +51,13 @@ fun EventScreen(navController: NavHostController) {
     // Sample events data - empty for demonstration
 //    val events = remember { emptyList<Event>() }
 
-
     val events = remember {
         listOf(
             Event("1", "Khai trương tuyến Metro", "Sự kiện khai trương tuyến metro số 1", "20/10/2023"),
             Event("2", "Giảm giá vé", "Giảm giá vé 50% trong dịp lễ", "30/10/2023"),
-            Event("3", "Hội chợ tại ga Bến Thành", "Triển lãm văn hóa tại ga Bến Thành", "15/11/2023")
+            Event("3", "Hội chợ tại ga Bến Thành", "Triển lãm văn hóa tại ga Bến Thành", "15/11/2023"),
         )
     }
-
 
     // State for dialog
     var showDialog by remember { mutableStateOf(false) }
@@ -74,7 +76,7 @@ fun EventScreen(navController: NavHostController) {
                         text = "Nhập mã sự kiện, khuyến mãi để nhận được các khuyến mãi hay tham gia sự kiện đang diễn ra",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(bottom = 8.dp),
                     )
 
                     TextField(
@@ -87,7 +89,7 @@ fun EventScreen(navController: NavHostController) {
                             .border(
                                 width = 1.dp,
                                 color = Color.Black,
-                                shape = MaterialTheme.shapes.small
+                                shape = MaterialTheme.shapes.small,
                             ),
 //                        colors = TextFieldDefaults.colors(
 //                            unfocusedContainerColor = Color.White,
@@ -108,22 +110,23 @@ fun EventScreen(navController: NavHostController) {
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PrimaryGreen, // Background color
-                        contentColor = Color.White  // Text color
-                    )
+                        contentColor = Color.White, // Text color
+                    ),
                 ) {
                     Text("Đồng ý")
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showDialog = false }, colors = ButtonDefaults.buttonColors(
+                    onClick = { showDialog = false },
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
-                        contentColor = Color.Black
-                    )
+                        contentColor = Color.Black,
+                    ),
                 ) {
                     Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                 }
-            }
+            },
         )
     }
 
@@ -131,28 +134,28 @@ fun EventScreen(navController: NavHostController) {
         topBar = {
             EventTopBar(
                 navController = navController,
-                onAddEvent = { showDialog = true }
+                onAddEvent = { showDialog = true },
             )
         },
         containerColor = Color.White,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             if (events.isEmpty()) {
                 // Fixed empty state with vertical arrangement
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Image(
                         painter = painterResource(id = org.com.hcmurs.R.drawable.hurc),
                         contentDescription = "HURC Logo",
-                        modifier = Modifier.size(120.dp)
+                        modifier = Modifier.size(120.dp),
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -161,7 +164,7 @@ fun EventScreen(navController: NavHostController) {
                         text = "Không có dữ liệu",
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
             } else {
@@ -169,7 +172,7 @@ fun EventScreen(navController: NavHostController) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     items(events) { event ->
                         EventCard(event)

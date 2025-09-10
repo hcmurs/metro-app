@@ -1,5 +1,8 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.stationselection
-
 
 import android.content.ContentValues.TAG
 import android.util.Log
@@ -18,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -54,19 +58,17 @@ import org.com.hcmurs.RouteResponse
 import org.com.hcmurs.Screen
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
-import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExit
-import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
-import org.com.hcmurs.ui.theme.PrimaryGreen
-import androidx.compose.foundation.lazy.items
 import org.com.hcmurs.ui.components.switchentryexit.SwitchEntryExitVN
+import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.theme.LightOrange
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StationSelectionScreen(
     navController: NavController,
     stationViewModel: StationSelectionViewModel = hiltViewModel(),
-    fareMatrixViewModel: FareMatrixViewModel
+    fareMatrixViewModel: FareMatrixViewModel,
 ) {
     val uiState by stationViewModel.uiState.collectAsState()
 
@@ -77,7 +79,6 @@ fun StationSelectionScreen(
     var selectedAction by remember { mutableStateOf("Ga vào") }
 
     var isNavigationTriggered by remember { mutableStateOf(false) }
-
 
     LaunchedEffect(uiState.selectedRoute) {
         if (uiState.selectedRoute == null) {
@@ -90,13 +91,11 @@ fun StationSelectionScreen(
         selectedExitStation = null
     }
 
-
     LaunchedEffect(fareMatrixUiState) {
         Log.d(TAG, "Fare calculated changed. Value: ${fareMatrixUiState.calculatedFare}. Triggered: $isNavigationTriggered")
         if (!isNavigationTriggered) {
             return@LaunchedEffect
         }
-
 
         if (fareMatrixUiState.isLoading) {
             return@LaunchedEffect
@@ -109,22 +108,20 @@ fun StationSelectionScreen(
                 navController.navigate(
                     Screen.CalculatedFare.createRoute(
                         entryStationId = entryStation.stationId,
-                        exitStationId = exitStation.stationId
-                    )
-                )            }
+                        exitStationId = exitStation.stationId,
+                    ),
+                )
+            }
         } else if (fareMatrixUiState.errorMessage != null) {
             Log.e(TAG, "Fare calculation failed: ${fareMatrixUiState.errorMessage}")
             isNavigationTriggered = false
         }
         isNavigationTriggered = false
-
     }
-
-
 
     LaunchedEffect(fareMatrixUiState.errorMessage) {
         Log.d(TAG, "Error message changed. Value: ${fareMatrixUiState.errorMessage}. Triggered: $isNavigationTriggered")
-        if(isNavigationTriggered && fareMatrixUiState.errorMessage != null) {
+        if (isNavigationTriggered && fareMatrixUiState.errorMessage != null) {
             // TODO: Hiển thị Snackbar hoặc Toast thông báo lỗi
             isNavigationTriggered = false
         }
@@ -134,7 +131,6 @@ fun StationSelectionScreen(
         selectedEntryStation = null
         selectedExitStation = null
     }
-
 
     Scaffold(
         topBar = {
@@ -147,8 +143,8 @@ fun StationSelectionScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = PrimaryGreen,
-                    titleContentColor = Color.White
-                )
+                    titleContentColor = Color.White,
+                ),
             )
         },
         floatingActionButton = {
@@ -159,11 +155,11 @@ fun StationSelectionScreen(
                             isNavigationTriggered = true
                             fareMatrixViewModel.getFareForStations(
                                 selectedEntryStation!!.stationId,
-                                selectedExitStation!!.stationId
+                                selectedExitStation!!.stationId,
                             )
                         }
                     },
-                    containerColor = PrimaryGreen
+                    containerColor = PrimaryGreen,
                 ) {
                     if (fareMatrixUiState.isLoading && isNavigationTriggered) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
@@ -172,16 +168,15 @@ fun StationSelectionScreen(
                     }
                 }
             }
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             val selectedRoute = uiState.selectedRoute
             if (selectedRoute != null) {
                 SelectedRouteHeader(routeName = selectedRoute.routeName)
@@ -192,9 +187,9 @@ fun StationSelectionScreen(
             SectionTitle(text = if (selectedAction == "Ga vào") " Chọn ga vào " else "Chọn ga ra ")
             Spacer(modifier = Modifier.height(8.dp))
 
-            SwitchEntryExitVN (
+            SwitchEntryExitVN(
                 selectedAction = selectedAction,
-                onActionSelected = { newAction -> selectedAction = newAction }
+                onActionSelected = { newAction -> selectedAction = newAction },
             )
             Spacer(modifier = Modifier.height(16.dp))
             SelectedStationsSummary(entryStation = selectedEntryStation, exitStation = selectedExitStation)
@@ -214,7 +209,7 @@ fun StationSelectionScreen(
                         modifier = Modifier.weight(1f).padding(top = 16.dp),
                         contentPadding = PaddingValues(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(uiState.stations.filterNotNull()) { station ->
                             val isSelected = when (selectedAction) {
@@ -237,13 +232,12 @@ fun StationSelectionScreen(
                                             selectedExitStation = station
                                         }
                                     }
-                                }
+                                },
                             )
                         }
                     }
                 }
             }
-
         }
     }
 }
@@ -254,7 +248,7 @@ private fun SectionTitle(text: String) {
         text = text,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = PrimaryGreen
+        color = PrimaryGreen,
     )
 }
 
@@ -263,15 +257,15 @@ private fun SectionTitle(text: String) {
 private fun RouteSelector(
     routes: List<RouteResponse>,
     selectedRoute: RouteResponse?,
-    onRouteSelected: (RouteResponse) -> Unit
+    onRouteSelected: (RouteResponse) -> Unit,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 4.dp)
+        contentPadding = PaddingValues(horizontal = 4.dp),
     ) {
         items(
             items = routes,
-            key = { route -> route.routeId }
+            key = { route -> route.routeId },
         ) { route ->
             FilterChip(
                 selected = route.routeId == selectedRoute?.routeId,
@@ -279,36 +273,35 @@ private fun RouteSelector(
                 label = { Text(route.routeName) },
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = PrimaryGreen,
-                    selectedLabelColor = Color.White
-                )
+                    selectedLabelColor = Color.White,
+                ),
             )
         }
     }
 }
 
-
 @Composable
 private fun SelectedRouteHeader(routeName: String) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = PrimaryGreen.copy(alpha = 0.1f))
+        colors = CardDefaults.elevatedCardColors(containerColor = PrimaryGreen.copy(alpha = 0.1f)),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = "Tuyến đường đã chọn",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = Color.Gray,
             )
             Text(
                 text = routeName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = PrimaryGreen
+                color = PrimaryGreen,
             )
         }
     }
@@ -318,17 +311,17 @@ private fun SelectedRouteHeader(routeName: String) {
 fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFF5F5F5))
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFFF5F5F5)),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text("Ga vào", fontSize = 14.sp, color = Color.Gray)
                 Text(
@@ -336,12 +329,12 @@ fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (entryStation != null) PrimaryGreen else Color.Gray,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text("Ga ra", fontSize = 14.sp, color = Color.Gray)
                 Text(
@@ -349,7 +342,7 @@ fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (exitStation != null) LightOrange else Color.Gray,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -359,9 +352,9 @@ fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
 val LightOrange = Color(0xFFFFA726)
 
 //
-//@Preview(showBackground = true)
-//@Composable
-//fun StationSelectionScreenPreview() {
+// @Preview(showBackground = true)
+// @Composable
+// fun StationSelectionScreenPreview() {
 //    StationSelectionScreen(navController = rememberNavController(),
 //        )
-//}
+// }

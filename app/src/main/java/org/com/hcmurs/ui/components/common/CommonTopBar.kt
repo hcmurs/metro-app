@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.common
 
 import androidx.compose.foundation.layout.Box
@@ -27,14 +31,14 @@ fun CommonTopBar(
     navController: NavController,
     title: String,
     actions: @Composable RowScope.() -> Unit = {},
-    bottomContent: @Composable (() -> Unit)? = null
+    bottomContent: @Composable (() -> Unit)? = null,
 ) {
     Column {
         CenterAlignedTopAppBar(
             title = {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = title,
@@ -48,14 +52,14 @@ fun CommonTopBar(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Quay lại",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             },
             actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = PrimaryGreen
-            )
+                containerColor = PrimaryGreen,
+            ),
         )
 
         bottomContent?.invoke()

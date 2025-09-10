@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.switchentryexit
 
 import androidx.compose.animation.core.animateFloat
@@ -24,8 +28,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.ui.theme.LightOrange
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) {
@@ -42,7 +46,7 @@ fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) 
             .height(48.dp)
             .clip(RoundedCornerShape(24.dp))
             .background(backgroundColor)
-            .padding(4.dp) // padding cho indicator không chạm viền
+            .padding(4.dp), // padding cho indicator không chạm viền
     ) {
         val transition = updateTransition(targetState = selectedAction, label = "ActionSwitch")
 
@@ -64,7 +68,7 @@ fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) 
                     this.translationX = this.size.width * translationX
                 }
                 .background(indicatorColor, RoundedCornerShape(20.dp))
-                .zIndex(1f)
+                .zIndex(1f),
         )
 
         // 2 nút Entry / Exit
@@ -72,14 +76,14 @@ fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) 
             modifier = Modifier
                 .fillMaxSize()
                 .zIndex(2f),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             TextButton(
                 onClick = { onActionSelected("Entry") },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = if (selectedAction == "Entry") Color.White else Color.Black
-                )
+                    contentColor = if (selectedAction == "Entry") Color.White else Color.Black,
+                ),
             ) {
                 Text("Entry", fontWeight = FontWeight.Bold)
             }
@@ -88,8 +92,8 @@ fun SwitchEntryExit(selectedAction: String, onActionSelected: (String) -> Unit) 
                 onClick = { onActionSelected("Exit") },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = if (selectedAction == "Exit") Color.White else Color.Black
-                )
+                    contentColor = if (selectedAction == "Exit") Color.White else Color.Black,
+                ),
             ) {
                 Text("Exit", fontWeight = FontWeight.Bold)
             }

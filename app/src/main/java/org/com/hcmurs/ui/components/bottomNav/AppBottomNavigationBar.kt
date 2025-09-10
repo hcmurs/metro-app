@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.bottomNav
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,20 +36,20 @@ import org.com.hcmurs.Screen
 data class BottomNavItem(
     val icon: ImageVector,
     val label: String,
-    val route: String
+    val route: String,
 )
 
 @Composable
 fun AppBottomNavigationBar(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    currentRoute: String?
+    currentRoute: String?,
 ) {
     val navItems = listOf(
         BottomNavItem(Icons.Default.Home, "Home", Screen.Home.route),
         BottomNavItem(Icons.Default.Search, "Search", Screen.BuyTicket.route),
         BottomNavItem(Icons.Default.QrCodeScanner, "My Ticket", Screen.Home.route),
-        BottomNavItem(Icons.Default.Settings, "Account", Screen.Home.route)
+        BottomNavItem(Icons.Default.Settings, "Account", Screen.Home.route),
     )
 
     val selectedColor = Color(0xFF4A6FA5)
@@ -57,14 +61,14 @@ fun AppBottomNavigationBar(
             .background(Color.White, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         navItems.forEach { item ->
             val isSelected = currentRoute == item.route
 
             val iconScale by animateFloatAsState(
                 targetValue = if (isSelected) 1.2f else 1.0f,
-                animationSpec = tween(durationMillis = 200)
+                animationSpec = tween(durationMillis = 200),
             )
 
             val itemColor = if (isSelected) selectedColor else unselectedColor
@@ -83,7 +87,7 @@ fun AppBottomNavigationBar(
                             restoreState = true
                         }
                     }
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
             ) {
                 Icon(
                     imageVector = item.icon,
@@ -91,7 +95,7 @@ fun AppBottomNavigationBar(
                     tint = itemColor,
                     modifier = Modifier
                         .size(28.dp)
-                        .scale(iconScale)
+                        .scale(iconScale),
                 )
             }
         }
@@ -103,6 +107,6 @@ fun AppBottomNavigationBar(
 fun AppBottomNavigationBarPreview() {
     AppBottomNavigationBar(
         navController = rememberNavController(),
-        currentRoute = Screen.Home.route
+        currentRoute = Screen.Home.route,
     )
 }

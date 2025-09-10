@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.feedback
 
-import android.R
-import android.content.Intent
 import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,27 +23,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,9 +63,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,30 +77,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.feedback.FeedbackDto
 import org.com.hcmurs.utils.navigateToHome
-import androidx.compose.foundation.lazy.items
-import org.com.hcmurs.Screen
-import androidx.compose.ui.draw.shadow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.background
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.foundation.border
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalContext
-import android.net.Uri
-
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material3.AlertDialog
-import androidx.compose.ui.graphics.asImageBitmap
-
-import android.util.Base64
-import androidx.compose.foundation.Image
 
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val SecondaryGreen = Color(0xFF66BB6A)
@@ -103,11 +98,11 @@ private val WarningOrange = Color(0xFFF59E0B)
 @Composable
 fun FeedbackScreen(
     navController: NavController,
-    viewModel: FeedbackViewModel = hiltViewModel()
+    viewModel: FeedbackViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect (key1 = Unit) {
+    LaunchedEffect(key1 = Unit) {
         viewModel.fetchMyFeedbacks()
     }
 
@@ -119,7 +114,7 @@ fun FeedbackScreen(
                         "Phản ánh/Góp ý",
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     )
                 },
                 navigationIcon = {
@@ -128,15 +123,15 @@ fun FeedbackScreen(
                             Icons.Default.Home,
                             contentDescription = "Home",
                             tint = Color.White,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Brush.horizontalGradient(
-                        colors = listOf(PrimaryGreen, SecondaryGreen)
-                    ).let { PrimaryGreen } // Fallback cho gradient
-                )
+                        colors = listOf(PrimaryGreen, SecondaryGreen),
+                    ).let { PrimaryGreen }, // Fallback cho gradient
+                ),
             )
         },
         floatingActionButton = {
@@ -148,52 +143,52 @@ fun FeedbackScreen(
                 contentColor = Color.White,
                 modifier = Modifier
                     .shadow(16.dp, RoundedCornerShape(20.dp))
-                    .size(64.dp)
+                    .size(64.dp),
             ) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = "Gửi phản ánh mới",
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
                 )
             }
         },
-        containerColor = BackgroundGray
+        containerColor = BackgroundGray,
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = CardBackground
+                            containerColor = CardBackground,
                         ),
                         modifier = Modifier
                             .padding(32.dp)
                             .shadow(8.dp, RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(20.dp),
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(40.dp)
+                            modifier = Modifier.padding(40.dp),
                         ) {
                             CircularProgressIndicator(
                                 color = PrimaryGreen,
                                 strokeWidth = 4.dp,
-                                modifier = Modifier.size(56.dp)
+                                modifier = Modifier.size(56.dp),
                             )
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(
                                 "Đang tải dữ liệu...",
                                 color = TextPrimary,
                                 fontWeight = FontWeight.Medium,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
                             )
                         }
                     }
@@ -201,11 +196,11 @@ fun FeedbackScreen(
             } else if (uiState.errorMessage != null) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFEF2F2)
+                            containerColor = Color(0xFFFEF2F2),
                         ),
                         modifier = Modifier
                             .padding(24.dp)
@@ -213,32 +208,32 @@ fun FeedbackScreen(
                             .border(
                                 1.dp,
                                 Color(0xFFFECACA),
-                                RoundedCornerShape(16.dp)
+                                RoundedCornerShape(16.dp),
                             ),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(
                             modifier = Modifier.padding(32.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
                                 Icons.Default.Feedback,
                                 contentDescription = null,
                                 tint = Color(0xFFEF4444),
-                                modifier = Modifier.size(48.dp)
+                                modifier = Modifier.size(48.dp),
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 "Đã xảy ra lỗi",
                                 color = Color(0xFFDC2626),
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
+                                fontSize = 18.sp,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 "${uiState.errorMessage}",
                                 color = Color(0xFFDC2626),
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
                             )
                         }
                     }
@@ -246,13 +241,14 @@ fun FeedbackScreen(
             } else if (uiState.myFeedbacks.isEmpty()) {
                 EmptyFeedbackContent("Bạn chưa có phản ánh/góp ý nào")
             } else {
-                LazyColumn (
+                LazyColumn(
                     contentPadding = PaddingValues(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    items (uiState.myFeedbacks,
-                        key = { feedback: FeedbackDto -> feedback.feedbackId })
-                    { feedback ->
+                    items(
+                        uiState.myFeedbacks,
+                        key = { feedback: FeedbackDto -> feedback.feedbackId },
+                    ) { feedback ->
                         FeedbackCard(feedback = feedback)
                     }
                 }
@@ -263,18 +259,18 @@ fun FeedbackScreen(
 
 @Composable
 fun FeedbackCard(feedback: FeedbackDto) {
-    Card (
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(8.dp, RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(containerColor = CardBackground),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
     ) {
         var showImageDialog by remember { mutableStateOf(false) }
-        val context= LocalContext.current
+        val context = LocalContext.current
 
         if (showImageDialog) {
-            AlertDialog (
+            AlertDialog(
                 onDismissRequest = { showImageDialog = false },
                 confirmButton = {
                     Text(
@@ -282,13 +278,13 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable { showImageDialog = false },
-                        color = PrimaryGreen
+                        color = PrimaryGreen,
                     )
                 },
                 text = {
                     val imageBytes = Base64.decode(
                         feedback.image!!.substringAfter("base64,"),
-                        Base64.DEFAULT
+                        Base64.DEFAULT,
                     )
                     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     Image(
@@ -297,47 +293,47 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp),
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Fit,
                     )
-                }
+                },
             )
         }
 
-        Column (
-            modifier = Modifier.padding(24.dp)
+        Column(
+            modifier = Modifier.padding(24.dp),
         ) {
             // Header với gradient background
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = LightGreen
+                    containerColor = LightGreen,
                 ),
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
                                 .background(
                                     PrimaryGreen,
-                                    RoundedCornerShape(10.dp)
+                                    RoundedCornerShape(10.dp),
                                 ),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 Icons.Default.Feedback,
                                 contentDescription = "Feedback",
                                 tint = Color.White,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
@@ -345,7 +341,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                             feedback.category,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            color = DarkGreen
+                            color = DarkGreen,
                         )
                     }
                 }
@@ -359,7 +355,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                 color = TextSecondary,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.Normal,
             )
 
             if (!feedback.image.isNullOrBlank()) {
@@ -372,32 +368,30 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         }
                         .background(Color(0xFFE8F5E9))
                         .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Visibility,
                         contentDescription = "Xem ảnh",
                         tint = PrimaryGreen,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Xem ảnh đính kèm",
                         color = PrimaryGreen,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
                     )
                 }
             }
-
-
 
             // Reply section
             if (!feedback.reply.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = LightGreen
+                        containerColor = LightGreen,
                     ),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
@@ -405,29 +399,29 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         .border(
                             1.dp,
                             Color(0xFFA5D6A7),
-                            RoundedCornerShape(16.dp)
-                        )
+                            RoundedCornerShape(16.dp),
+                        ),
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(20.dp),
                     ) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Box(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .background(
                                         SuccessGreen,
-                                        RoundedCornerShape(8.dp)
+                                        RoundedCornerShape(8.dp),
                                     ),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
                                     Icons.Default.Reply,
                                     contentDescription = "Reply",
                                     tint = Color.White,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(16.dp),
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
@@ -435,7 +429,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                                 "Phản hồi từ quản trị viên",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 14.sp,
-                                color = DarkGreen
+                                color = DarkGreen,
                             )
                         }
                         Spacer(modifier = Modifier.height(12.dp))
@@ -443,7 +437,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                             feedback.reply,
                             fontSize = 14.sp,
                             color = TextPrimary,
-                            lineHeight = 20.sp
+                            lineHeight = 20.sp,
                         )
                     }
                 }
@@ -455,30 +449,30 @@ fun FeedbackCard(feedback: FeedbackDto) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF9FAFB)
+                        containerColor = Color(0xFFF9FAFB),
                     ),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             Icons.Default.Schedule,
                             contentDescription = "Time",
                             tint = TextSecondary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             feedback.createdAt,
                             fontSize = 12.sp,
                             color = TextSecondary,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                 }
@@ -493,11 +487,11 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 72.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(32.dp)
+            modifier = Modifier.padding(32.dp),
         ) {
             if (showSearch) {
                 SearchBarWithButtons()
@@ -506,14 +500,14 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
 
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = CardBackground
+                    containerColor = CardBackground,
                 ),
                 modifier = Modifier.shadow(12.dp, RoundedCornerShape(24.dp)),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(24.dp),
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(40.dp)
+                    modifier = Modifier.padding(40.dp),
                 ) {
                     // Gradient circle background
                     Box(
@@ -523,18 +517,18 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                                 Brush.radialGradient(
                                     colors = listOf(
                                         LightGreen,
-                                        Color(0xFFBBDEFB)
-                                    )
+                                        Color(0xFFBBDEFB),
+                                    ),
                                 ),
-                                RoundedCornerShape(70.dp)
+                                RoundedCornerShape(70.dp),
                             ),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             Icons.Default.Feedback,
                             contentDescription = null,
                             tint = PrimaryGreen,
-                            modifier = Modifier.size(72.dp)
+                            modifier = Modifier.size(72.dp),
                         )
                     }
 
@@ -544,7 +538,7 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                         text = message,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = TextPrimary,
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -552,7 +546,7 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                     Text(
                         text = "Hãy gửi phản ánh đầu tiên của bạn",
                         fontSize = 15.sp,
-                        color = TextSecondary
+                        color = TextSecondary,
                     )
                 }
             }
@@ -568,10 +562,10 @@ fun SearchBarWithButtons() {
             .padding(horizontal = 20.dp)
             .shadow(8.dp, RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(containerColor = CardBackground),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(20.dp),
         ) {
             OutlinedTextField(
                 value = "",
@@ -582,36 +576,36 @@ fun SearchBarWithButtons() {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = PrimaryGreen
+                        tint = PrimaryGreen,
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = PrimaryGreen,
                     unfocusedBorderColor = BorderColor,
                     cursorColor = PrimaryGreen,
-                    focusedLabelColor = PrimaryGreen
+                    focusedLabelColor = PrimaryGreen,
                 ),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Button(
                     onClick = { /* TODO: Gửi phản ánh */ },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryGreen
+                        containerColor = PrimaryGreen,
                     ),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Icon(
                         Icons.Default.Add,
                         contentDescription = "Add",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Gửi phản ánh", fontWeight = FontWeight.Medium)
@@ -621,14 +615,14 @@ fun SearchBarWithButtons() {
                     onClick = { /* TODO: Lọc phản ánh */ },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = SecondaryGreen
+                        containerColor = SecondaryGreen,
                     ),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Icon(
                         Icons.Default.FilterList,
                         contentDescription = "Filter",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Lọc phản ánh", fontWeight = FontWeight.Medium)
@@ -648,14 +642,14 @@ fun BottomNavBar(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
             .fillMaxWidth()
             .shadow(16.dp, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
         colors = CardDefaults.cardColors(containerColor = PrimaryGreen),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             tabs.forEachIndexed { index, label ->
                 Card(
@@ -663,28 +657,30 @@ fun BottomNavBar(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                         .clickable { onTabSelected(index) }
                         .padding(8.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (selectedIndex == index)
+                        containerColor = if (selectedIndex == index) {
                             Color.White.copy(alpha = 0.25f)
-                        else Color.Transparent
+                        } else {
+                            Color.Transparent
+                        },
                     ),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Column(
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Icon(
                             imageVector = icons[index],
                             contentDescription = label,
                             tint = if (selectedIndex == index) Color.White else Color.White.copy(alpha = 0.7f),
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(28.dp),
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = label,
                             fontSize = 13.sp,
                             color = if (selectedIndex == index) Color.White else Color.White.copy(alpha = 0.7f),
-                            fontWeight = if (selectedIndex == index) FontWeight.Bold else FontWeight.Normal
+                            fontWeight = if (selectedIndex == index) FontWeight.Bold else FontWeight.Normal,
                         )
                     }
                 }

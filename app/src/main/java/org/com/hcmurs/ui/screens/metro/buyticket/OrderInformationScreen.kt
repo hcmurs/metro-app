@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import android.content.Intent
@@ -57,7 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.stripe.android.paymentsheet.PaymentSheetResultCallback
@@ -76,12 +79,12 @@ data class OrderInfo(
     val quantity: Int,
     val totalPrice: String,
     val validity: String,
-    val note: String
+    val note: String,
 )
 data class PaymentMethod(
     val id: String,
     val name: String,
-    val icon: @Composable () -> Unit
+    val icon: @Composable () -> Unit,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +92,7 @@ data class PaymentMethod(
 fun OrderInfoScreen(
     navController: NavHostController,
     currencyManager: CurrencyManager,
-    viewModel: OrderInfoViewModel = hiltViewModel()
+    viewModel: OrderInfoViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -111,14 +114,13 @@ fun OrderInfoScreen(
                 imageVector = Icons.Default.CreditCard,
                 contentDescription = "Stripe",
                 tint = Color(0xFFE91E63),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
-        }
+        },
     )
-    
+
     var selectedPaymentMethod by remember { mutableStateOf<PaymentMethod?>(defaultPaymentMethod) }
     var isTicketInfoExpanded by remember { mutableStateOf(true) }
-
 
     val paymentSheet = rememberPaymentSheet(
         paymentResultCallback = object : PaymentSheetResultCallback {
@@ -138,18 +140,18 @@ fun OrderInfoScreen(
                     }
                 }
             }
-        }
+        },
     )
 
     LaunchedEffect(uiState.clientSecret) {
         val clientSecret = uiState.clientSecret
         if (!clientSecret.isNullOrBlank()) {
             val configuration = PaymentSheet.Configuration(
-                merchantDisplayName = "HCMURS Metro"
+                merchantDisplayName = "HCMURS Metro",
             )
             paymentSheet.presentWithPaymentIntent(
                 clientSecret,
-                configuration
+                configuration,
             )
         }
     }
@@ -179,9 +181,9 @@ fun OrderInfoScreen(
                         imageVector = Icons.Default.CreditCard,
                         contentDescription = "Stripe",
                         tint = Color(0xFFE91E63),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
-                }
+                },
             ),
             PaymentMethod(
                 id = "payos",
@@ -191,10 +193,10 @@ fun OrderInfoScreen(
                         imageVector = Icons.Default.CreditCard,
                         contentDescription = "PayOS",
                         tint = Color(0xFF1976D2), // Màu xanh đặc trưng
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
-                }
-            )
+                },
+            ),
         )
     }
     // Derive OrderInfo from fetched TicketType with currency conversion
@@ -207,19 +209,19 @@ fun OrderInfoScreen(
                 else -> 0.0
             }
             val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
-            
+
             // Get localized text
             val validityText = TranslationHelper.getLocalizedValidity(ticket.validityDuration, currentLanguage)
             val noteText = TranslationHelper.getLocalizedNote(ticket.name, currentLanguage)
             val ticketName = TranslationHelper.getLocalizedTicketName(ticket.description, currentLanguage)
-            
+
             OrderInfo(
                 ticketType = ticketName,
                 unitPrice = convertedPrice,
                 quantity = 1,
                 totalPrice = convertedPrice,
                 validity = validityText,
-                note = noteText
+                note = noteText,
             )
         } else {
             OrderInfo(
@@ -228,26 +230,25 @@ fun OrderInfoScreen(
                 quantity = 0,
                 totalPrice = currencyManager.convertPrice(0.0, currentLanguage),
                 validity = "Loading...",
-                note = "Loading..."
+                note = "Loading...",
             )
         }
     }
-
 
     Scaffold(
         topBar = {
             OrderInfoTopBar(
                 title = stringResource(R.string.order_information),
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
             )
-        }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .background(Color(0xFFF5F5F5))
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -255,7 +256,7 @@ fun OrderInfoScreen(
             PaymentMethodSection(
                 selectedPaymentMethod = selectedPaymentMethod,
                 paymentMethods = paymentMethods,
-                onPaymentMethodSelected = { selectedPaymentMethod = it }
+                onPaymentMethodSelected = { selectedPaymentMethod = it },
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -268,7 +269,7 @@ fun OrderInfoScreen(
             TicketInfoSection(
                 orderInfo = orderInfo,
                 isExpanded = isTicketInfoExpanded,
-                onExpandClick = { isTicketInfoExpanded = !isTicketInfoExpanded }
+                onExpandClick = { isTicketInfoExpanded = !isTicketInfoExpanded },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -284,7 +285,7 @@ fun OrderInfoScreen(
                     .padding(horizontal = 16.dp)
                     .clickable {
                         showDialog = true
-                    }
+                    },
             )
             if (showDialog) {
                 TermsAndConditionsDialog(onDismiss = { showDialog = false })
@@ -310,19 +311,19 @@ fun OrderInfoScreen(
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF4CAF50),
-                    disabledContainerColor = Color(0xFF9E9E9E)
-                )
+                    disabledContainerColor = Color(0xFF9E9E9E),
+                ),
             ) {
                 if (uiState.isProcessing) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
-                            Spacer(Modifier.width(8.dp))
-                            Text(uiState.processMessage ?: stringResource(R.string.processing), color = Color.White)
+                    Spacer(Modifier.width(8.dp))
+                    Text(uiState.processMessage ?: stringResource(R.string.processing), color = Color.White)
                 } else {
                     Text(
                         text = stringResource(R.string.pay_amount, orderInfo.totalPrice),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = Color.White,
                     )
                 }
             }
@@ -336,7 +337,7 @@ fun OrderInfoScreen(
 @Composable
 fun OrderInfoTopBar(
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -344,7 +345,7 @@ fun OrderInfoTopBar(
                 text = title,
                 color = Color(0xFF1A237E),
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         },
         navigationIcon = {
@@ -352,13 +353,13 @@ fun OrderInfoTopBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color(0xFF1A237E)
+                    tint = Color(0xFF1A237E),
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
-        )
+            containerColor = Color.White,
+        ),
     )
 }
 
@@ -366,7 +367,7 @@ fun OrderInfoTopBar(
 fun PaymentMethodSection(
     selectedPaymentMethod: PaymentMethod?,
     paymentMethods: List<PaymentMethod>,
-    onPaymentMethodSelected: (PaymentMethod) -> Unit
+    onPaymentMethodSelected: (PaymentMethod) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -374,16 +375,16 @@ fun PaymentMethodSection(
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             Text(
                 text = stringResource(R.string.payment_method),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1A237E)
+                color = Color(0xFF1A237E),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -400,29 +401,29 @@ fun PaymentMethodSection(
                         }
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             imageVector = Icons.Default.CreditCard,
                             contentDescription = "Payment Method",
                             tint = Color(0xFF4CAF50),
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = stringResource(R.string.select_payment_method),
                             fontSize = 14.sp,
-                            color = Color(0xFF999999)
+                            color = Color(0xFF999999),
                         )
                     }
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowRight,
                         contentDescription = "Arrow Right",
                         tint = Color(0xFF999999),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                 }
             } else {
@@ -439,10 +440,10 @@ fun PaymentMethodSection(
                         }
                         .padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         selectedPaymentMethod.icon()
                         Spacer(modifier = Modifier.width(12.dp))
@@ -450,24 +451,24 @@ fun PaymentMethodSection(
                             text = selectedPaymentMethod.name,
                             fontSize = 14.sp,
                             color = Color(0xFF333333),
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "Selected",
                             tint = Color(0xFF4CAF50),
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowRight,
                             contentDescription = "Change",
                             tint = Color(0xFF999999),
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                 }
@@ -475,7 +476,6 @@ fun PaymentMethodSection(
         }
     }
 }
-
 
 @Composable
 fun PaymentInfoSection(orderInfo: OrderInfo) {
@@ -485,16 +485,16 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             Text(
                 text = stringResource(R.string.payment_info),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
-                color = Color(0xFF1A237E)
+                color = Color(0xFF1A237E),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -502,7 +502,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             // Product
             PaymentInfoRow(
                 label = stringResource(R.string.product),
-                value = orderInfo.ticketType
+                value = orderInfo.ticketType,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -510,7 +510,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             // Unit Price
             PaymentInfoRow(
                 label = stringResource(R.string.unit_price),
-                value = orderInfo.unitPrice
+                value = orderInfo.unitPrice,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -518,7 +518,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             // Quantity
             PaymentInfoRow(
                 label = stringResource(R.string.quantity),
-                value = orderInfo.quantity.toString()
+                value = orderInfo.quantity.toString(),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -526,7 +526,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             // Subtotal
             PaymentInfoRow(
                 label = stringResource(R.string.subtotal),
-                value = orderInfo.totalPrice
+                value = orderInfo.totalPrice,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -539,7 +539,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             PaymentInfoRow(
                 label = stringResource(R.string.total_price),
                 value = orderInfo.totalPrice,
-                isTotal = true
+                isTotal = true,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -548,7 +548,7 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
             PaymentInfoRow(
                 label = stringResource(R.string.final_amount),
                 value = orderInfo.totalPrice,
-                isTotal = true
+                isTotal = true,
             )
         }
     }
@@ -558,23 +558,23 @@ fun PaymentInfoSection(orderInfo: OrderInfo) {
 fun PaymentInfoRow(
     label: String,
     value: String,
-    isTotal: Boolean = false
+    isTotal: Boolean = false,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = label,
             fontSize = if (isTotal) 15.sp else 14.sp,
             fontWeight = if (isTotal) FontWeight.Medium else FontWeight.Normal,
-            color = Color(0xFF333333)
+            color = Color(0xFF333333),
         )
         Text(
             text = value,
             fontSize = if (isTotal) 15.sp else 14.sp,
             fontWeight = if (isTotal) FontWeight.Medium else FontWeight.Normal,
-            color = Color(0xFF333333)
+            color = Color(0xFF333333),
         )
     }
 }
@@ -583,7 +583,7 @@ fun PaymentInfoRow(
 fun TicketInfoSection(
     orderInfo: OrderInfo,
     isExpanded: Boolean,
-    onExpandClick: () -> Unit
+    onExpandClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -591,10 +591,10 @@ fun TicketInfoSection(
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             // Header
             Row(
@@ -602,19 +602,19 @@ fun TicketInfoSection(
                     .fillMaxWidth()
                     .clickable { onExpandClick() },
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = stringResource(R.string.description) + " " + orderInfo.ticketType,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1A237E)
+                    color = Color(0xFF1A237E),
                 )
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
                     contentDescription = if (isExpanded) "Collapse" else "Expand",
                     tint = Color(0xFF1A237E),
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
 
@@ -625,7 +625,7 @@ fun TicketInfoSection(
                 // Ticket Type
                 TicketDetailRow(
                     label = stringResource(R.string.ticket_type),
-                    value = orderInfo.ticketType
+                    value = orderInfo.ticketType,
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -633,7 +633,7 @@ fun TicketInfoSection(
                 // Validity
                 TicketDetailRow(
                     label = stringResource(R.string.validity_period),
-                    value = orderInfo.validity
+                    value = orderInfo.validity,
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -642,7 +642,7 @@ fun TicketInfoSection(
                 TicketDetailRow(
                     label = stringResource(R.string.note),
                     value = orderInfo.note,
-                    valueColor = Color(0xFFE53935)
+                    valueColor = Color(0xFFE53935),
                 )
             }
         }
@@ -653,26 +653,27 @@ fun TicketInfoSection(
 fun TicketDetailRow(
     label: String,
     value: String,
-    valueColor: Color = Color(0xFF333333)
+    valueColor: Color = Color(0xFF333333),
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(
             text = label,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = Color(0xFF666666)
+            color = Color(0xFF666666),
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = value,
             fontSize = 14.sp,
             color = valueColor,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         )
     }
 }
+
 @Composable
 private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
     AlertDialog(
@@ -681,19 +682,20 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
         text = {
             Text(
                 stringResource(R.string.terms_content),
-                fontSize = 14.sp
+                fontSize = 14.sp,
             )
         },
         confirmButton = {
             Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
             ) {
                 Text(stringResource(R.string.understood))
             }
-        }
+        },
     )
 }
+
 @Preview(showBackground = true)
 @Composable
 fun OrderInfoScreenPreview() {

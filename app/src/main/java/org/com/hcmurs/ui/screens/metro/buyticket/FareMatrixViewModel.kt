@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.buyticket
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +21,6 @@ import org.com.hcmurs.repositories.apis.order.FareMatrixIdObject
 import org.com.hcmurs.repositories.apis.order.OrderRepository
 import org.com.hcmurs.repositories.apis.payment.PaymentRepository
 import org.com.hcmurs.repositories.apis.ticket.FareMatrixRepository
-import javax.inject.Inject
-
 
 data class FareMatrixUiState(
     val fareMatrices: List<FareMatrix> = emptyList(),
@@ -38,7 +40,7 @@ data class FareMatrixUiState(
 class FareMatrixViewModel @Inject constructor(
     private val fareMatrixRepository: FareMatrixRepository,
     private val orderRepository: OrderRepository,
-    private val paymentRepository: PaymentRepository
+    private val paymentRepository: PaymentRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FareMatrixUiState())
@@ -50,7 +52,6 @@ class FareMatrixViewModel @Inject constructor(
 
     fun fetchFareMatrices() {
         viewModelScope.launch {
-
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             val result = fareMatrixRepository.getFareMatrices()
             result.onSuccess { matrices ->
@@ -59,7 +60,6 @@ class FareMatrixViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(errorMessage = throwable.localizedMessage ?: "Unknown error")
             }
             _uiState.value = _uiState.value.copy(isLoading = false)
-
         }
     }
 
@@ -81,7 +81,7 @@ class FareMatrixViewModel @Inject constructor(
 
             val request = CreateOrderRequest(
                 fareMatrixId = FareMatrixIdObject(id = fareMatrixId),
-                paymentMethodId = paymentMethodId
+                paymentMethodId = paymentMethodId,
             )
 
             val result = orderRepository.createSingleOrder(request)
@@ -90,14 +90,14 @@ class FareMatrixViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isCreatingOrder = false,
-                        createOrderResponse = response
+                        createOrderResponse = response,
                     )
                 }
             }.onFailure { throwable ->
                 _uiState.update {
                     it.copy(
                         isCreatingOrder = false,
-                        createOrderError = throwable.localizedMessage ?: "An unexpected error occurred"
+                        createOrderError = throwable.localizedMessage ?: "An unexpected error occurred",
                     )
                 }
             }
@@ -117,7 +117,7 @@ class FareMatrixViewModel @Inject constructor(
 
             val orderRequest = CreateOrderRequest(
                 fareMatrixId = FareMatrixIdObject(id = currentFareMatrix.fareMatrixId),
-                paymentMethodId = paymentMethodId
+                paymentMethodId = paymentMethodId,
             )
             val orderResult = orderRepository.createSingleOrder(orderRequest)
 
@@ -138,7 +138,7 @@ class FareMatrixViewModel @Inject constructor(
                                         isProcessing = false,
                                         processMessage = "Đã sẵn sàng thanh toán",
                                         clientSecret = clientSecret,
-                                        paymentIntentId = paymentIntentId
+                                        paymentIntentId = paymentIntentId,
                                     )
                                 }
                             } else {
@@ -186,6 +186,4 @@ class FareMatrixViewModel @Inject constructor(
     fun clearCreateOrderStatus() {
         _uiState.update { it.copy(clientSecret = null, createOrderError = null) }
     }
-
-
 }

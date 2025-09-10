@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.topbar
 
 import androidx.compose.foundation.layout.Box
@@ -35,12 +39,12 @@ fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> 
         bottomContent = {
             Surface(
                 color = PrimaryGreen,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     TextField(
                         value = searchText,
@@ -55,22 +59,22 @@ fun TicketInformationTopBar(navController: NavController, onSearch: (String) -> 
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Tìm kiếm",
-                                tint = PrimaryGreen
+                                tint = PrimaryGreen,
                             )
                         },
                         colors = TextFieldDefaults.colors(
                             unfocusedContainerColor = Color.White,
                             focusedContainerColor = Color.White,
                             unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent
+                            focusedIndicatorColor = Color.Transparent,
                         ),
                         shape = RoundedCornerShape(8.dp),
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
-        }
+        },
     )
 }
 

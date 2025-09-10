@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.utils
 
-import org.json.JSONObject
 import android.util.Base64
 import java.lang.Exception
+import org.json.JSONObject
+
 object JwtUtils {
     fun isTokenExpired(token: String?): Boolean {
         if (token.isNullOrEmpty()) return true

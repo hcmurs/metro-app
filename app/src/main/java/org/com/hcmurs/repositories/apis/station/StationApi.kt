@@ -1,7 +1,10 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.station
 
 import org.com.hcmurs.RouteResponse
-import org.com.hcmurs.Station
 import org.com.hcmurs.StationResponse
 import org.com.hcmurs.StationRouteResponse
 import org.com.hcmurs.repositories.apis.request.ApiResponse
@@ -17,5 +20,7 @@ interface StationApi {
     suspend fun getRoutes(): ApiResponse<List<RouteResponse>>
 
     @GET("api/station-routes/route/{routeId}")
-    suspend fun getStationsByRouteId(@Path("routeId") routeId: Long): ApiResponse<List<StationRouteResponse>>
+    suspend fun getStationsByRouteId(
+        @Path("routeId") routeId: Long,
+    ): ApiResponse<List<StationRouteResponse>>
 }

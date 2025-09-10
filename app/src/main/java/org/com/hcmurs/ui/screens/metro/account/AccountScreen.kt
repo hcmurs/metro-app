@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.account
 
 import androidx.compose.foundation.background
@@ -24,6 +28,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Divider as HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -49,50 +54,50 @@ import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
 import org.com.hcmurs.ui.theme.PaleYellow
 import org.com.hcmurs.ui.theme.PrimaryGreen
-import androidx.compose.material3.Divider as HorizontalDivider
-
 
 data class MenuItem(
     val icon: ImageVector,
     val title: String,
     val hasArrow: Boolean = true,
     val isDestructive: Boolean = false,
-    val onClickAction: (() -> Unit)? = null
+    val onClickAction: (() -> Unit)? = null,
 )
 
 @Composable
 fun MenuItemRow(
     item: MenuItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .clickable() { onClick() }
+            .clickable { onClick() }
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         // Icon Background
         Surface(
             modifier = Modifier.size(48.dp),
             shape = CircleShape,
-            color = if (item.isDestructive)
+            color = if (item.isDestructive) {
                 Color(0xFFFFEBEE)
-            else
+            } else {
                 Color(0xFFE3F2FD)
+            },
         ) {
             Box(
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = item.icon,
                     contentDescription = null,
-                    tint = if (item.isDestructive)
+                    tint = if (item.isDestructive) {
                         Color(0xFFE53935)
-                    else
-                        Color(0xFF2196F3),
-                    modifier = Modifier.size(24.dp)
+                    } else {
+                        Color(0xFF2196F3)
+                    },
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
@@ -102,12 +107,13 @@ fun MenuItemRow(
         // Title
         Text(
             text = item.title,
-            color = if (item.isDestructive)
+            color = if (item.isDestructive) {
                 Color(0xFFE53935)
-            else
-                Color(0xFF424242),
+            } else {
+                Color(0xFF424242)
+            },
             fontSize = 16.sp,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         // Arrow
@@ -116,7 +122,7 @@ fun MenuItemRow(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Navigate",
                 tint = Color(0xFF9E9E9E),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -126,9 +132,8 @@ fun MenuItemRow(
 fun AccountScreen(
     navController: NavController,
     onMenuItemClick: (MenuItem) -> Unit = {},
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel,
 ) {
-
     if (viewModel == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(stringResource(R.string.error))
@@ -156,28 +161,27 @@ fun AccountScreen(
         MenuItem(
             icon = Icons.Default.Person,
             title = stringResource(R.string.full_name) + ": $userName", // Cập nhật họ tên
-            hasArrow = false
+            hasArrow = false,
         ),
         MenuItem(
             icon = Icons.Default.Email,
             title = "Email: $userEmail", // Cập nhật email
-            hasArrow = false
+            hasArrow = false,
         ),
-        if( userProfile?.isStudent == false) {
+        if (userProfile?.isStudent == false) {
             MenuItem(
                 icon = Icons.Default.Info,
                 title = stringResource(R.string.account_verification),
                 hasArrow = true,
-                onClickAction = { navController.navigate(Screen.CCCD.route) }
+                onClickAction = { navController.navigate(Screen.CCCD.route) },
             )
         } else {
             MenuItem(
                 icon = Icons.Default.Info,
                 title = stringResource(R.string.student_account),
-                hasArrow = false
+                hasArrow = false,
             )
         },
-
 
 //        MenuItem(
 //            icon = Icons.Default.ShoppingCart,
@@ -200,41 +204,38 @@ fun AccountScreen(
                     colors = listOf(
                         PrimaryGreen,
                         PaleYellow,
-                        DarkGreen
-                    )
-                )
-            )
-    )
-    {
+                        DarkGreen,
+                    ),
+                ),
+            ),
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // status bar spacer
             Spacer(modifier = Modifier.height(24.dp))
-            //header
+            // header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = {
                     navController.navigate(Screen.Home.route)
-                })
-                {
+                }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
                 Text(
                     text = stringResource(R.string.account_information),
                     color = Color.White,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
                 Spacer(modifier = Modifier.width(48.dp))
-
             }
 
             // Profile Section
@@ -242,39 +243,38 @@ fun AccountScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 // Avatar
                 Box(
                     modifier = Modifier
                         .size(80.dp)
                         .background(Color.White, CircleShape)
                         .padding(4.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Box(
                         modifier = Modifier
                             .size(64.dp)
                             .background(Color(0xFFE0E0E0), CircleShape),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Avatar",
                             modifier = Modifier.size(48.dp),
-                            tint = Color(0xFF9E9E9E)
+                            tint = Color(0xFF9E9E9E),
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                //Name
+                // Name
                 Text(
                     text = userName, // Cập nhật tên hiển thị
                     color = Color.White,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
             // Content Card
@@ -284,26 +284,26 @@ fun AccountScreen(
                     .weight(1f),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                 color = Color.White,
-                shadowElevation = 8.dp
+                shadowElevation = 8.dp,
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     // Menu Items
                     menuItem.forEach { item ->
                         MenuItemRow(
                             item = item,
-                            onClick = { item.onClickAction?.invoke()  }
+                            onClick = { item.onClickAction?.invoke() },
                         )
                     }
 
                     // Divider
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),
-                        color = Color(0xFFE0E0E0)
+                        color = Color(0xFFE0E0E0),
                     )
 
                     // Logout Button
@@ -312,29 +312,25 @@ fun AccountScreen(
                             icon = Icons.Default.ExitToApp,
                             title = stringResource(R.string.logout),
                             hasArrow = false,
-                            isDestructive = false
+                            isDestructive = false,
                         ),
-                        onClick = { viewModel.logout() } // Gọi hàm logout từ ViewModel
+                        onClick = { viewModel.logout() }, // Gọi hàm logout từ ViewModel
                     )
 
                     Spacer(modifier = Modifier.height(50.dp))
-
                 }
-
             }
-
-
         }
     }
 }
 //
-//@Preview(showBackground = true)
-//@Composable
-//fun AccountInfoScreenPreview() {
+// @Preview(showBackground = true)
+// @Composable
+// fun AccountInfoScreenPreview() {
 //    MaterialTheme {
 //        AccountScreen(
 //            navController = rememberNavController(),
 //            viewModel = null,
 //        )
 //    }
-//}
+// }

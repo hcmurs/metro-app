@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.stationselection
 
 import android.widget.Toast
@@ -63,7 +67,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.stripe.android.paymentsheet.PaymentSheet
 import com.stripe.android.paymentsheet.PaymentSheetResult
-import com.stripe.android.paymentsheet.PaymentSheetResultCallback
 import com.stripe.android.paymentsheet.rememberPaymentSheet
 import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.R
@@ -82,7 +85,7 @@ private val DividerColor = Color.Black.copy(alpha = 0.08f)
 data class LocalPaymentMethod(
     val id: Int,
     val name: String,
-    val iconRes: Int
+    val iconRes: Int,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +100,7 @@ fun OrderFareInfoScreen(
         LocalPaymentMethod(1, "VNPAY", R.drawable.ic_vnpay),
         LocalPaymentMethod(2, "Stripe", R.drawable.ic_stripe),
         LocalPaymentMethod(3, "Momo", R.drawable.ic_momo),
-    )
+    ),
 ) {
     val uiState by fareMatrixViewModel.uiState.collectAsState()
     val stationUiState by stationViewModel.uiState.collectAsState()
@@ -105,7 +108,6 @@ fun OrderFareInfoScreen(
     val fareInfo = uiState.calculatedFare?.data
     val entryStation = stationUiState.stations.find { it.stationId == entryStationId }
     val exitStation = stationUiState.stations.find { it.stationId == exitStationId }
-
 
     var showPaymentSheet by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
@@ -131,18 +133,18 @@ fun OrderFareInfoScreen(
                     fareMatrixViewModel.verifyPaymentFailed()
                 }
             }
-        })
-
+        },
+    )
 
     LaunchedEffect(uiState.clientSecret) {
         val clientSecret = uiState.clientSecret
         if (!clientSecret.isNullOrBlank()) {
             val configuration = PaymentSheet.Configuration(
-                merchantDisplayName = "HCMURS Metro"
+                merchantDisplayName = "HCMURS Metro",
             )
             paymentSheet.presentWithPaymentIntent(
                 clientSecret,
-                configuration
+                configuration,
             )
         }
     }
@@ -152,7 +154,6 @@ fun OrderFareInfoScreen(
             fareMatrixViewModel.clearCreateOrderStatus()
         }
     }
-
 
 //        if (showPaymentSheet) {
 //        PaymentMethodBottomSheet(
@@ -179,7 +180,7 @@ fun OrderFareInfoScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor),
             )
         },
         bottomBar = {
@@ -193,12 +194,11 @@ fun OrderFareInfoScreen(
                         if (!uiState.isProcessing) {
                             fareMatrixViewModel.startSingleTicketCheckoutFlow(selectedPaymentMethod.id)
                         }
-
                     },
-                    onTermsClick = { showTermsDialog = true }
+                    onTermsClick = { showTermsDialog = true },
                 )
             }
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -207,12 +207,12 @@ fun OrderFareInfoScreen(
                 .background(LightGreenBackground)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (fareInfo != null && entryStation != null && exitStation != null) {
                 PaymentMethodSection(
                     selectedMethod = selectedPaymentMethod,
-                    onClick = { showPaymentSheet = true }
+                    onClick = { showPaymentSheet = true },
                 )
                 PaymentInfoSection(fare = fareInfo, entryStation = entryStation, exitStation = exitStation)
                 TicketDetailsSection(entryStation = entryStation, exitStation = exitStation)
@@ -236,20 +236,20 @@ private fun PaymentMethodSection(selectedMethod: LocalPaymentMethod, onClick: ()
                 .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
                         painter = painterResource(id = selectedMethod.iconRes),
                         contentDescription = selectedMethod.name,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                     Spacer(Modifier.width(12.dp))
                     Text(selectedMethod.name, color = TextPrimaryColor, fontWeight = FontWeight.SemiBold)
@@ -266,20 +266,20 @@ private fun PaymentMethodBottomSheet(
     paymentMethods: List<LocalPaymentMethod>,
     selectedMethod: LocalPaymentMethod,
     onDismiss: () -> Unit,
-    onSelectMethod: (LocalPaymentMethod) -> Unit
+    onSelectMethod: (LocalPaymentMethod) -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .padding(bottom = 32.dp)
+                .padding(bottom = 32.dp),
         ) {
             Text(
                 "Chọn phương thức thanh toán",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(16.dp))
             paymentMethods.forEach { method ->
@@ -288,12 +288,12 @@ private fun PaymentMethodBottomSheet(
                         .fillMaxWidth()
                         .clickable { onSelectMethod(method) }
                         .padding(vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
                         painter = painterResource(id = method.iconRes),
                         contentDescription = method.name,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(method.name, modifier = Modifier.weight(1f), fontSize = 16.sp)
@@ -301,7 +301,7 @@ private fun PaymentMethodBottomSheet(
                         Icon(
                             Icons.Filled.CheckCircle,
                             contentDescription = "Selected",
-                            tint = PrimaryGreen
+                            tint = PrimaryGreen,
                         )
                     }
                 }
@@ -318,36 +318,37 @@ private fun TermsAndConditionsDialog(onDismiss: () -> Unit) {
         text = {
             Text(
                 "Bằng việc sử dụng dịch vụ, bạn đồng ý tuân thủ tất cả các quy định về vận chuyển hành khách công cộng. " +
-                        "Vé đã mua không thể hoàn trả. Vui lòng giữ vé cẩn thận để xuất trình khi có yêu cầu. " +
-                        "Mọi hành vi gian lận sẽ bị xử lý theo quy định của pháp luật. " +
-                        "Cảm ơn bạn đã sử dụng dịch vụ của Metro.",
-                fontSize = 14.sp
+                    "Vé đã mua không thể hoàn trả. Vui lòng giữ vé cẩn thận để xuất trình khi có yêu cầu. " +
+                    "Mọi hành vi gian lận sẽ bị xử lý theo quy định của pháp luật. " +
+                    "Cảm ơn bạn đã sử dụng dịch vụ của Metro.",
+                fontSize = 14.sp,
             )
         },
         confirmButton = {
             Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
             ) {
                 Text("Đã hiểu")
             }
-        }
+        },
     )
 }
+
 @Composable
 private fun PaymentBottomBar(
     price: Int,
     onTermsClick: () -> Unit,
     onPayClick: () -> Unit,
     isLoading: Boolean = false,
-    processMessage: String? = null
+    processMessage: String? = null,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(elevation = 8.dp)
             .background(CardBackgroundColor)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             val annotatedString = buildAnnotatedString {
@@ -357,8 +358,8 @@ private fun PaymentBottomBar(
                     style = SpanStyle(
                         color = DarkGreen,
                         fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
+                        textDecoration = TextDecoration.Underline,
+                    ),
                 ) {
                     append("điều khoản")
                 }
@@ -378,8 +379,8 @@ private fun PaymentBottomBar(
                 style = LocalTextStyle.current.copy(
                     fontSize = 12.sp,
                     color = TextSecondaryColor,
-                    textAlign = TextAlign.Center
-                )
+                    textAlign = TextAlign.Center,
+                ),
             )
 
             Spacer(Modifier.height(8.dp))
@@ -393,20 +394,20 @@ private fun PaymentBottomBar(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryGreen,
-                    disabledContainerColor = Color(0xFF9E9E9E)
-                )
+                    disabledContainerColor = Color(0xFF9E9E9E),
+                ),
             ) {
                 if (isLoading) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = processMessage ?: "Đang xử lý...",
-                            color = Color.White
+                            color = Color.White,
                         )
                     }
                 } else {
@@ -414,7 +415,7 @@ private fun PaymentBottomBar(
                         text = "Thanh toán: ${price}đ",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                 }
             }
@@ -433,7 +434,7 @@ private fun PaymentInfoSection(fare: FareMatrix, entryStation: Station, exitStat
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 InfoRow(label = "Sản phẩm:", value = "Vé lượt: $routeName")
@@ -461,7 +462,7 @@ private fun TicketDetailsSection(entryStation: Station, exitStation: Station) {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 InfoRow(label = "Loại vé:", value = "Vé lượt")
@@ -478,19 +479,19 @@ private fun InfoRow(label: String, value: String, isTotal: Boolean = false, valu
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = label,
             color = TextSecondaryColor,
             fontSize = if (isTotal) 16.sp else 14.sp,
-            fontWeight = if (isTotal) FontWeight.Bold else FontWeight.Normal
+            fontWeight = if (isTotal) FontWeight.Bold else FontWeight.Normal,
         )
         Text(
             text = value,
             color = valueColor ?: if (isTotal) DarkGreen else TextPrimaryColor,
             fontSize = if (isTotal) 18.sp else 16.sp,
-            fontWeight = if (isTotal) FontWeight.Bold else FontWeight.SemiBold
+            fontWeight = if (isTotal) FontWeight.Bold else FontWeight.SemiBold,
         )
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.weather
 
 import android.os.Build
@@ -25,25 +29,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun WeatherDisplay(
     viewModel: WeatherViewModel = hiltViewModel(),
-    isScrolled: Boolean
+    isScrolled: Boolean,
 ) {
     val weather = viewModel.weather.value
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(
             imageVector = Icons.Default.CloudQueue,
             contentDescription = "Temperature",
             tint = if (isScrolled) Color.White else Color.White,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
         )
 
         Text(
             text = weather?.temperature?.let { "$it°C" } ?: "Loading...",
             color = if (isScrolled) Color.White else Color.White,
-            fontSize = 14.sp
+            fontSize = 14.sp,
         )
 
         weather?.windSpeed?.let { windSpeed ->
@@ -52,12 +56,12 @@ fun WeatherDisplay(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Wind speed",
                 tint = if (isScrolled) Color.White else Color.White,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
             Text(
                 text = "$windSpeed m/s",
                 color = if (isScrolled) Color.White else Color.White,
-                fontSize = 14.sp
+                fontSize = 14.sp,
             )
         }
     }
@@ -71,24 +75,24 @@ fun WeatherDisplayPreview() {
             imageVector = Icons.Default.CloudQueue,
             contentDescription = "Temperature",
             tint = Color.White,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
         )
         Text(
             text = "30.0°C",
             color = Color.White,
-            fontSize = 14.sp
+            fontSize = 14.sp,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = "Wind speed",
             tint = Color.Black,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(16.dp),
         )
         Text(
             text = "5.0 m/s",
             color = Color.Black,
-            fontSize = 14.sp
+            fontSize = 14.sp,
         )
     }
 }

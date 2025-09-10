@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.stationselection
 
 import androidx.compose.foundation.BorderStroke
@@ -20,10 +24,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Route
-import androidx.compose.material.icons.filled.WavingHand
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -68,7 +70,7 @@ fun RouteSelectionTopBar(onBackClick: () -> Unit) {
                 text = "Chọn tuyến",
                 color = PrimaryGreen,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         },
         navigationIcon = {
@@ -76,13 +78,13 @@ fun RouteSelectionTopBar(onBackClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Trở về",
-                    tint = PrimaryGreen
+                    tint = PrimaryGreen,
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.White,
-        )
+        ),
     )
 }
 
@@ -93,19 +95,19 @@ fun RouteWelcomeCard() {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = DarkGreen),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = Icons.Filled.Route,
                 contentDescription = "Route",
                 tint = Color.White,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
@@ -113,12 +115,12 @@ fun RouteWelcomeCard() {
                     text = "Chọn tuyến đường!",
                     color = Color.White,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = "Chọn tuyến Metro phù hợp với bạn",
                     fontSize = 14.sp,
-                    color = Color(0xB3FFFFFF)
+                    color = Color(0xB3FFFFFF),
                 )
             }
         }
@@ -132,20 +134,20 @@ fun RouteSectionHeader(title: String, icon: ImageVector) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = title,
             tint = DarkGreen,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = title,
             color = TextPrimaryColor,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }
@@ -155,7 +157,7 @@ fun RouteSectionHeader(title: String, icon: ImageVector) {
 fun RouteSelectionCard(
     route: RouteResponse,
     isSelected: Boolean,
-    onRouteSelected: (RouteResponse) -> Unit
+    onRouteSelected: (RouteResponse) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -163,20 +165,20 @@ fun RouteSelectionCard(
             .clickable { onRouteSelected(route) },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) LightGreenBackground else Color.White
+            containerColor = if (isSelected) LightGreenBackground else Color.White,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(
             width = if (isSelected) 2.dp else 1.dp,
-            color = if (isSelected) PrimaryGreen else Color(0xFFE0E0E0)
-        )
+            color = if (isSelected) PrimaryGreen else Color(0xFFE0E0E0),
+        ),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
@@ -184,15 +186,15 @@ fun RouteSelectionCard(
                         .size(48.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(
-                            if (isSelected) PrimaryGreen else LightGreenBackground
+                            if (isSelected) PrimaryGreen else LightGreenBackground,
                         ),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Route,
                         contentDescription = route.routeName,
                         tint = if (isSelected) Color.White else PrimaryGreen,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp),
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -201,17 +203,17 @@ fun RouteSelectionCard(
                         text = route.routeName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = TextPrimaryColor
+                        color = TextPrimaryColor,
                     )
                     Text(
                         text = "Mã: ${route.routeCode}",
                         fontSize = 14.sp,
-                        color = TextSecondaryColor
+                        color = TextSecondaryColor,
                     )
                     Text(
                         text = "Khoảng cách: ${route.distanceInKm} km",
                         fontSize = 14.sp,
-                        color = TextSecondaryColor
+                        color = TextSecondaryColor,
                     )
                 }
             }
@@ -219,7 +221,7 @@ fun RouteSelectionCard(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = "Chọn tuyến",
                 tint = if (isSelected) PrimaryGreen else TextSecondaryColor.copy(alpha = 0.7f),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
     }
@@ -232,14 +234,14 @@ fun RoutesSelectionSection(
     selectedRoute: RouteResponse?,
     onRouteSelected: (RouteResponse) -> Unit,
     isLoading: Boolean,
-    errorMessage: String?
+    errorMessage: String?,
 ) {
     if (isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator(color = PrimaryGreen)
         }
@@ -247,20 +249,20 @@ fun RoutesSelectionSection(
         Text(
             text = "Lỗi tải tuyến đường: $errorMessage",
             color = Color.Red,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             RouteSectionHeader(
                 title = "Chọn tuyến Metro",
-                icon = Icons.Default.Route
+                icon = Icons.Default.Route,
             )
 
             routes.forEach { route ->
                 RouteSelectionCard(
                     route = route,
                     isSelected = route.routeId == selectedRoute?.routeId,
-                    onRouteSelected = onRouteSelected
+                    onRouteSelected = onRouteSelected,
                 )
             }
         }
@@ -272,7 +274,7 @@ fun RoutesSelectionSection(
 @Composable
 fun RouteSelectionScreen(
     navController: NavController,
-    stationViewModel: StationSelectionViewModel = hiltViewModel()
+    stationViewModel: StationSelectionViewModel = hiltViewModel(),
 ) {
     val uiState by stationViewModel.uiState.collectAsState()
 
@@ -287,16 +289,16 @@ fun RouteSelectionScreen(
                     onClick = {
                         navController.navigate(Screen.StationSelection.route)
                     },
-                    containerColor = PrimaryGreen
+                    containerColor = PrimaryGreen,
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
                         contentDescription = "Tiếp tục",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
-        }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -306,11 +308,11 @@ fun RouteSelectionScreen(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.White, LightGreenBackground),
                         startY = 0f,
-                        endY = 1500f
-                    )
+                        endY = 1500f,
+                    ),
                 )
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             RouteWelcomeCard()
@@ -321,7 +323,7 @@ fun RouteSelectionScreen(
                 selectedRoute = uiState.selectedRoute,
                 onRouteSelected = { stationViewModel.onRouteSelected(it) },
                 isLoading = uiState.isLoadingRoutes,
-                errorMessage = if (uiState.routes.isEmpty()) uiState.errorMessage else null
+                errorMessage = if (uiState.routes.isEmpty()) uiState.errorMessage else null,
             )
 
             Spacer(modifier = Modifier.height(100.dp))

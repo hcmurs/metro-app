@@ -1,10 +1,18 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.oauth
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class TokenStorage @Inject constructor(@ApplicationContext context: Context) {
+class TokenStorage
+@Inject
+constructor(
+    @ApplicationContext context: Context,
+) {
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     fun saveToken(token: String) {

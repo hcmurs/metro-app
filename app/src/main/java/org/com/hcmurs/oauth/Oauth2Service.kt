@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.oauth
 import android.content.Context
 import android.content.Intent
@@ -9,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class OAuth2Service @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     companion object {
         private const val GOOGLE_AUTH_URL = "http://10.0.2.2:4003/api/oauth2/authorization/google"

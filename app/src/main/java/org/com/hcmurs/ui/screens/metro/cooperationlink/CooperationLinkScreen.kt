@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.cooperationlink
 
 import android.content.Intent
@@ -46,18 +50,18 @@ fun CooperationLinkScreen(navController: NavHostController) {
         CooperationLink("1", "Go!Bus HCM", R.drawable.gobus, "https://preview.page.link/gobus.vn/app/home"),
         CooperationLink("2", "TTGT Tp Hồ Chí Minh", R.drawable.ttgt, "https://giaothong.hochiminhcity.gov.vn/"),
         CooperationLink("3", "Công dân số TPHCM", R.drawable.congdanso, "https://congdanso.tphcm.gov.vn/cds-tphcm"),
-        CooperationLink("4", "TNGo", R.drawable.tngo, "https://onelink.to/tngo")
+        CooperationLink("4", "TNGo", R.drawable.tngo, "https://onelink.to/tngo"),
     )
 
     Scaffold(
         topBar = { CooperationLinkTopBar(navController = navController) },
         containerColor = Color.White,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -65,7 +69,7 @@ fun CooperationLinkScreen(navController: NavHostController) {
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(items.size) { index ->
                     val item = items[index]
@@ -81,25 +85,25 @@ fun CooperationLinkScreen(navController: NavHostController) {
                             },
                         shape = RoundedCornerShape(12.dp),
                         elevation = CardDefaults.cardElevation(
-                            defaultElevation = 2.dp
+                            defaultElevation = 2.dp,
                         ),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        )
+                            containerColor = Color.White,
+                        ),
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(12.dp)
+                                .padding(12.dp),
                         ) {
                             Image(
                                 painter = painterResource(id = item.iconRes),
                                 contentDescription = item.title,
                                 modifier = Modifier
                                     .size(64.dp)
-                                    .weight(1f, fill = false)
+                                    .weight(1f, fill = false),
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
@@ -109,7 +113,7 @@ fun CooperationLinkScreen(navController: NavHostController) {
                                 color = Color.Black,
                                 textAlign = TextAlign.Center,
                                 maxLines = 2,
-                                modifier = Modifier.padding(horizontal = 4.dp)
+                                modifier = Modifier.padding(horizontal = 4.dp),
                             )
                         }
                     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.weather
 
 import android.os.Build
@@ -8,17 +12,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.weather.WeatherRepository
 import org.com.hcmurs.repositories.apis.weather.WeatherResult
-import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
-class WeatherViewModel @Inject constructor(
-    private val repository: WeatherRepository
+class WeatherViewModel
+@Inject
+constructor(
+    private val repository: WeatherRepository,
 ) : ViewModel() {
-
     private val _temperature = mutableStateOf<Double?>(null)
     val temperature: State<Double?> = _temperature
 

@@ -1,18 +1,18 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.staffhome
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +45,7 @@ import org.com.hcmurs.utils.screenTitleIconMap
 
 @Composable
 fun StaffQRSection(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     val iconRes = screenTitleIconMap[ScreenTitle.SCAN_QR_CODE] ?: R.drawable.btn_5
     val localizedTitle = stringResource(id = ScreenTitle.SCAN_QR_CODE.titleRes)
@@ -53,7 +53,7 @@ fun StaffQRSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
+            .padding(horizontal = 10.dp),
     ) {
         Card(
             modifier = Modifier
@@ -61,26 +61,26 @@ fun StaffQRSection(
                 .wrapContentHeight()
                 .align(Alignment.Center),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
                         .background(Color(0xFF4CAF50).copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         painter = painterResource(id = iconRes),
                         contentDescription = localizedTitle,
                         modifier = Modifier.size(32.dp),
-                        tint = Color(0xFF4CAF50)
+                        tint = Color(0xFF4CAF50),
                     )
                 }
 
@@ -95,48 +95,48 @@ fun StaffQRSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    lineHeight = 18.sp
+                    lineHeight = 18.sp,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
                         onClick = {
                             navController.navigate(
-                                Screen.StaffStationSelectionScreen.createRoute(ActionType.ENTRY)
+                                Screen.StaffStationSelectionScreen.createRoute(ActionType.ENTRY),
                             )
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp) // Set fixed button height
+                            .height(56.dp), // Set fixed button height
                     ) {
                         Text(
                             text = "ENTRY",
                             color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
 
                     Button(
                         onClick = {
                             navController.navigate(
-                                Screen.StaffStationSelectionScreen.createRoute(ActionType.EXIT)
+                                Screen.StaffStationSelectionScreen.createRoute(ActionType.EXIT),
                             )
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5722)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp) // Set fixed button height
+                            .height(56.dp), // Set fixed button height
                     ) {
                         Text(
                             text = "EXIT",
                             color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -144,7 +144,6 @@ fun StaffQRSection(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.myticket
 
 import androidx.compose.foundation.BorderStroke
@@ -34,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +51,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import org.com.hcmurs.R
-import org.com.hcmurs.utils.LanguageManager
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFF1F8E9)
@@ -59,17 +61,17 @@ private val TextSecondaryColor = Color(0xFF757575)
 fun TicketQRCodeScreen(
     navController: NavController,
     ticketCode: String,
-    viewModel: TicketQRCodeViewModel = hiltViewModel()
+    viewModel: TicketQRCodeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    
+
     // Force recomposition when returning from language change
     // This ensures strings are re-evaluated with the current locale
     LaunchedEffect(context) {
         // This will trigger when context changes (like after language change)
     }
-    
+
     // Create string resources that will be re-evaluated on recomposition
     val ticketDigitalTitle = stringResource(R.string.ticket_digital)
     val scanQrGuide = stringResource(R.string.scan_qr_code_guide)
@@ -88,9 +90,9 @@ fun TicketQRCodeScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
             )
-        }
+        },
     ) { padding ->
         // Make the entire content scrollable
         Column(
@@ -99,7 +101,7 @@ fun TicketQRCodeScreen(
                 .fillMaxSize()
                 .background(Color.White)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (uiState.isLoading) {
                 // Loading state with proper spacing
@@ -107,7 +109,7 @@ fun TicketQRCodeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(color = PrimaryGreen)
                 }
@@ -118,12 +120,12 @@ fun TicketQRCodeScreen(
                         .fillMaxWidth()
                         .height(400.dp)
                         .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         "Lỗi: ${uiState.errorMessage}",
                         color = Color.Red,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             } else if (uiState.qrCodeBitmap != null) {
@@ -132,14 +134,14 @@ fun TicketQRCodeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 16.dp), // Reduced padding
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     // Header text with reduced spacing
                     Text(
                         "",
                         fontSize = 20.sp, // Slightly smaller
                         fontWeight = FontWeight.Bold,
-                        color = DarkGreen
+                        color = DarkGreen,
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -148,7 +150,7 @@ fun TicketQRCodeScreen(
                         scanQrGuide,
                         fontSize = 15.sp, // Slightly smaller
                         color = TextSecondaryColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     Spacer(Modifier.height(20.dp)) // Reduced spacing
@@ -158,12 +160,12 @@ fun TicketQRCodeScreen(
                         modifier = Modifier.size(280.dp), // Smaller for compact screens
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
                     ) {
                         Image(
                             bitmap = uiState.qrCodeBitmap!!.asImageBitmap(),
                             contentDescription = "QR Code for ticket ${uiState.ticketCode}",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
                         )
                     }
 
@@ -176,7 +178,7 @@ fun TicketQRCodeScreen(
                             fontSize = 16.sp, // Slightly smaller
                             fontWeight = FontWeight.Medium,
                             letterSpacing = 1.5.sp, // Slightly reduced
-                            color = DarkGreen
+                            color = DarkGreen,
                         )
                     }
 
@@ -185,7 +187,7 @@ fun TicketQRCodeScreen(
                     // Countdown and reset section
                     CountdownAndReset(
                         seconds = uiState.countdownSeconds,
-                        onResetClick = { viewModel.resetQRCode() }
+                        onResetClick = { viewModel.resetQRCode() },
                     )
 
                     // Bottom padding to ensure content is never cut off
@@ -197,12 +199,12 @@ fun TicketQRCodeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         qrCodeNotLoaded,
                         color = TextSecondaryColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -214,33 +216,33 @@ fun TicketQRCodeScreen(
 private fun CountdownAndReset(seconds: Int, onResetClick: () -> Unit) {
     val codeRefresh = stringResource(R.string.code_refresh)
     val refreshCode = stringResource(R.string.refresh_code)
-    
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             codeRefresh,
             fontSize = 13.sp, // Slightly smaller
-            color = TextSecondaryColor
+            color = TextSecondaryColor,
         )
         Text(
             String.format("0:%02d", seconds),
             fontSize = 18.sp, // Slightly smaller
             fontWeight = FontWeight.Bold,
-            color = if (seconds <= 10) Color.Red else DarkGreen
+            color = if (seconds <= 10) Color.Red else DarkGreen,
         )
         OutlinedButton(
             onClick = onResetClick,
             shape = RoundedCornerShape(50),
             border = BorderStroke(1.dp, PrimaryGreen),
-            modifier = Modifier.height(44.dp) // Slightly more compact
+            modifier = Modifier.height(44.dp), // Slightly more compact
         ) {
             Icon(
                 Icons.Default.Refresh,
                 contentDescription = "Reset QR Code",
                 tint = PrimaryGreen,
-                modifier = Modifier.size(18.dp) // Slightly smaller icon
+                modifier = Modifier.size(18.dp), // Slightly smaller icon
             )
             Spacer(Modifier.width(8.dp))
             Text(refreshCode, color = PrimaryGreen, fontSize = 14.sp) // Slightly smaller text

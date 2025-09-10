@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.floatingButton
 
 import androidx.compose.foundation.shape.CircleShape
@@ -21,12 +25,12 @@ fun FloatingButton(
     contentColor: Color = Color.White,
     icon: ImageVector = Icons.Default.Leaderboard,
     contentDescription: String = "Floating Action Button",
-){
+) {
     FloatingActionButton(
         onClick = onClick,
         containerColor = containerColor,
         contentColor = contentColor,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(icon, contentDescription)
     }

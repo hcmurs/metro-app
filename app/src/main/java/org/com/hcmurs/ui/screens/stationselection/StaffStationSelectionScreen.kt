@@ -1,16 +1,18 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.stationselection
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,12 +21,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -60,7 +58,7 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 fun StaffStationSelectionScreen(
     navController: NavController,
     stationViewModel: StationSelectionViewModel = hiltViewModel(),
-    actionType: ActionType
+    actionType: ActionType,
 ) {
     var selectedStation by remember { mutableStateOf<Station?>(null) }
     val uiState by stationViewModel.uiState.collectAsState()
@@ -74,14 +72,14 @@ fun StaffStationSelectionScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color.White
+                            tint = Color.White,
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = PrimaryGreen,
-                    titleContentColor = Color.White
-                )
+                    titleContentColor = Color.White,
+                ),
             )
         },
         floatingActionButton = {
@@ -90,58 +88,58 @@ fun StaffStationSelectionScreen(
                     onClick = {
                         navController.navigate("scanQR/${selectedStation!!.stationId}/${selectedStation!!.name}/${actionType.name}")
                     },
-                    containerColor = PrimaryGreen
+                    containerColor = PrimaryGreen,
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
                         contentDescription = "Continue",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             // Routes section
             SectionTitle("Select Route")
-            
+
             if (uiState.isLoadingRoutes) {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(color = PrimaryGreen)
                 }
             } else {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 4.dp)
+                    contentPadding = PaddingValues(horizontal = 4.dp),
                 ) {
                     items(uiState.routes) { route ->
                         RouteChip(
                             route = route,
                             isSelected = uiState.selectedRoute?.routeId == route.routeId,
-                            onClick = { stationViewModel.onRouteSelected(route) }
+                            onClick = { stationViewModel.onRouteSelected(route) },
                         )
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Stations section
             if (uiState.selectedRoute != null) {
                 SectionTitle("Select Station")
-                
+
                 if (uiState.isLoadingStations) {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(color = PrimaryGreen)
                     }
@@ -151,13 +149,13 @@ fun StaffStationSelectionScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(uiState.stations) { station ->
                             StationCard(
                                 station = station,
                                 isSelected = station == selectedStation,
-                                onClick = { selectedStation = station }
+                                onClick = { selectedStation = station },
                             )
                         }
                     }
@@ -166,7 +164,7 @@ fun StaffStationSelectionScreen(
                         text = "No stations available for this route",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
                 }
             } else {
@@ -175,10 +173,10 @@ fun StaffStationSelectionScreen(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     color = Color.Gray,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
                 )
             }
-            
+
             // Error message
             uiState.errorMessage?.let { error ->
                 Spacer(modifier = Modifier.height(8.dp))
@@ -186,7 +184,7 @@ fun StaffStationSelectionScreen(
                     text = error,
                     color = Color.Red,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -200,7 +198,7 @@ private fun SectionTitle(text: String) {
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         color = PrimaryGreen,
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 8.dp),
     )
 }
 
@@ -209,7 +207,7 @@ private fun SectionTitle(text: String) {
 private fun RouteChip(
     route: RouteResponse,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     FilterChip(
         onClick = onClick,
@@ -218,11 +216,11 @@ private fun RouteChip(
                 Text(
                     text = route.routeName,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
                 )
                 Text(
                     text = route.routeCode,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
                 )
             }
         },
@@ -231,8 +229,8 @@ private fun RouteChip(
             selectedContainerColor = PrimaryGreen,
             selectedLabelColor = Color.White,
             containerColor = Color.White,
-            labelColor = PrimaryGreen
+            labelColor = PrimaryGreen,
         ),
-        modifier = Modifier.padding(horizontal = 4.dp)
+        modifier = Modifier.padding(horizontal = 4.dp),
     )
 }

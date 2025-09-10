@@ -1,5 +1,8 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.staffhome
-
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -50,12 +53,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
 import org.com.hcmurs.ui.theme.PaleYellow
 import org.com.hcmurs.ui.theme.PrimaryGreen
-import org.com.hcmurs.R
 
 data class StaffMenuItem(
     val icon: ImageVector,
@@ -63,13 +66,13 @@ data class StaffMenuItem(
     val subtitle: String? = null,
     val hasArrow: Boolean = true,
     val isDestructive: Boolean = false,
-    val onClickAction: (() -> Unit)? = null
+    val onClickAction: (() -> Unit)? = null,
 )
 
 @Composable
 fun StaffMenuItemRow(
     item: StaffMenuItem,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -77,7 +80,7 @@ fun StaffMenuItemRow(
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() }
             .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         // Icon Background - Staff theme colors
         Surface(
@@ -87,7 +90,7 @@ fun StaffMenuItemRow(
                 item.isDestructive -> Color(0xFFFFEBEE)
                 item.icon == Icons.Default.QrCodeScanner -> Color(0xFFE8F5E8) // Green for QR
                 else -> Color(0xFFE3F2FD)
-            }
+            },
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
@@ -98,7 +101,7 @@ fun StaffMenuItemRow(
                         item.icon == Icons.Default.QrCodeScanner -> PrimaryGreen
                         else -> Color(0xFF2196F3)
                     },
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
@@ -111,14 +114,14 @@ fun StaffMenuItemRow(
                 text = item.title,
                 color = if (item.isDestructive) Color(0xFFE53935) else Color(0xFF424242),
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
             item.subtitle?.let {
                 Text(
                     text = it,
                     color = Color(0xFF757575),
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 2.dp)
+                    modifier = Modifier.padding(top = 2.dp),
                 )
             }
         }
@@ -129,7 +132,7 @@ fun StaffMenuItemRow(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Navigate",
                 tint = Color(0xFF9E9E9E),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }
@@ -141,24 +144,24 @@ fun StaffBadge() {
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = RoundedCornerShape(20.dp),
-        color = PrimaryGreen.copy(alpha = 0.1f)
+        color = PrimaryGreen.copy(alpha = 0.1f),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Badge,
                 contentDescription = "Staff Badge",
                 tint = PrimaryGreen,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(16.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "NHÂN VIÊN",
                 color = PrimaryGreen,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -168,7 +171,7 @@ fun StaffBadge() {
 fun StaffAccountScreen(
     navController: NavController,
     onMenuItemClick: (StaffMenuItem) -> Unit = {},
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel,
 ) {
     // Lắng nghe userProfile từ ViewModel
     val userProfile by viewModel.userProfile.collectAsState()
@@ -196,39 +199,39 @@ fun StaffAccountScreen(
             icon = Icons.Default.Person,
             title = "Thông tin cá nhân",
             subtitle = userName,
-            hasArrow = false
+            hasArrow = false,
         ),
         StaffMenuItem(
             icon = Icons.Default.Email,
             title = "Email",
             subtitle = userEmail,
-            hasArrow = false
+            hasArrow = false,
         ),
         StaffMenuItem(
             icon = Icons.Default.Work,
             title = "Mã nhân viên",
             subtitle = staffId,
-            hasArrow = false
+            hasArrow = false,
         ),
         StaffMenuItem(
             icon = Icons.Default.QrCodeScanner,
             title = "Quét mã QR",
             subtitle = "Chức năng chính của nhân viên",
             hasArrow = true,
-            onClickAction = { navController.navigate(Screen.ScanQrCode.route) }
+            onClickAction = { navController.navigate(Screen.ScanQrCode.route) },
         ),
         StaffMenuItem(
             icon = Icons.Default.Schedule,
             title = "Lịch làm việc",
             subtitle = "Xem ca làm việc",
-            hasArrow = true
+            hasArrow = true,
         ),
         StaffMenuItem(
             icon = Icons.Default.Settings,
             title = "Cài đặt",
             subtitle = "Tùy chỉnh ứng dụng",
-            hasArrow = true
-        )
+            hasArrow = true,
+        ),
     )
 
     Box(
@@ -239,10 +242,10 @@ fun StaffAccountScreen(
                     colors = listOf(
                         PrimaryGreen,
                         PaleYellow,
-                        DarkGreen
-                    )
-                )
-            )
+                        DarkGreen,
+                    ),
+                ),
+            ),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Status bar spacer
@@ -254,7 +257,7 @@ fun StaffAccountScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = {
                     navController.popBackStack()
@@ -262,14 +265,14 @@ fun StaffAccountScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
                 Text(
                     text = "Tài khoản nhân viên",
                     color = Color.White,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
                 Spacer(modifier = Modifier.width(48.dp))
             }
@@ -279,7 +282,7 @@ fun StaffAccountScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 // Avatar
                 Box(
@@ -287,19 +290,19 @@ fun StaffAccountScreen(
                         .size(80.dp)
                         .background(Color.White, CircleShape)
                         .padding(4.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Box(
                         modifier = Modifier
                             .size(64.dp)
                             .background(PrimaryGreen.copy(alpha = 0.2f), CircleShape),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Staff Avatar",
                             modifier = Modifier.size(48.dp),
-                            tint = PrimaryGreen
+                            tint = PrimaryGreen,
                         )
                     }
                 }
@@ -311,7 +314,7 @@ fun StaffAccountScreen(
                     text = userName,
                     color = Color.White,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
 
                 // Staff Badge
@@ -325,26 +328,26 @@ fun StaffAccountScreen(
                     .weight(1f),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                 color = Color.White,
-                shadowElevation = 8.dp
+                shadowElevation = 8.dp,
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     // Staff Menu Items
                     staffMenuItems.forEach { item ->
                         StaffMenuItemRow(
                             item = item,
-                            onClick = { item.onClickAction?.invoke() }
+                            onClick = { item.onClickAction?.invoke() },
                         )
                     }
 
                     // Divider
                     Divider(
                         modifier = Modifier.padding(vertical = 16.dp),
-                        color = Color(0xFFE0E0E0)
+                        color = Color(0xFFE0E0E0),
                     )
 
                     // Logout Button
@@ -354,9 +357,9 @@ fun StaffAccountScreen(
                             title = "Đăng xuất",
                             subtitle = "Thoát khỏi tài khoản nhân viên",
                             hasArrow = false,
-                            isDestructive = true
+                            isDestructive = true,
                         ),
-                        onClick = { viewModel.logout() }
+                        onClick = { viewModel.logout() },
                     )
 
                     Spacer(modifier = Modifier.height(50.dp))

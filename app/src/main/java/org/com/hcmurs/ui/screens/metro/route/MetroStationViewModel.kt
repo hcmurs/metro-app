@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.route
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,13 +18,13 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.model.Station
 import org.com.hcmurs.repositories.apis.station.MetroStationRepository
 import org.osmdroid.util.GeoPoint
-import javax.inject.Inject
 
 @HiltViewModel
-class MetroStationViewModel @Inject constructor(
-    private val repository: MetroStationRepository
+class MetroStationViewModel
+@Inject
+constructor(
+    private val repository: MetroStationRepository,
 ) : ViewModel() {
-
     private val _stations = MutableStateFlow<List<Station>>(emptyList())
     val stations = _stations.asStateFlow()
 
@@ -30,9 +35,11 @@ class MetroStationViewModel @Inject constructor(
     val error = _error.asStateFlow()
 
     // Computed state for map points
-    val stationGeoPoints = stations.map { stations ->
-        stations.map { GeoPoint(it.latitude, it.longitude) }
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val stationGeoPoints =
+        stations
+            .map { stations ->
+                stations.map { GeoPoint(it.latitude, it.longitude) }
+            }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     init {
         fetchStations()

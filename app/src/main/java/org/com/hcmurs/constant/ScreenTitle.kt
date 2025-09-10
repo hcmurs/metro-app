@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.constant
 
 import androidx.annotation.StringRes
 import org.com.hcmurs.R
 
-enum class ScreenTitle(@StringRes val titleRes: Int) {
+enum class ScreenTitle(
+    @StringRes val titleRes: Int,
+) {
     BUY_TICKET(R.string.buy_ticket),
     ROUTE(R.string.route),
     MY_TICKET(R.string.my_ticket),

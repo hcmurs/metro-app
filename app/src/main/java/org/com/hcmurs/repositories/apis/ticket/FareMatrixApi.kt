@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.repositories.apis.ticket
 
 import com.google.gson.annotations.SerializedName
@@ -9,20 +13,18 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface FareMatrixApi {
-
     @GET("api/ts/fare-matrices")
     suspend fun getFareMatrices(): Response<FareMatricesResponse>
 
     @POST("api/ts/fare-matrices/get-fare")
     suspend fun getFareForRoute(
-        @Body fareRequest: FareRequest
+        @Body fareRequest: FareRequest,
     ): Response<FareMatrixResponse>
 }
 
 data class FareRequest(
     @SerializedName("startStationId")
     val startStationId: Int,
-
     @SerializedName("endStationId")
-    val endStationId: Int
+    val endStationId: Int,
 )

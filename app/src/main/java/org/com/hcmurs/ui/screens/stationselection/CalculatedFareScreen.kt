@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.stationselection
 
 import androidx.compose.foundation.BorderStroke
@@ -68,7 +72,7 @@ fun CalculatedFareScreen(
     entryStationId: Int,
     exitStationId: Int,
     viewModel: FareMatrixViewModel,
-    stationViewModel: StationSelectionViewModel = hiltViewModel()
+    stationViewModel: StationSelectionViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val fare = uiState.calculatedFare
@@ -86,9 +90,9 @@ fun CalculatedFareScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
             )
-        }
+        },
     ) { padding ->
         val currentFareResponse = uiState.calculatedFare
 
@@ -101,12 +105,12 @@ fun CalculatedFareScreen(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.White, LightGreenBackground),
                         startY = 0f,
-                        endY = 1500f
-                    )
+                        endY = 1500f,
+                    ),
                 )
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Content section with weight to take available space
             if (uiState.isLoading) {
@@ -114,7 +118,7 @@ fun CalculatedFareScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp), // Minimum height for loading
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(color = PrimaryGreen)
                 }
@@ -123,19 +127,19 @@ fun CalculatedFareScreen(
                 FareDetailCard(
                     entryStationName = entryStation.name,
                     exitStationName = exitStation.name,
-                    fare = currentFareResponse.data!!
+                    fare = currentFareResponse.data!!,
                 )
             } else {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(400.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = uiState.errorMessage ?: "Không thể tính giá vé. Vui lòng thử lại.",
                         color = Color.Red,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }
@@ -151,8 +155,8 @@ fun CalculatedFareScreen(
                             navController.navigate(
                                 Screen.OrderFareInfo.createRoute(
                                     entryStationId = entryStation.stationId,
-                                    exitStationId = exitStation.stationId
-                                )
+                                    exitStationId = exitStation.stationId,
+                                ),
                             )
                         }
                     },
@@ -161,13 +165,13 @@ fun CalculatedFareScreen(
                         .height(52.dp), // Slightly shorter for compact screens
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
-                    enabled = fare != null
+                    enabled = fare != null,
                 ) {
                     Text(
                         "Xác nhận mua vé",
                         fontSize = 16.sp, // Slightly smaller text
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
                     )
                 }
 
@@ -179,13 +183,13 @@ fun CalculatedFareScreen(
                         .fillMaxWidth()
                         .height(52.dp), // Slightly shorter for compact screens
                     shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, PrimaryGreen.copy(alpha = 0.5f))
+                    border = BorderStroke(1.dp, PrimaryGreen.copy(alpha = 0.5f)),
                 ) {
                     Text(
                         "Chọn lại ga",
                         fontSize = 14.sp, // Slightly smaller text
                         fontWeight = FontWeight.Medium,
-                        color = PrimaryGreen
+                        color = PrimaryGreen,
                     )
                 }
             }
@@ -202,17 +206,17 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Column(
             modifier = Modifier.padding(20.dp), // Reduced padding for compact screens
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 "HÀNH TRÌNH CỦA BẠN",
                 fontSize = 14.sp,
                 color = TextSecondaryColor,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(20.dp)) // Reduced spacing
 
@@ -221,17 +225,17 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp) // Reduced spacing
+                verticalArrangement = Arrangement.spacedBy(10.dp), // Reduced spacing
             ) {
                 InfoRow(title = "Hạn sử dụng:", value = "Theo quy định")
                 InfoRow(
                     title = "Lưu ý:",
                     value = "Tự động kích hoạt sau 30 ngày kể từ ngày mua.",
-                    valueColor = WarningColor
+                    valueColor = WarningColor,
                 )
                 InfoRow(
                     title = "Mô tả:",
-                    value = "Vé cho phép di chuyển một lượt giữa ${entryStationName} và ${exitStationName}."
+                    value = "Vé cho phép di chuyển một lượt giữa $entryStationName và $exitStationName.",
                 )
             }
 
@@ -243,7 +247,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 StationDisplay(name = entryStationName, isEntry = true)
                 Spacer(modifier = Modifier.width(12.dp)) // Reduced spacing
@@ -251,7 +255,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
                     imageVector = Icons.Default.ArrowForward,
                     contentDescription = "to",
                     tint = TextSecondaryColor,
-                    modifier = Modifier.size(20.dp) // Smaller icon
+                    modifier = Modifier.size(20.dp), // Smaller icon
                 )
                 Spacer(modifier = Modifier.width(12.dp)) // Reduced spacing
                 StationDisplay(name = exitStationName, isEntry = false)
@@ -268,7 +272,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
                 "${fare.price} đ",
                 fontSize = 32.sp, // Slightly smaller for compact screens
                 fontWeight = FontWeight.ExtraBold,
-                color = DarkGreen
+                color = DarkGreen,
             )
         }
     }
@@ -278,20 +282,20 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
 fun StationDisplay(name: String, isEntry: Boolean) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(110.dp) // Slightly narrower for compact screens
+        modifier = Modifier.width(110.dp), // Slightly narrower for compact screens
     ) {
         Box(
             modifier = Modifier
                 .size(42.dp) // Smaller icon container
                 .clip(CircleShape)
                 .background(if (isEntry) PrimaryGreen else Color(0xFFFFA726)),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Default.DirectionsBus,
                 contentDescription = "Station",
                 tint = Color.White,
-                modifier = Modifier.size(24.dp) // Smaller icon
+                modifier = Modifier.size(24.dp), // Smaller icon
             )
         }
         Spacer(modifier = Modifier.height(6.dp)) // Reduced spacing
@@ -302,7 +306,7 @@ fun StationDisplay(name: String, isEntry: Boolean) {
             textAlign = TextAlign.Center,
             maxLines = 2,
             lineHeight = 18.sp,
-            color = TextPrimaryColor
+            color = TextPrimaryColor,
         )
     }
 }
@@ -313,14 +317,14 @@ private fun InfoRow(title: String, value: String, valueColor: Color = TextPrimar
         Text(
             text = title,
             color = TextSecondaryColor,
-            fontSize = 13.sp // Slightly smaller
+            fontSize = 13.sp, // Slightly smaller
         )
         Spacer(modifier = Modifier.height(3.dp)) // Reduced spacing
         Text(
             text = value,
             color = valueColor,
             fontSize = 15.sp, // Slightly smaller
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.components.quickaction
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -6,14 +10,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
@@ -51,14 +53,14 @@ import org.com.hcmurs.utils.screenTitleIconMap
 fun QuickActionsSection(
     navController: NavHostController,
     userRole: UserRole = UserRole.GUEST,
-    onGridItemClick: (String) -> Unit
+    onGridItemClick: (String) -> Unit,
 ) {
     // Filter the list based on user role
     val allScreenTitles = ScreenTitle.values().toList()
 
     // Define which items should only be visible to STAFF
     val staffOnlyScreens = listOf(
-        ScreenTitle.SCAN_QR_CODE
+        ScreenTitle.SCAN_QR_CODE,
         // Add any other STAFF-only screens here
     )
 
@@ -73,14 +75,14 @@ fun QuickActionsSection(
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { pages.size }
+        pageCount = { pages.size },
     )
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(210.dp) // đủ để chứa cả Card và indicator
-            .padding(horizontal = 10.dp)
+            .padding(horizontal = 10.dp),
     ) {
         // Card chứa grid
         Card(
@@ -90,21 +92,21 @@ fun QuickActionsSection(
                 .align(Alignment.TopCenter), // đảm bảo nó nằm trên
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White) // Màu nền trắng
+            colors = CardDefaults.cardColors(containerColor = Color.White), // Màu nền trắng
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) { page ->
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(4),
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp)
+                            .padding(8.dp),
                     ) {
                         items(pages[page].size) { index ->
                             val item = pages[page][index]
@@ -122,7 +124,7 @@ fun QuickActionsSection(
                                     } catch (e: Exception) {
                                         println("Navigation failed: $route - ${e.message}")
                                     }
-                                }
+                                },
                             )
                         }
                     }
@@ -136,7 +138,7 @@ fun QuickActionsSection(
                 modifier = Modifier
                     .align(Alignment.BottomCenter) // ✅ Bảo đảm nằm ở đáy của Box
                     .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(pages.size) { index ->
                     Box(
@@ -144,9 +146,9 @@ fun QuickActionsSection(
                             .size(8.dp)
                             .background(
                                 if (index == pagerState.currentPage) LightOrange else Color.Gray.copy(alpha = 0.3f),
-                                CircleShape
+                                CircleShape,
                             )
-                            .padding(horizontal = 2.dp)
+                            .padding(horizontal = 2.dp),
                     )
                 }
             }
@@ -158,7 +160,7 @@ fun QuickActionsSection(
 fun QuickActionItem(
     title: String,
     icon: Painter,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White), // Màu nền trắng
@@ -172,7 +174,7 @@ fun QuickActionItem(
                 .fillMaxSize()
                 .padding(6.dp), // FIXED: Reduced internal padding
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center // FIXED: Better spacing distribution
+            verticalArrangement = Arrangement.Center, // FIXED: Better spacing distribution
         ) {
             // Icon section
             Box(
@@ -180,13 +182,13 @@ fun QuickActionItem(
                     .size(32.dp) // FIXED: Slightly smaller icon to save space
                     .clip(CircleShape)
                     .background(PrimaryGreen.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     painter = icon,
                     contentDescription = title,
                     modifier = Modifier.size(18.dp), // FIXED: Smaller icon size
-                    tint = PrimaryGreen
+                    tint = PrimaryGreen,
                 )
             }
 
@@ -200,9 +202,8 @@ fun QuickActionItem(
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
-                lineHeight = 12.sp // FIXED: Better line height for 2-line text
+                lineHeight = 12.sp, // FIXED: Better line height for 2-line text
             )
         }
     }
 }
-

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.route
 
 import android.Manifest
@@ -86,7 +90,7 @@ import org.osmdroid.views.overlay.Polyline
 @Composable
 fun RouteScreen(
     navController: NavController,
-    metroStationViewModel: MetroStationViewModel = hiltViewModel<MetroStationViewModel>()
+    metroStationViewModel: MetroStationViewModel = hiltViewModel<MetroStationViewModel>(),
 ) {
     val metroStations by metroStationViewModel.stations.collectAsState()
     val stationPoints by metroStationViewModel.stationGeoPoints.collectAsState()
@@ -107,14 +111,13 @@ fun RouteScreen(
     var selectedEndStation by remember { mutableStateOf<Station?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
+        ActivityResultContracts.RequestPermission(),
     ) { isGranted ->
         hasLocationPermission = isGranted
     }
 
     LaunchedEffect(metroStations) {
         if (metroStations.isNotEmpty()) {
-
             Log.d("RouteScreen", "Metro stations loaded: ${metroStations.size}")
 
             // Only set values if they haven't been set by the user
@@ -130,7 +133,7 @@ fun RouteScreen(
     LaunchedEffect(Unit) {
         hasLocationPermission = ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
         ) == PackageManager.PERMISSION_GRANTED
 
         if (!hasLocationPermission) {
@@ -143,12 +146,12 @@ fun RouteScreen(
     Scaffold(
         topBar = {
             CommonTopBar(navController, stringResource(R.string.journey_title))
-        }
+        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
         ) {
             // Show loading indicator if needed
             if (isLoading) {
@@ -174,7 +177,7 @@ fun RouteScreen(
                     // Initialize OSMdroid configuration
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
 
                     // Create and configure the map view
@@ -184,7 +187,7 @@ fun RouteScreen(
                         controller.setZoom(14.0)
 
                         // Center the map on a default location
-                        //val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
+                        // val startPoint = GeoPoint(10.763032, 106.682397) // Ho Chi Minh City
                         controller.setCenter(initialView)
 
                         // Add a marker at the center
@@ -203,7 +206,7 @@ fun RouteScreen(
                                 currentCenter = mapCenter as GeoPoint
                                 Log.d(
                                     "RouteScreen",
-                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}"
+                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}",
                                 )
                                 return true
                             }
@@ -212,7 +215,7 @@ fun RouteScreen(
                                 currentCenter = mapCenter as GeoPoint
                                 Log.d(
                                     "RouteScreen",
-                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}, Zoom: ${event?.zoomLevel}"
+                                    "Current Center - Lat: ${currentCenter?.latitude}, Lng: ${currentCenter?.longitude}, Zoom: ${event?.zoomLevel}",
                                 )
                                 return true
                             }
@@ -263,8 +266,8 @@ fun RouteScreen(
                                 // Apply tint based on station type
 //                                metroIcon?.setTint(
 //                                    when (index) {
-////                                        0 -> "#FFFF5722".toColorInt() // Orange for start
-////                                        station.size - 1 -> "#FF4CAF50".toColorInt() // Green for end
+// //                                        0 -> "#FFFF5722".toColorInt() // Orange for start
+// //                                        station.size - 1 -> "#FF4CAF50".toColorInt() // Green for end
 //                                        else -> "#FF1976D2".toColorInt() // Blue for regular
 //                                    }
 //                                )
@@ -280,7 +283,9 @@ fun RouteScreen(
 
                                     // Create bitmap with proper dimensions
                                     val bitmap = android.graphics.Bitmap.createBitmap(
-                                        iconSize, iconSize, android.graphics.Bitmap.Config.ARGB_8888
+                                        iconSize,
+                                        iconSize,
+                                        android.graphics.Bitmap.Config.ARGB_8888,
                                     )
                                     val canvas = android.graphics.Canvas(bitmap)
 
@@ -322,7 +327,7 @@ fun RouteScreen(
                         // Refresh the map
                         mapView.invalidate()
                     }
-                }
+                },
             )
 
             // Route Selection Box with floating swap button
@@ -330,28 +335,28 @@ fun RouteScreen(
                 modifier = Modifier
                     .width(300.dp)
                     .align(Alignment.TopCenter)
-                    .padding(16.dp)
+                    .padding(16.dp),
             ) {
                 Card(
                     modifier = Modifier.align(Alignment.TopCenter),
                     shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         // Start station selector
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_home_50),
                                     contentDescription = "Điểm đi",
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(24.dp),
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 FilledTonalButton(
@@ -361,16 +366,16 @@ fun RouteScreen(
                                         .height(35.dp), // Reduced height
                                     shape = RoundedCornerShape(4.dp),
                                     colors = ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                     ),
-                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                                 ) {
                                     Text(
                                         selectedStartStation?.name ?: "Chọn ga đi",
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         fontWeight = FontWeight.Medium,
-                                        style = MaterialTheme.typography.bodyMedium
+                                        style = MaterialTheme.typography.bodyMedium,
                                     )
                                 }
                             }
@@ -380,12 +385,12 @@ fun RouteScreen(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.ic_red_point_50),
                                     contentDescription = "Điểm đến",
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(24.dp),
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 FilledTonalButton(
@@ -395,16 +400,16 @@ fun RouteScreen(
                                         .height(35.dp), // Reduced height
                                     shape = RoundedCornerShape(4.dp),
                                     colors = ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                     ),
-                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                                 ) {
                                     Text(
                                         selectedEndStation?.name ?: "Chọn ga đến",
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         fontWeight = FontWeight.Medium,
-                                        style = MaterialTheme.typography.bodyMedium
+                                        style = MaterialTheme.typography.bodyMedium,
                                     )
                                 }
                             }
@@ -424,11 +429,11 @@ fun RouteScreen(
                         .offset(x = 16.dp), // Offset to float outside the card
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
-                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp)
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.SwapVert,
-                        contentDescription = "Đảo ga"
+                        contentDescription = "Đảo ga",
                     )
                 }
             }
@@ -441,20 +446,20 @@ fun RouteScreen(
                     .animateContentSize() // Add this for animation
                     .align(Alignment.BottomCenter),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 ) {
                     Text(
                         "Thông tin chuyến đi",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
 
                     if (isCalculatingRoute) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.dp,
                         )
                     }
 
@@ -463,7 +468,7 @@ fun RouteScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Column {
                                 Text("Thời gian")
@@ -482,12 +487,11 @@ fun RouteScreen(
                         Text(
                             "Vui lòng chọn ga đi và ga đến để xem thông tin",
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
                         )
                     }
                 }
             }
-
 
             // Floating Action Button to reset map to initial view
             FloatingActionButton(
@@ -501,12 +505,12 @@ fun RouteScreen(
                     .align(Alignment.BottomEnd)
                     .padding(16.dp, 16.dp, 16.dp, 100.dp),
                 containerColor = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.MyLocation,
                     contentDescription = "Reset to initial view",
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSecondary,
                 )
             }
         }
@@ -523,7 +527,7 @@ fun RouteScreen(
                                 modifier = Modifier.clickable {
                                     selectedStartStation = station
                                     showStartStationDialog = false
-                                }
+                                },
                             )
                         }
                     }
@@ -532,7 +536,7 @@ fun RouteScreen(
                     TextButton(onClick = { showStartStationDialog = false }) {
                         Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                     }
-                }
+                },
             )
         }
 
@@ -548,7 +552,7 @@ fun RouteScreen(
                                 modifier = Modifier.clickable {
                                     selectedEndStation = station
                                     showEndStationDialog = false
-                                }
+                                },
                             )
                         }
                     }
@@ -557,7 +561,7 @@ fun RouteScreen(
                     TextButton(onClick = { showEndStationDialog = false }) {
                         Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
                     }
-                }
+                },
             )
         }
     }
@@ -569,7 +573,7 @@ fun RouteScreen(
                 Lifecycle.Event.ON_RESUME -> {
                     Configuration.getInstance().load(
                         context,
-                        PreferenceManager.getDefaultSharedPreferences(context)
+                        PreferenceManager.getDefaultSharedPreferences(context),
                     )
                 }
 
@@ -594,6 +598,6 @@ fun RouteScreenPreview() {
     // This preview will not show the map, but it allows you to see the layout structure
     RouteScreen(
         navController = NavController(LocalContext.current),
-        metroStationViewModel = hiltViewModel<MetroStationViewModel>()
+        metroStationViewModel = hiltViewModel<MetroStationViewModel>(),
     )
 }

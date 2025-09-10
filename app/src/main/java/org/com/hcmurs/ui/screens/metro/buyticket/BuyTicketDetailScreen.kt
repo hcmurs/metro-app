@@ -1,7 +1,10 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +44,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.com.hcmurs.MainActivity
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.ticket.TicketType
@@ -58,7 +61,6 @@ import org.com.hcmurs.ui.components.logo.HurcLogo
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 import org.com.hcmurs.utils.TranslationHelper
-import org.com.hcmurs.MainActivity
 
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
@@ -72,21 +74,20 @@ data class TicketDetailInfo(
     val price: String,
     val validity: String,
     val note: String,
-    val description: String = ""
+    val description: String = "",
 )
-
 
 data class TicketDetailUiState(
     val ticketDetail: TicketType? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketDetailTopBar(
     title: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -94,7 +95,7 @@ fun TicketDetailTopBar(
                 text = title,
                 color = DarkGreen,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         },
         navigationIcon = {
@@ -102,13 +103,13 @@ fun TicketDetailTopBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = DarkGreen
+                    tint = DarkGreen,
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent // Nền trong suốt để hòa vào gradient
-        )
+            containerColor = Color.Transparent, // Nền trong suốt để hòa vào gradient
+        ),
     )
 }
 
@@ -117,13 +118,13 @@ fun TicketInfoRow(label: String, value: String, valueColor: Color = TextPrimaryC
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
+            .padding(vertical = 12.dp),
     ) {
         Text(
             text = label,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
-            color = TextSecondaryColor
+            color = TextSecondaryColor,
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -131,7 +132,7 @@ fun TicketInfoRow(label: String, value: String, valueColor: Color = TextPrimaryC
             fontSize = 16.sp,
             color = valueColor,
             lineHeight = 22.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
         )
     }
 }
@@ -139,7 +140,7 @@ fun TicketInfoRow(label: String, value: String, valueColor: Color = TextPrimaryC
 @Composable
 fun TicketDetailCard(
     ticketDetail: TicketType,
-    currencyManager: CurrencyManager
+    currencyManager: CurrencyManager,
 ) {
     val context = LocalContext.current
     val currentLanguage = LanguageManager.getLocale(context)
@@ -162,7 +163,7 @@ fun TicketDetailCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header của Card
@@ -171,11 +172,11 @@ fun TicketDetailCard(
                     .fillMaxWidth()
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(LightGreenBackground, Color(0xFFF1F8E9))
-                        )
+                            colors = listOf(LightGreenBackground, Color(0xFFF1F8E9)),
+                        ),
                     )
                     .padding(vertical = 24.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 HurcLogo(modifier = Modifier.size(72.dp))
             }
@@ -184,7 +185,7 @@ fun TicketDetailCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .padding(20.dp),
             ) {
                 // Tên vé với translation
                 Text(
@@ -193,7 +194,7 @@ fun TicketDetailCard(
                     fontWeight = FontWeight.Bold,
                     color = TextPrimaryColor,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -201,7 +202,7 @@ fun TicketDetailCard(
                 val validityText = TranslationHelper.getLocalizedValidity(ticketDetail.validityDuration, currentLanguage)
                 TicketInfoRow(
                     label = stringResource(R.string.validity),
-                    value = validityText
+                    value = validityText,
                 )
                 Divider(color = Color.Black.copy(alpha = 0.08f))
 
@@ -209,14 +210,14 @@ fun TicketDetailCard(
                 TicketInfoRow(
                     label = stringResource(R.string.note),
                     value = noteText,
-                    valueColor = ErrorColor
+                    valueColor = ErrorColor,
                 )
                 Divider(color = Color.Black.copy(alpha = 0.08f))
 
                 val detailedDescription = TranslationHelper.getLocalizedDescription(ticketDetail.name, currentLanguage)
                 TicketInfoRow(
                     label = stringResource(R.string.description),
-                    value = detailedDescription
+                    value = detailedDescription,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -227,35 +228,35 @@ fun TicketDetailCard(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(LightGreenBackground)
-                        .padding(16.dp)
+                        .padding(16.dp),
                 ) {
                     Column {
                         if (isLoadingRate) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(16.dp),
-                                    color = DarkGreen
+                                    color = DarkGreen,
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.updating_price),
                                     fontSize = 14.sp,
-                                    color = DarkGreen
+                                    color = DarkGreen,
                                 )
                             }
                         }
-                        
+
                         Text(
                             text = "${stringResource(R.string.ticket_price)}: $convertedPrice",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = DarkGreen,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         )
 
                         // Show exchange rate info for English
@@ -266,14 +267,14 @@ fun TicketDetailCard(
                                 fontSize = 12.sp,
                                 color = DarkGreen.copy(alpha = 0.7f),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Text(
                                 text = currencyManager.getExchangeRateDisplay(),
                                 fontSize = 10.sp,
                                 color = DarkGreen.copy(alpha = 0.5f),
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
@@ -283,25 +284,24 @@ fun TicketDetailCard(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketDetailScreen(
     navController: NavHostController,
-    viewModel: TicketDetailViewModel = hiltViewModel()
+    viewModel: TicketDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     // Get CurrencyManager from the calling activity
     val activity = LocalContext.current as? MainActivity
-    val currencyManager = activity?.currencyManager 
-    
+    val currencyManager = activity?.currencyManager
+
     if (currencyManager == null) {
         // Show error or fallback UI
         Text(
             text = stringResource(R.string.error),
             color = ErrorColor,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
         return
     }
@@ -310,10 +310,10 @@ fun TicketDetailScreen(
         topBar = {
             TicketDetailTopBar(
                 title = uiState.ticketDetail?.description ?: stringResource(R.string.ticket_detail),
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
             )
         },
-        containerColor = Color.Transparent
+        containerColor = Color.Transparent,
     ) { padding ->
         Column(
             modifier = Modifier
@@ -323,11 +323,11 @@ fun TicketDetailScreen(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.White, LightGreenBackground),
                         startY = 0f,
-                        endY = 1500f
-                    )
+                        endY = 1500f,
+                    ),
                 )
                 .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // LOGIC GỐC: Hiển thị UI dựa trên state
             when {
@@ -341,25 +341,24 @@ fun TicketDetailScreen(
                     Text(
                         text = stringResource(R.string.error) + ": ${uiState.errorMessage}",
                         color = ErrorColor,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
 
                 uiState.ticketDetail != null -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Spacer(modifier = Modifier.height(16.dp))
                         TicketDetailCard(
                             ticketDetail = uiState.ticketDetail!!,
-                            currencyManager = currencyManager
+                            currencyManager = currencyManager,
                         )
                         Spacer(modifier = Modifier.weight(1f))
 
                         Button(
                             onClick = {
-
                                 uiState.ticketDetail!!.id.let { id ->
                                     navController.navigate(Screen.OrderInfo.createRoute(id))
                                 }
@@ -368,13 +367,13 @@ fun TicketDetailScreen(
                                 .fillMaxWidth()
                                 .height(56.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
                         ) {
                             Text(
                                 text = stringResource(org.com.hcmurs.R.string.next),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
                             )
                         }
 
@@ -388,19 +387,18 @@ fun TicketDetailScreen(
                                 .height(56.dp),
                             shape = RoundedCornerShape(16.dp),
                             border = BorderStroke(1.dp, PrimaryGreen.copy(alpha = 0.5f)),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryGreen)
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryGreen),
                         ) {
                             Text(
                                 text = stringResource(org.com.hcmurs.R.string.cancel),
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
                             )
-
                         }
 
                         /* LOGIC GỐC: Giữ lại phần code đã được comment
                         // Payment selection section...
-                        */
+                         */
 
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -410,7 +408,7 @@ fun TicketDetailScreen(
                     Text(
                         text = stringResource(R.string.not_found_ticket),
                         color = TextSecondaryColor,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
             }
@@ -424,10 +422,3 @@ fun TicketDetailScreenPreview() {
     val navController = rememberNavController()
     TicketDetailScreen(navController = navController)
 }
-
-
-
-
-
-
-

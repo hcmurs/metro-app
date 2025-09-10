@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 hcmurs.
+ * All rights reserved.
+ */
 package org.com.hcmurs.ui.screens.news
 
 import android.os.Build
@@ -21,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,12 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.com.hcmurs.R
+import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +53,7 @@ import org.com.hcmurs.R
 fun BlogDetailScreen(
     navController: NavController,
     blogId: Int,
-    viewModel: BlogViewModel = hiltViewModel()
+    viewModel: BlogViewModel = hiltViewModel(),
 ) {
     val blogDetailState by viewModel.blogDetailState.collectAsState()
 
@@ -69,10 +71,10 @@ fun BlogDetailScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = PrimaryGreen
-                )
+                    containerColor = PrimaryGreen,
+                ),
             )
-        }
+        },
     ) { paddingValues ->
         when (blogDetailState) {
             is BlogDetailUiState.Loading -> {
@@ -80,7 +82,7 @@ fun BlogDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -90,7 +92,7 @@ fun BlogDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text((blogDetailState as BlogDetailUiState.Error).message, color = Color.Red)
@@ -107,7 +109,7 @@ fun BlogDetailScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     AsyncImage(
                         model = blog.image,
@@ -115,16 +117,16 @@ fun BlogDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
 
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     ) {
                         Text(
                             text = blog.title,
                             fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -141,7 +143,7 @@ fun BlogDetailScreen(
                                 }
                             } ?: "",
                             fontSize = 14.sp,
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -151,7 +153,7 @@ fun BlogDetailScreen(
                                 text = excerpt,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = Color.DarkGray
+                                color = Color.DarkGray,
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
@@ -159,7 +161,7 @@ fun BlogDetailScreen(
                         Text(
                             text = blog.content,
                             fontSize = 16.sp,
-                            lineHeight = 24.sp
+                            lineHeight = 24.sp,
                         )
                     }
                 }
