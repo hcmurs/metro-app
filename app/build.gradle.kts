@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.compose)
-    //id ("kotlin-kapt")
+    // id ("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
@@ -33,7 +33,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation (libs.play.services.auth) // hoặc bản mới nhất
+    implementation(libs.play.services.auth) // hoặc bản mới nhất
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -89,10 +89,9 @@ dependencies {
     implementation(libs.jackson.core)
     implementation(libs.jackson.databind)
 
-
     implementation(libs.gson)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil.compose)
@@ -101,10 +100,10 @@ dependencies {
 
     // QR Code Scanning
     implementation(libs.androidx.camera.view)
-    implementation (libs.androidx.camera.camera2)
-    implementation (libs.androidx.camera.lifecycle)
-    implementation (libs.androidx.camera.view.v131)
-    implementation (libs.barcode.scanning)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view.v131)
+    implementation(libs.barcode.scanning)
 
     implementation(libs.osmdroid.android)
 
@@ -122,6 +121,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-//kapt {
+// kapt {
 //    correctErrorTypes = true
-//}
+// }

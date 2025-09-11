@@ -6,10 +6,8 @@ package org.com.hcmurs
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,8 +26,6 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import org.com.hcmurs.MainActivity
-import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.ui.screens.changelanguage.ChangeLanguageScreen
 import org.com.hcmurs.ui.screens.login.LoginScreen
 import org.com.hcmurs.ui.screens.login.LoginViewModel
@@ -71,6 +67,7 @@ import org.com.hcmurs.ui.screens.stationselection.RouteSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StaffStationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionScreen
 import org.com.hcmurs.ui.screens.stationselection.StationSelectionViewModel
+import org.com.hcmurs.utils.CurrencyManager
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -84,15 +81,11 @@ sealed class Screen(val route: String) {
     object StaffHomeScreen : Screen("staffHomeScreen")
 
     object StaffStationSelectionScreen : Screen("stationSelect/{actionType}") {
-        fun createRoute(actionType: ActionType): String {
-            return "stationSelect/${actionType.name}"
-        }
+        fun createRoute(actionType: ActionType): String = "stationSelect/${actionType.name}"
     }
 
     object BlogList : Screen("blog_list")
-    object BlogDetail : Screen("blog_detail/{blogId}") {
-        fun createRoute(blogId: Int) = "blog_detail/$blogId"
-    }
+    object BlogDetail : Screen("blog_detail/{blogId}")
     object RouteSelection : Screen("routeSelection")
     object Feedback : Screen("feedback")
     object RedeemCodeForTicket : Screen("redeemCodeForTicket")
@@ -110,13 +103,11 @@ sealed class Screen(val route: String) {
     }
 
     object CalculatedFare : Screen("calculatedFare/{entryStationId}/{exitStationId}") {
-        fun createRoute(entryStationId: Int, exitStationId: Int) =
-            "calculatedFare/$entryStationId/$exitStationId"
+        fun createRoute(entryStationId: Int, exitStationId: Int) = "calculatedFare/$entryStationId/$exitStationId"
     }
 
     object OrderFareInfo : Screen("orderFareInfo/{entryStationId}/{exitStationId}") {
-        fun createRoute(entryStationId: Int, exitStationId: Int) =
-            "orderFareInfo/$entryStationId/$exitStationId"
+        fun createRoute(entryStationId: Int, exitStationId: Int) = "orderFareInfo/$entryStationId/$exitStationId"
     }
 
     object TicketQRCode : Screen("ticket_qr_code/{ticketCode}") {
@@ -139,18 +130,7 @@ sealed class Screen(val route: String) {
     object CooperationLink : Screen("cooperationLink")
     object Introduction : Screen("introduction")
     object StationSelection : Screen("stationSelect")
-    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}") {
-        fun createRoute(stationId: Int, stationName: String) =
-            "scanQR/$stationId/$stationName"
-
-        const val defaultRoute = "scanQR/0/None"
-    }
-
-    // Staff Only Choose Station and do scan
-    data object StaffScanQrCode : Screen("scanQR/{stationId}/{stationName}") {
-        fun createRoute(stationId: Int, stationName: String) = "scanQR/$stationId/$stationName"
-        const val defaultRoute = "scanQR/0/None"
-    }
+    object ScanQrCode : Screen("scanQR/{stationId}/{stationName}")
 
     object ChangeLanguage : Screen("changeLanguage")
 
@@ -159,11 +139,10 @@ sealed class Screen(val route: String) {
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(
     authResultLauncher: ActivityResultLauncher<Intent>? = null,
-    setAuthResultCallback: ((Intent?) -> Unit) -> Unit = {}
+    setAuthResultCallback: ((Intent?) -> Unit) -> Unit = {},
 ) {
     val navController = rememberNavController()
     val mainViewModel: MainViewModel = hiltViewModel()
@@ -179,43 +158,40 @@ fun Navigation(
             mainViewModel.setError("")
         }
     }
-    //val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
+    // val startDestination = if (isAuthenticated) Screen.Account.route else Screen.Login.route
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
-
         composable(Screen.OsmdroidMap.route) {
             OsmdroidMapScreen(navController)
         }
-        composable(Screen.StaffHomeScreen.route)
-        {
-            // StaffHomeScreen(navController)
-            StaffHomeScreen(navController) // Temporarily using HomeScreen for staff
+        composable(Screen.StaffHomeScreen.route) {
+            StaffHomeScreen(navController)
         }
 
         composable(
             route = Screen.StaffStationSelectionScreen.route,
             arguments = listOf(
-                navArgument("actionType") { type = NavType.StringType }
-            )
+                navArgument("actionType") { type = NavType.StringType },
+            ),
         ) { backStackEntry ->
             val actionTypeString = backStackEntry.arguments?.getString("actionType")
             val actionType = try {
                 ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
             } catch (e: IllegalArgumentException) {
-                ActionType.ENTRY // fallback
+                ActionType.ENTRY
             }
 
             StaffStationSelectionScreen(
                 navController = navController,
                 stationViewModel = hiltViewModel<StationSelectionViewModel>(),
-                actionType = actionType
+                actionType = actionType,
             )
         }
 
         composable(Screen.StaffAccount.route) {
             StaffAccountScreen(
                 navController = navController,
-                viewModel = loginViewModel
+                viewModel = loginViewModel,
             )
         }
         composable(Screen.Login.route) {
@@ -233,14 +209,14 @@ fun Navigation(
         composable(Screen.MyTicket.route) {
             // Get CurrencyManager from the calling activity through the NavBackStackEntry
             val activity = LocalContext.current as? MainActivity
-            val currencyManager = activity?.currencyManager 
+            val currencyManager = activity?.currencyManager
             if (currencyManager != null) {
                 MyTicketScreen(navController, currencyManager)
             } else {
                 // Fallback - try to get from Hilt container directly
                 val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
                     LocalContext.current.applicationContext,
-                    CurrencyManagerEntryPoint::class.java
+                    CurrencyManagerEntryPoint::class.java,
                 ).currencyManager()
                 MyTicketScreen(navController, fallbackManager)
             }
@@ -255,9 +231,8 @@ fun Navigation(
         // Luồng mua vé đơn
         navigation(
             route = Screen.TicketFlow.route,
-            startDestination = Screen.RouteSelection.route
+            startDestination = Screen.RouteSelection.route,
         ) {
-
             composable(route = Screen.RouteSelection.route) { backStackEntry ->
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry(Screen.TicketFlow.route)
@@ -266,7 +241,7 @@ fun Navigation(
 
                 RouteSelectionScreen(
                     navController = navController,
-                    stationViewModel = stationViewModel
+                    stationViewModel = stationViewModel,
                 )
             }
             composable(route = Screen.StationSelection.route) { backStackEntry ->
@@ -279,15 +254,15 @@ fun Navigation(
                 StationSelectionScreen(
                     navController = navController,
                     stationViewModel = stationViewModel,
-                    fareMatrixViewModel = fareMatrixViewModel
+                    fareMatrixViewModel = fareMatrixViewModel,
                 )
             }
             composable(
                 route = Screen.CalculatedFare.route,
                 arguments = listOf(
                     navArgument("entryStationId") { type = NavType.IntType },
-                    navArgument("exitStationId") { type = NavType.IntType }
-                )
+                    navArgument("exitStationId") { type = NavType.IntType },
+                ),
             ) { backStackEntry ->
                 val parentEntry =
                     remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
@@ -300,7 +275,7 @@ fun Navigation(
                     entryStationId = entryId,
                     exitStationId = exitId,
                     viewModel = fareMatrixViewModel,
-                    stationViewModel = stationViewModel
+                    stationViewModel = stationViewModel,
                 )
             }
 
@@ -308,8 +283,8 @@ fun Navigation(
                 route = Screen.OrderFareInfo.route,
                 arguments = listOf(
                     navArgument("entryStationId") { type = NavType.IntType },
-                    navArgument("exitStationId") { type = NavType.IntType }
-                )
+                    navArgument("exitStationId") { type = NavType.IntType },
+                ),
             ) { backStackEntry ->
                 val parentEntry =
                     remember(backStackEntry) { navController.getBackStackEntry(Screen.TicketFlow.route) }
@@ -323,13 +298,13 @@ fun Navigation(
                     entryStationId = entryId,
                     exitStationId = exitId,
                     fareMatrixViewModel = fareMatrixViewModel,
-                    stationViewModel = stationViewModel
+                    stationViewModel = stationViewModel,
                 )
             }
         }
         composable(
             route = Screen.TicketQRCode.route,
-            arguments = listOf(navArgument("ticketCode") { type = NavType.StringType })
+            arguments = listOf(navArgument("ticketCode") { type = NavType.StringType }),
         ) { backStackEntry ->
             val ticketCode = backStackEntry.arguments?.getString("ticketCode") ?: ""
             TicketQRCodeScreen(navController = navController, ticketCode = ticketCode)
@@ -339,8 +314,8 @@ fun Navigation(
             arguments = listOf(
                 navArgument("stationId") { type = NavType.IntType },
                 navArgument("stationName") { type = NavType.StringType },
-                navArgument("actionType") { type = NavType.StringType }
-            )
+                navArgument("actionType") { type = NavType.StringType },
+            ),
         ) { backStackEntry ->
             val stationId = backStackEntry.arguments?.getInt("stationId") ?: 0
             val stationName = backStackEntry.arguments?.getString("stationName") ?: ""
@@ -358,7 +333,7 @@ fun Navigation(
                 stationId,
                 stationName,
                 viewModel,
-                actionType
+                actionType,
             )
         }
 
@@ -371,14 +346,14 @@ fun Navigation(
         composable(Screen.BuyTicket.route) {
             // Get CurrencyManager from the calling activity through the NavBackStackEntry
             val activity = LocalContext.current as? MainActivity
-            val currencyManager = activity?.currencyManager 
+            val currencyManager = activity?.currencyManager
             if (currencyManager != null) {
                 BuyTicketScreen(navController, currencyManager)
             } else {
                 // Fallback - try to get from Hilt container directly
                 val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
                     LocalContext.current.applicationContext,
-                    CurrencyManagerEntryPoint::class.java
+                    CurrencyManagerEntryPoint::class.java,
                 ).currencyManager()
                 BuyTicketScreen(navController, fallbackManager)
             }
@@ -389,14 +364,14 @@ fun Navigation(
         composable(Screen.OrderInfo.route) {
             // Get CurrencyManager from the calling activity through the NavBackStackEntry
             val activity = LocalContext.current as? MainActivity
-            val currencyManager = activity?.currencyManager 
+            val currencyManager = activity?.currencyManager
             if (currencyManager != null) {
                 OrderInfoScreen(navController, currencyManager)
             } else {
                 // Fallback - try to get from Hilt container directly
                 val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
                     LocalContext.current.applicationContext,
-                    CurrencyManagerEntryPoint::class.java
+                    CurrencyManagerEntryPoint::class.java,
                 ).currencyManager()
                 OrderInfoScreen(navController, fallbackManager)
             }
@@ -411,7 +386,7 @@ fun Navigation(
 
         composable(
             route = Screen.BlogDetail.route,
-            arguments = listOf(navArgument("blogId") { type = NavType.IntType })
+            arguments = listOf(navArgument("blogId") { type = NavType.IntType }),
         ) { backStackEntry ->
             val blogId = backStackEntry.arguments?.getInt("blogId") ?: 0
             BlogDetailScreen(navController, blogId)
@@ -432,7 +407,7 @@ fun Navigation(
         composable(Screen.Account.route) {
             AccountScreen(
                 navController,
-                viewModel = loginViewModel
+                viewModel = loginViewModel,
             )
         }
 
@@ -466,17 +441,17 @@ fun Navigation(
             IntroductionScreen(navController)
         }
 
-        composable(Screen.ChangeLanguage.route){
+        composable(Screen.ChangeLanguage.route) {
             // Get CurrencyManager from the calling activity through the NavBackStackEntry
             val activity = LocalContext.current as? MainActivity
-            val currencyManager = activity?.currencyManager 
+            val currencyManager = activity?.currencyManager
             if (currencyManager != null) {
                 ChangeLanguageScreen(navController, currencyManager)
             } else {
                 // Fallback - try to get from Hilt container directly
                 val fallbackManager: CurrencyManager = EntryPointAccessors.fromApplication(
                     LocalContext.current.applicationContext,
-                    CurrencyManagerEntryPoint::class.java
+                    CurrencyManagerEntryPoint::class.java,
                 ).currencyManager()
                 ChangeLanguageScreen(navController, fallbackManager)
             }
@@ -492,22 +467,21 @@ fun Navigation(
                 navArgument("orderCode") {
                     type = NavType.IntType
                     nullable = false
-                }
+                },
             ),
             deepLinks = listOf(
                 navDeepLink {
                     uriPattern = "org.com.hcmurs://callback?status={status}&orderCode={orderCode}"
-                }
-            )
+                },
+            ),
         ) { backStackEntry ->
             val status = backStackEntry.arguments?.getString("status")
             val orderCode = backStackEntry.arguments?.getInt("orderCode") ?: 0
             PaymentRedirectScreen(
                 navController = navController,
                 status = status,
-                orderCode = orderCode
+                orderCode = orderCode,
             )
-        }}
-
-
+        }
+    }
 }

@@ -9,7 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-
 data class TransactionData(
     val transactionId: Int?,
     val userId: Int,
@@ -17,7 +16,7 @@ data class TransactionData(
     val paymentMethodName: String?,
     val transactionStatus: String,
     val amount: Double,
-    val createAt: String
+    val createAt: String,
 )
 
 data class OrderData(
@@ -27,38 +26,37 @@ data class OrderData(
     val status: String,
     val amount: Double,
     val createdAt: String,
-    val transaction: TransactionData?
+    val transaction: TransactionData?,
 )
 
 data class UserOrdersResponse(
     val status: Int,
     val message: String,
-    val data: List<OrderData>?
+    val data: List<OrderData>?,
 )
 
-
 data class FareMatrixIdObject(
-    val id: Int
+    val id: Int,
 )
 
 data class CreateOrderRequest(
     val fareMatrixId: FareMatrixIdObject,
-    val paymentMethodId: Int //1: VN_PAY, 2: Stripe
+
+    // 1: VN_PAY, 2: Stripe
+    val paymentMethodId: Int,
 )
 
 data class CreatedOrderData(
     val orderId: Int,
     val ticketId: String,
-    val status: String
+    val status: String,
 )
 
 data class CreateOrderResponse(
     val status: Int,
     val message: String,
-    val data: CreatedOrderData?
+    val data: CreatedOrderData?,
 )
-
-
 
 data class TicketDetails(
     val id: Int,
@@ -66,24 +64,22 @@ data class TicketDetails(
     val ticketCode: String,
     val validFrom: String,
     val validUntil: String,
-    val status: String
+    val status: String,
 )
-
 
 data class OrderWithTicketDetails(
     val orderId: Int,
     val userId: Int,
     val status: String,
     val amount: Double,
-    val ticket: TicketDetails?
+    val ticket: TicketDetails?,
 )
 
 data class UserOrdersDetailsResponse(
     val status: Int,
     val message: String,
-    val data: List<OrderWithTicketDetails>?
+    val data: List<OrderWithTicketDetails>?,
 )
-
 
 data class SingleTicketDetails(
     val id: Int,
@@ -96,14 +92,14 @@ data class SingleTicketDetails(
     val validUntil: String,
     val status: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 data class TicketDetailsResponse(
     val status: Int,
     val message: String,
 
-    val data: SingleTicketDetails?
+    val data: SingleTicketDetails?,
 )
 interface OrderSingleApi {
 
@@ -121,5 +117,4 @@ interface OrderSingleApi {
 
 //    @GET("/api/ts/tickets/qr")
 //    suspend fun getTicketQRCode(@Query("ticketCode") ticketCode: String): Response<ResponseBody>
-
 }

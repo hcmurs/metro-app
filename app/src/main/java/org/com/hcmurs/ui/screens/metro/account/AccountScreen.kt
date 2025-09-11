@@ -22,6 +22,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.ExitToApp
@@ -119,7 +122,7 @@ fun MenuItemRow(
         // Arrow
         if (item.hasArrow) {
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Navigate",
                 tint = Color(0xFF9E9E9E),
                 modifier = Modifier.size(20.dp),
@@ -134,13 +137,6 @@ fun AccountScreen(
     onMenuItemClick: (MenuItem) -> Unit = {},
     viewModel: LoginViewModel,
 ) {
-    if (viewModel == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(R.string.error))
-        }
-        return
-    }
-
     // Lắng nghe userProfile từ ViewModel
     val userProfile by viewModel.userProfile.collectAsState()
     val isAuthenticated by viewModel.isAuthenticated.collectAsState()
@@ -224,7 +220,7 @@ fun AccountScreen(
                     navController.navigate(Screen.Home.route)
                 }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         tint = Color.White,
                     )
@@ -309,7 +305,7 @@ fun AccountScreen(
                     // Logout Button
                     MenuItemRow(
                         item = MenuItem(
-                            icon = Icons.Default.ExitToApp,
+                            icon = Icons.AutoMirrored.Filled.ExitToApp,
                             title = stringResource(R.string.logout),
                             hasArrow = false,
                             isDestructive = false,
