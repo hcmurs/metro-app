@@ -8,19 +8,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.ticket.TicketRepository
-import javax.inject.Inject
-
-
 
 // ViewModel for TicketDetailScreen
 @HiltViewModel
 class TicketDetailViewModel @Inject constructor(
     private val ticketRepository: TicketRepository,
-    savedStateHandle: SavedStateHandle // To access navigation arguments
+    // To access navigation arguments
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TicketDetailUiState())
@@ -38,9 +37,6 @@ class TicketDetailViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(errorMessage = "Ticket ID is missing.")
             return
         }
-
-
-
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)

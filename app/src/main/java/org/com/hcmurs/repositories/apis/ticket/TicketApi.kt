@@ -19,21 +19,20 @@ interface TicketApi {
     @GET("/api/ts/tickets/qr")
     suspend fun getTicketQRCode(@Query("ticketCode") ticketCode: String): Response<ResponseBody>
 
-    @POST ("/api/ts/tickets/scan/entry")
+    @POST("/api/ts/tickets/scan/entry")
     suspend fun scanTicketEntry(
-        @Body request: ScanTicketRequest
+        @Body request: ScanTicketRequest,
     ): Response<ApiResponse<TicketRes>>
 
-    @POST ("/api/ts/tickets/scan/exit")
+    @POST("/api/ts/tickets/scan/exit")
     suspend fun scanTicketExit(
-        @Body request: ScanTicketRequest
+        @Body request: ScanTicketRequest,
     ): Response<ApiResponse<TicketRes>>
-
 }
 data class TicketTypeResponse(
     val status: Int,
     val message: String,
-    val data: List<TicketType>
+    val data: List<TicketType>,
 )
 
 data class TicketType(
@@ -44,7 +43,7 @@ data class TicketType(
     val validityDuration: String,
     val isActive: Boolean,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
 )
 
 data class ScanQRResponse(
@@ -55,26 +54,13 @@ data class ScanQRResponse(
     val validUntil: String,
     val ticketCode: String,
     val actualPrice: Int,
-    val signature: String
+    val signature: String,
 )
 
 data class ScanTicketRequest(
     val stationId: Int,
-    val qrCodeJsonData: String
+    val qrCodeJsonData: String,
 )
-
-/*
-* Long id,
-        Long fareMatrixId,
-        Long ticketTypeId,
-        String name,
-        String ticketCode,
-        float actualPrice,
-        LocalDateTime validFrom,
-        LocalDateTime validUntil,
-        TicketStatus status,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt*/
 
 enum class TicketStatus {
     USED,
@@ -91,9 +77,9 @@ data class TicketRes(
     val name: String,
     val ticketCode: String,
     val actualPrice: Float,
-    val validFrom: String, // Use String for JSON serialization
-    val validUntil: String, // Use String for JSON serialization
+    val validFrom: String,
+    val validUntil: String,
     val status: TicketStatus,
-    val createdAt: String, // Use String for JSON serialization
-    val updatedAt: String // Use String for JSON serialization
+    val createdAt: String,
+    val updatedAt: String,
 )

@@ -15,6 +15,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.stripe.android.PaymentConfiguration
 import java.util.Locale
@@ -84,9 +87,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            AppTheme {
-                Navigation()
-            }
+            HURCApp()
         }
     }
 
@@ -115,5 +116,23 @@ class MainActivity : ComponentActivity() {
         } else {
             super.attachBaseContext(newBase)
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun HURCApp() {
+    AppTheme {
+        Navigation()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+@RestrictTo(RestrictTo.Scope.TESTS)
+fun HURCAppPreview() {
+    AppTheme {
+        Navigation()
     }
 }

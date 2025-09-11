@@ -11,6 +11,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.net.CookieManager
+import java.net.CookiePolicy
+import javax.inject.Named
+import javax.inject.Singleton
 import okhttp3.Interceptor
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
@@ -46,50 +50,37 @@ import org.com.hcmurs.repositories.apis.weather.WeatherRepository
 import org.com.hcmurs.security.TokenProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.CookieManager
-import java.net.CookiePolicy
-import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-  //  private val BASE_URL = "http://10.0.2.2:4003/"
-//    private val BASE_URL = "http://192.168.88.172:4003/"
-    // private val BASE_URL = "http://172.20.10.9:4003/"
-    private val BASE_BLOG = "http://10.0.2.2:4007/"
-    private val BASE_STATION = "http://192.168.88.172:4004/"
-    private val BASE_PHONE = "http://192.168.1.14:4003/"
-    private val BASE_STATION_ = "http://10.0.2.2:4004/"
-    private val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
-    private val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
-//    private val BASE_URL= "http://10.87.15.67:4003/"
-        private val BASE_URL= "http://192.168.1.10:4003/"
 
-  //  private val BASE_URL= "http://192.168.1.13:4003/"
-
-    @Provides
-    @Singleton
-    fun provideGson(): Gson {
-        return Gson()
+    companion object {
+        private const val BASE_STATION = "http://192.168.88.172:4004/"
+        private const val BASE_STATION_ = "http://10.0.2.2:4004/"
+        private const val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
+        private const val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
+        private const val BASE_URL = "http://192.168.1.10:4003/"
     }
 
     @Provides
     @Singleton
+    fun provideGson(): Gson = Gson()
+
+    @Provides
+    @Singleton
     @Named("Auth")
-    fun provideAuthInterceptor(tokenProvider: TokenProvider): Interceptor {
-        return Interceptor { chain ->
-            val original = chain.request()
-            val token = tokenProvider.getToken()
+    fun provideAuthInterceptor(tokenProvider: TokenProvider): Interceptor = Interceptor { chain ->
+        val original = chain.request()
+        val token = tokenProvider.getToken()
 
-            val requestBuilder: Request.Builder = original.newBuilder()
-            token?.let {
-                requestBuilder.header("Authorization", "Bearer $it")
-            }
-
-            val request = requestBuilder.build()
-            chain.proceed(request)
+        val requestBuilder: Request.Builder = original.newBuilder()
+        token?.let {
+            requestBuilder.header("Authorization", "Bearer $it")
         }
+
+        val request = requestBuilder.build()
+        chain.proceed(request)
     }
 
     @Provides
@@ -101,10 +92,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCookieManager(): CookieManager {
-        return CookieManager().apply {
-            setCookiePolicy(CookiePolicy.ACCEPT_ALL)
-        }
+    fun provideCookieManager(): CookieManager = CookieManager().apply {
+        setCookiePolicy(CookiePolicy.ACCEPT_ALL)
     }
 
     @Provides
@@ -112,295 +101,227 @@ class NetworkModule {
     fun provideOkHttpClient(
         @Named("Auth") authInterceptor: Interceptor,
         @Named("ApiKey") apiKeyInterceptor: Interceptor,
-        cookieManager: CookieManager
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
-            .addInterceptor(apiKeyInterceptor)
-            .addInterceptor(HttpLoggingInterceptor().apply {
+        cookieManager: CookieManager,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
+        .addInterceptor(apiKeyInterceptor)
+        .addInterceptor(
+            HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
-            })
-            .cookieJar(JavaNetCookieJar(cookieManager))
-            .build()
-    }
+            },
+        )
+        .cookieJar(JavaNetCookieJar(cookieManager))
+        .build()
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ProfileApi {
-        return retrofit.create(ProfileApi::class.java)
-    }
+    fun provideApiService(retrofit: Retrofit): ProfileApi = retrofit.create(ProfileApi::class.java)
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthApi {
-        return retrofit.create(AuthApi::class.java)
-    }
-
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
 
     @Provides
     @Singleton
     @Named("ApiKey")
-    fun provideApiKeyInterceptor(): Interceptor {
-        return Interceptor { chain ->
-            val original = chain.request()
-            val request = original.newBuilder()
-                .header("Content-Type", "application/json") // luôn set JSON
-                .header(
-                    "x-api-key",
-                    "c761c9f0bb379612afbfd6ffeca90261db961bb93bce17728bc2a74430a66c0a"
-                )
-                .build()
-            chain.proceed(request)
-        }
+    fun provideApiKeyInterceptor(): Interceptor = Interceptor { chain ->
+        val original = chain.request()
+        val request = original.newBuilder()
+            .header("Content-Type", "application/json") // luôn set JSON
+            .header(
+                "x-api-key",
+                "c761c9f0bb379612afbfd6ffeca90261db961bb93bce17728bc2a74430a66c0a",
+            )
+            .build()
+        chain.proceed(request)
     }
 
-    //metro station api
+    // metro station api
     @Provides
     @Singleton
     fun provideMetroStationApi(
-        @Named("stationRetrofit") retrofit: Retrofit
-    ): MetroStationApi {
-        return retrofit.create(MetroStationApi::class.java)
-    }
+        @Named("stationRetrofit") retrofit: Retrofit,
+    ): MetroStationApi = retrofit.create(MetroStationApi::class.java)
 
     @Provides
     @Named("stationRetrofit")
     @Singleton
-    fun provideStationRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_STATION_)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun provideStationRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_STATION_)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
-    fun provideMetroStationRepository(api: MetroStationApi): MetroStationRepository {
-        return MetroStationRepository(api)
-    }
+    fun provideMetroStationRepository(api: MetroStationApi): MetroStationRepository = MetroStationRepository(api)
 
-    //mock bus station api
+    // mock bus station api
     @Provides
     @Singleton
     fun provideBusStationApi(
-        @Named("busRetrofit") retrofit: Retrofit
-    ): BusStationApi {
-        return retrofit.create(BusStationApi::class.java)
-    }
+        @Named("busRetrofit") retrofit: Retrofit,
+    ): BusStationApi = retrofit.create(BusStationApi::class.java)
 
     @Provides
     @Named("busRetrofit")
     @Singleton
-    fun provideMockyRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_STATION)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun provideMockyRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_STATION)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
-    fun provideBusStationRepository(api: BusStationApi): BusStationRepository {
-        return BusStationRepository(api)
-    }
+    fun provideBusStationRepository(api: BusStationApi): BusStationRepository = BusStationRepository(api)
 
     @Provides
     @Singleton
     fun provideTicketApi(
-
-        retrofit: Retrofit
-    ): TicketApi {
-        return retrofit.create(TicketApi::class.java)
-    }
+        retrofit: Retrofit,
+    ): TicketApi = retrofit.create(TicketApi::class.java)
 
     // Provide the TicketRepository
     @Provides
     @Singleton
-    fun provideTicketRepository(api: TicketApi): TicketRepository {
-        return TicketRepository(api)
-    }
+    fun provideTicketRepository(api: TicketApi): TicketRepository = TicketRepository(api)
 
     @Provides
     @Singleton
     fun provideFareMatrixApi(
-        retrofit: Retrofit // Reusing the main Retrofit instance
-    ): FareMatrixApi {
-        return retrofit.create(FareMatrixApi::class.java)
-    }
+        retrofit: Retrofit,
+    ): FareMatrixApi = retrofit.create(FareMatrixApi::class.java)
 
     @Provides
     @Singleton
-    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository {
-        return FareMatrixRepository(api)
-    }
+    fun provideFareMatrixRepository(api: FareMatrixApi): FareMatrixRepository = FareMatrixRepository(api)
 
     // Stations
     @Provides
     @Singleton
     fun provideStationApi(
-        retrofit: Retrofit // Reusing the main Retrofit instance
-    ): StationApi {
-        return retrofit.create(StationApi::class.java)
-    }
+        retrofit: Retrofit,
+    ): StationApi = retrofit.create(StationApi::class.java)
 
     @Provides
     @Singleton
-    fun provideStationRepository(api: StationApi): StationRepository {
-        return StationRepository(api)
-    }
+    fun provideStationRepository(api: StationApi): StationRepository = StationRepository(api)
 
-    //order
+    // order
     @Provides
     @Singleton
     fun provideOrderApi(
-        retrofit: Retrofit
-    ): OrderSingleApi {
-        return retrofit.create(OrderSingleApi::class.java)
-    }
-    @Provides
-    @Singleton
-    fun provideOrdersApi(retrofit: Retrofit): OrderDaysApi {
-        return retrofit.create(OrderDaysApi::class.java)
-    }
+        retrofit: Retrofit,
+    ): OrderSingleApi = retrofit.create(OrderSingleApi::class.java)
 
     @Provides
     @Singleton
-    fun provideOrdersRepository(api: OrderDaysApi): OrderDaysRepository {
-        return OrderDaysRepository(api)
-    }
+    fun provideOrdersApi(retrofit: Retrofit): OrderDaysApi = retrofit.create(OrderDaysApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(api: OrderDaysApi): OrderDaysRepository = OrderDaysRepository(api)
+
     // weather
     @Provides
     @Singleton
     @Named("weatherRetrofit")
-    fun provideWeatherRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_WEATHER_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
+    fun provideWeatherRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_WEATHER_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
     fun provideWeatherApi(
-        @Named("weatherRetrofit") retrofit: Retrofit
-    ): WeatherApi {
-        return retrofit.create(WeatherApi::class.java)
-    }
+        @Named("weatherRetrofit") retrofit: Retrofit,
+    ): WeatherApi = retrofit.create(WeatherApi::class.java)
 
     @Provides
     @Singleton
-    fun provideWeatherRepository(api: WeatherApi): WeatherRepository {
-        return WeatherRepository(api)
-    }
+    fun provideWeatherRepository(api: WeatherApi): WeatherRepository = WeatherRepository(api)
 
-    //Blog
+    // Blog
     @Provides
     @Singleton
     @Named("publicClient")
     fun providePublicOkHttpClient(
         @Named("ApiKey") apiKeyInterceptor: Interceptor,
-        cookieManager: CookieManager
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(apiKeyInterceptor)
-            .addInterceptor(HttpLoggingInterceptor().apply {
+        cookieManager: CookieManager,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(apiKeyInterceptor)
+        .addInterceptor(
+            HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
-            })
-            .cookieJar(JavaNetCookieJar(cookieManager))
-            .build()
-    }
-
-
+            },
+        )
+        .cookieJar(JavaNetCookieJar(cookieManager))
+        .build()
 
     @Provides
     @Named("publicRetrofit")
     @Singleton
-    fun providePublicRetrofit(@Named("publicClient") okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun providePublicRetrofit(@Named("publicClient") okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
-    fun providePublicBlogApi(@Named("publicRetrofit") retrofit: Retrofit): PublicBlogApi {
-        return retrofit.create(PublicBlogApi::class.java)
-    }
+    fun providePublicBlogApi(@Named("publicRetrofit") retrofit: Retrofit): PublicBlogApi = retrofit.create(PublicBlogApi::class.java)
 
     @Provides
     @Singleton
-    fun providePublicBlogRepository(api: PublicBlogApi): BlogRepository {
-        return BlogRepository(api)
-    }
-    //request
+    fun providePublicBlogRepository(api: PublicBlogApi): BlogRepository = BlogRepository(api)
+
+    // request
     @Provides
     @Singleton
-    fun provideRequestApi(retrofit: Retrofit): RequestApi {
-        return retrofit.create(RequestApi::class.java)
-    }
+    fun provideRequestApi(retrofit: Retrofit): RequestApi = retrofit.create(RequestApi::class.java)
 
     @Provides
     @Singleton
-    fun provideRequestRepository(api: RequestApi): RequestRepository {
-        return RequestRepository(api)
-    }
-    
-//feedback
-@Provides
-@Singleton
-fun provideFeedbackApi(retrofit: Retrofit): FeedbackApi {
-    return retrofit.create(FeedbackApi::class.java)
-}
+    fun provideRequestRepository(api: RequestApi): RequestRepository = RequestRepository(api)
+
+    // feedback
+    @Provides
+    @Singleton
+    fun provideFeedbackApi(retrofit: Retrofit): FeedbackApi = retrofit.create(FeedbackApi::class.java)
 
     @Provides
     @Singleton
-    fun provideFeedbackRepository(api: FeedbackApi): FeedbackRepository {
-        return FeedbackRepository(api)
-    }
-// payment
-@Provides
-@Singleton
-    fun providePaymentApi(retrofit: Retrofit): PaymentApi {
-    return retrofit.create(PaymentApi::class.java)
-}
+    fun provideFeedbackRepository(api: FeedbackApi): FeedbackRepository = FeedbackRepository(api)
+
+    // payment
+    @Provides
+    @Singleton
+    fun providePaymentApi(retrofit: Retrofit): PaymentApi = retrofit.create(PaymentApi::class.java)
 
     @Provides
     @Singleton
-    fun providePaymentRepository(api: PaymentApi): PaymentRepository {
-        return PaymentRepository(api)
-    }
+    fun providePaymentRepository(api: PaymentApi): PaymentRepository = PaymentRepository(api)
 
     // Currency API
     @Provides
     @Named("currencyRetrofit")
     @Singleton
-    fun provideCurrencyRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_CURRENCY_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+    fun provideCurrencyRetrofit(): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_CURRENCY_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
-    fun provideCurrencyApi(@Named("currencyRetrofit") retrofit: Retrofit): CurrencyApi {
-        return retrofit.create(CurrencyApi::class.java)
-    }
-
+    fun provideCurrencyApi(@Named("currencyRetrofit") retrofit: Retrofit): CurrencyApi = retrofit.create(CurrencyApi::class.java)
 }
