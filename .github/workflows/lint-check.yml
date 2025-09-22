@@ -26,6 +26,8 @@ jobs:
         key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties')\
           \ }}"
         restore-keys: "${{ runner.os }}-gradle-\n"
+
+
     - name: "Run Spotless check"
       run: "./gradlew spotlessCheck"
     - name: "Comment on PR if format fails"
