@@ -11,6 +11,10 @@ concurrency:
 jobs:
   spotless:
     runs-on: "ubuntu-latest"
+    permissions:
+      checks: "write"
+      contents: "read"
+      pull-requests: "write"
     steps:
     - name: "Checkout code"
       uses: "actions/checkout@v4"
@@ -25,6 +29,16 @@ jobs:
         path: "~/.gradle/caches\n~/.gradle/wrapper\n"
         key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties')\
           \ }}"
-        restore-keys: "${{ runner.os }}-gradle-\n"
+        restore-keys: "${{ runner.os }}-gradle-"
     - name: "Run Spotless check"
-      run: "./gradlew spotlessCheck"
+      run: "./gradlew spotlessCheck || echo 'FAILED=true' >> $GITHUB_ENV"
+    - name: "Comment on PR if format fails"
+      if: "env.FAILED == 'true'"
+      uses: "marocchino/sticky-pull-request-comment@v2.9.4"
+      with:
+        header: "format-check"
+        message: "❌ Spotless formatting check failed.\n\nRun this command to fix:\n\
+          ```bash\n./gradlew spotlessApply\n```\n"
+    - name: "Fail if needed"
+      if: "env.FAILED == 'true'"
+      run: "exit 1"
