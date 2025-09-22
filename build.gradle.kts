@@ -24,7 +24,7 @@ subprojects {
             "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
           )
         )
-      licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+      licenseHeaderFile(rootProject.file("spotless/license-header.kt"))
     }
 
     kotlinGradle {

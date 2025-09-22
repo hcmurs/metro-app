@@ -12,9 +12,9 @@ jobs:
   spotless:
     runs-on: "ubuntu-latest"
     permissions:
-      checks: write
-      contents: read
-      pull-requests: write
+      checks: "write"
+      contents: "read"
+      pull-requests: "write"
     steps:
     - name: "Checkout code"
       uses: "actions/checkout@v4"
@@ -30,9 +30,6 @@ jobs:
         key: "${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties')\
           \ }}"
         restore-keys: "${{ runner.os }}-gradle-"
-
-
-
     - name: "Run Spotless check"
       run: "./gradlew spotlessCheck || echo 'FAILED=true' >> $GITHUB_ENV"
     - name: "Comment on PR if format fails"
