@@ -30,7 +30,7 @@ jobs:
       run: "./gradlew spotlessCheck"
     - name: "Comment on PR if format fails"
       if: "failure() && steps.spotless.outcome == 'failure'"
-      uses: "marocchino/sticky-pull-request-comment@latest"
+      uses: "marocchino/sticky-pull-request-comment@v2.9.4"
       with:
         header: "format-check"
         message: "❌ Spotless formatting check failed in one or more modules.\n\nRun\
