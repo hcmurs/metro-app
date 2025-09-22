@@ -28,3 +28,11 @@ jobs:
         restore-keys: "${{ runner.os }}-gradle-\n"
     - name: "Run Spotless check"
       run: "./gradlew spotlessCheck"
+    - name: "Comment on PR if format fails"
+      if: "failure() && steps.spotless.outcome == 'failure'"
+      uses: "marocchino/sticky-pull-request-comment@latest"
+      with:
+        header: "format-check"
+        message: "❌ Spotless formatting check failed in one or more modules.\n\nRun\
+          \ the following command locally to auto-fix:\n```bash\n./gradlew spotlessApply\n\
+          ```\n\nThen commit & push the changes to update this PR ✅"
