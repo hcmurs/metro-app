@@ -11,6 +11,10 @@ concurrency:
 jobs:
   spotless:
     runs-on: "ubuntu-latest"
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
     steps:
     - name: "Checkout code"
       uses: "actions/checkout@v4"
