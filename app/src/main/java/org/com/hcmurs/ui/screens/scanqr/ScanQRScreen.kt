@@ -51,7 +51,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,7 +89,7 @@ fun ScanQRScreen(
     actionType: ActionType,
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -436,7 +435,7 @@ fun CameraPreview(
     onQRCodeScanned: (String) -> Unit,
     lifecycleOwner: LifecycleOwner,
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
 
     AndroidView(
@@ -450,7 +449,7 @@ fun CameraPreview(
                 val preview = androidx.camera.core.Preview.Builder()
                     .build()
                     .apply {
-                        setSurfaceProvider(previewView.surfaceProvider)
+                        surfaceProvider = previewView.surfaceProvider
                     }
 
                 val imageAnalyzer = ImageAnalysis.Builder()
@@ -490,7 +489,7 @@ fun CameraPreview(
     }
 }
 
-@androidx.camera.core.ExperimentalGetImage
+@ExperimentalGetImage
 class QRCodeAnalyzer(
     private val onQRCodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
@@ -551,7 +550,7 @@ class QRCodeAnalyzer(
         val gson = Gson()
         val response = gson.fromJson(content, ScanQRResponse::class.java)
         response != null && response.toString().isNotEmpty()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         false
     }
 }

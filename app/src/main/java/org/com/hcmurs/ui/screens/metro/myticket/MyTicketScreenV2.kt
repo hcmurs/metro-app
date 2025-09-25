@@ -23,7 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -87,8 +87,7 @@ fun MyTicketScreen(
     val uiState by viewModel.uiState.collectAsState()
     val selectedTab = remember { mutableStateOf("NOT_USED") } // PENDING, FAILED, SUCCESSFUL
     val context = LocalContext.current
-    val currentLanguage = LanguageManager.getLocale(context)
-    val exchangeRate by currencyManager.exchangeRate.collectAsState()
+    LanguageManager.getLocale(context)
 
     // Initialize currency manager on first load
     LaunchedEffect(Unit) {
@@ -249,7 +248,7 @@ fun TicketCard(
 
             Spacer(Modifier.height(16.dp))
 
-            if (ticket.status.equals("NOT_USED") || ticket.status.equals("USED")) {
+            if (ticket.status == "NOT_USED" || ticket.status == "USED") {
                 Button(
                     onClick = {
                         navController.navigate(Screen.TicketQRCode.createRoute(order.ticket.ticketCode))
@@ -266,7 +265,7 @@ fun TicketCard(
 
 private fun formatDate(dateString: String): String {
     return try {
-        val cleanedDateString = dateString.replace(Regex("(\\+|\\-)\\d{2}:(\\d{2})")) {
+        val cleanedDateString = dateString.replace(Regex("([+\\-])\\d{2}:(\\d{2})")) {
             "${it.groupValues[1]}${it.groupValues[2]}00"
         }
 
@@ -277,7 +276,7 @@ private fun formatDate(dateString: String): String {
         formatter.timeZone = TimeZone.getDefault()
 
         formatter.format(date)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         dateString.take(10)
     }
 }
@@ -300,15 +299,6 @@ private fun InfoRow(label: String, value: String, valueColor: Color = TextPrimar
     }
 }
 
-// Hàm helper để lấy màu theo trạng thái
-@Composable
-private fun getStatusColor(status: String): Color = when (status.uppercase()) {
-    "PENDING", "ACTIVE" -> PrimaryGreen
-    "COMPLETED" -> DarkGreen
-    "EXPIRED", "CANCELLED" -> Color.Red
-    else -> TextSecondaryColor
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTicketTopBar(navController: NavController) {
@@ -323,7 +313,7 @@ fun MyTicketTopBar(navController: NavController) {
         navigationIcon = {
             IconButton(onClick = { navController.navigate(Screen.Home.route) }) {
                 Icon(
-                    Icons.Default.ArrowBack,
+                    Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = DarkGreen,
                 )

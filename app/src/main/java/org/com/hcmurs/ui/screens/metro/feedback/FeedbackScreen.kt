@@ -28,11 +28,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Reply
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Schedule
@@ -87,14 +88,12 @@ private val PrimaryGreen = Color(0xFF4CAF50)
 private val SecondaryGreen = Color(0xFF66BB6A)
 private val LightGreen = Color(0xFFE8F5E8)
 private val DarkGreen = Color(0xFF2E7D32)
-private val AccentGreen = Color(0xFF81C784)
 private val BackgroundGray = Color(0xFFF5F7FA)
 private val CardBackground = Color(0xFFFFFFFF)
 private val BorderColor = Color(0xFFE1E5E9)
 private val TextSecondary = Color(0xFF6B7280)
 private val TextPrimary = Color(0xFF1F2937)
 private val SuccessGreen = Color(0xFF10B981)
-private val WarningOrange = Color(0xFFF59E0B)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -269,7 +268,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
         shape = RoundedCornerShape(20.dp),
     ) {
         var showImageDialog by remember { mutableStateOf(false) }
-        val context = LocalContext.current
+        LocalContext.current
 
         if (showImageDialog) {
             AlertDialog(
@@ -420,7 +419,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Icon(
-                                    Icons.Default.Reply,
+                                    Icons.AutoMirrored.Filled.Reply,
                                     contentDescription = "Reply",
                                     tint = Color.White,
                                     modifier = Modifier.size(16.dp),
@@ -637,7 +636,7 @@ fun SearchBarWithButtons() {
 @Composable
 fun BottomNavBar(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
     val tabs = listOf("Cá nhân", "Tất cả")
-    val icons = listOf(Icons.Default.Person, Icons.Default.ViewList)
+    val icons = listOf(Icons.Default.Person, Icons.AutoMirrored.Filled.ViewList)
 
     Card(
         modifier = Modifier

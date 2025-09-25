@@ -69,6 +69,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -284,11 +285,7 @@ fun RouteScreen(
                                     }
 
                                     // Create bitmap with proper dimensions
-                                    val bitmap = android.graphics.Bitmap.createBitmap(
-                                        iconSize,
-                                        iconSize,
-                                        android.graphics.Bitmap.Config.ARGB_8888,
-                                    )
+                                    val bitmap = createBitmap(iconSize, iconSize)
                                     val canvas = android.graphics.Canvas(bitmap)
 
                                     // Set bounds to fill the bitmap
@@ -536,7 +533,7 @@ fun RouteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showStartStationDialog = false }) {
-                        Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
+                        Text(androidx.compose.ui.res.stringResource(R.string.cancel))
                     }
                 },
             )
@@ -561,7 +558,7 @@ fun RouteScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = { showEndStationDialog = false }) {
-                        Text(androidx.compose.ui.res.stringResource(org.com.hcmurs.R.string.cancel))
+                        Text(androidx.compose.ui.res.stringResource(R.string.cancel))
                     }
                 },
             )

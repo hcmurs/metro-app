@@ -24,7 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Discount
@@ -50,14 +50,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-// --- Định nghĩa màu sắc chủ đạo ---
-private val PrimaryGreen = Color(0xFF4CAF50)
+
 private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFF1F8E9)
 private val TextPrimaryColor = Color(0xFF212121)
 private val TextSecondaryColor = Color(0xFF757575)
 private val CardBackgroundColor = Color.White
-private val DividerColor = Color.Black.copy(alpha = 0.08f)
 
 // --- Data class để biểu diễn một thông báo ---
 data class NotificationItem(
@@ -112,7 +110,7 @@ fun NotificationScreen(navController: NavController) {
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Quay lại", tint = DarkGreen)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Quay lại", tint = DarkGreen)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor),

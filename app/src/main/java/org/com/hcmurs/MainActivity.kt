@@ -44,7 +44,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var fcmTokenManager: FcmTokenManager
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -147,7 +146,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HURCApp() {
     AppTheme {
@@ -155,7 +153,6 @@ fun HURCApp() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 @RestrictTo(RestrictTo.Scope.TESTS)

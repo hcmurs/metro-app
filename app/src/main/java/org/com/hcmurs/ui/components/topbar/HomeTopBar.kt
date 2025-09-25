@@ -6,8 +6,6 @@
  */
 package org.com.hcmurs.ui.components.topbar
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +28,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,23 +47,20 @@ import org.com.hcmurs.ui.components.weather.WeatherViewModel
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.LanguageManager
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     isScrolled: Boolean = false,
     isAuthenticated: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
-    var selectedLanguage by remember { mutableStateOf("Vietnamese") }
-    val context = LocalContext.current
+    LocalContext.current
 
     // Weather data - would come from ViewModel in real app
     val weatherViewModel: WeatherViewModel = hiltViewModel<WeatherViewModel>()
 
     LaunchedEffect(Unit) {
-        selectedLanguage = LanguageManager.getCurrentLanguageName(context)
     }
 
     TopAppBar(
@@ -126,15 +119,15 @@ private fun LanguageButton(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val vietnameseFlag = "\uD83C\uDDFB\uD83C\uDDF3"
-    val englishFlag = "\uD83C\uDDFA\uD83C\uDDF8"
+    "\uD83C\uDDFB\uD83C\uDDF3"
+    "\uD83C\uDDFA\uD83C\uDDF8"
 
     // Get current language from LanguageManager
     val currentLang = LanguageManager.getLocale(context)
     val currentDisplayText = when (currentLang) {
-        "vi" -> "${stringResource(R.string.vietnamese)}"
-        "en" -> "${stringResource(R.string.english)}"
-        else -> "${stringResource(R.string.vietnamese)}"
+        "vi" -> stringResource(R.string.vietnamese)
+        "en" -> stringResource(R.string.english)
+        else -> stringResource(R.string.vietnamese)
     }
 
     Box(

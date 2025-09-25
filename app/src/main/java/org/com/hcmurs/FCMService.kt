@@ -135,7 +135,7 @@ class FCMService : FirebaseMessagingService() {
 
         // Example: Handle notification type
         val notificationType = data["type"]
-        val notificationId = data["notificationId"]
+        data["notificationId"]
 
         when (notificationType) {
             "LECTURE_UPDATE" -> {
