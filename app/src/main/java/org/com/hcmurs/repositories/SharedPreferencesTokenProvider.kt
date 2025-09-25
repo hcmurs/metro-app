@@ -7,6 +7,7 @@
 package org.com.hcmurs.repositories
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import javax.inject.Inject
 import javax.inject.Singleton
 import org.com.hcmurs.security.TokenProvider
@@ -22,12 +23,12 @@ constructor(
     }
 
     override fun saveToken(token: String) {
-        prefs.edit().putString(TOKEN_KEY, token).apply()
+        prefs.edit { putString(TOKEN_KEY, token) }
     }
 
     override fun getToken(): String? = prefs.getString(TOKEN_KEY, null)
 
     override fun clearToken() {
-        prefs.edit().remove(TOKEN_KEY).apply()
+        prefs.edit { remove(TOKEN_KEY) }
     }
 }

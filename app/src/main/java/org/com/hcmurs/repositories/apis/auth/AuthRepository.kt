@@ -6,7 +6,10 @@
  */
 package org.com.hcmurs.repositories.apis.auth
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +25,12 @@ class AuthRepository
 constructor(
     private val api: AuthApi,
     private val tokenProvider: TokenProvider,
+    @ApplicationContext private val context: Context,
 ) {
+
+    private val sharedPrefs: SharedPreferences =
+        context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+
     suspend fun loginWithGoogle(idToken: String): String = withContext(Dispatchers.IO) {
         try {
             val apiResponse = api.loginWithGoogle(GoogleLoginRequest(idToken))
@@ -87,5 +95,13 @@ constructor(
 
     fun clearUserProfile() {
         _userProfile.value = null
+    }
+
+    suspend fun storeUserEmail(email: String) = withContext(Dispatchers.IO) {
+        sharedPrefs.edit().putString("user_email", email).apply()
+    }
+
+    suspend fun getStoredUserEmail(): String? = withContext(Dispatchers.IO) {
+        sharedPrefs.getString("user_email", null)
     }
 }

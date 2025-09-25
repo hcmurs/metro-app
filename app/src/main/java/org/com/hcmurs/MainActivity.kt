@@ -21,6 +21,8 @@ import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.stripe.android.PaymentConfiguration
 import java.util.Locale
 import javax.inject.Inject
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.AppTheme
 import org.com.hcmurs.utils.CurrencyManager
+import org.com.hcmurs.utils.FcmTokenManager
 import org.com.hcmurs.utils.LanguageManager
 
 @dagger.hilt.android.AndroidEntryPoint
@@ -38,9 +41,32 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var currencyManager: CurrencyManager
 
+    @Inject
+    lateinit var fcmTokenManager: FcmTokenManager
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+
+                // Log and toast
+                Log.d("FCM", token.toString())
+//            Toast.makeText(baseContext, token.toString(), Toast.LENGTH_SHORT).show()
+
+                // Register token with backend when user is logged in
+                // Note: You should call fcmTokenManager.registerTokenWithUserIdAndDevice(userEmail)
+                // after successful login in your authentication flow
+            },
+        )
 
         // Initialize currency manager with language manager
         LanguageManager.setCurrencyManager(currencyManager)

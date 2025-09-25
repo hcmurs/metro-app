@@ -7,6 +7,7 @@ plugins {
     // id ("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -111,6 +112,16 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
     implementation("com.stripe:stripe-android:20.42.0")
+
+    // firebase
+    implementation(libs.firebase.bom)
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-analytics-ktx
+    implementation(libs.google.firebase.analytics.ktx)
+    // messaging
+    implementation(libs.firebase.messaging.ktx)
+
+    // notification permission
+    implementation(libs.accompanist.permissions)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

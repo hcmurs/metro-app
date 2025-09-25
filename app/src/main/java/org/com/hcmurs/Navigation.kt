@@ -57,6 +57,7 @@ import org.com.hcmurs.ui.screens.metro.setting.SettingScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.news.BlogDetailScreen
 import org.com.hcmurs.ui.screens.news.BlogListScreen
+import org.com.hcmurs.ui.screens.notification.NotificationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
@@ -138,6 +139,8 @@ sealed class Screen(val route: String) {
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
+
+    object Notification : Screen("notification")
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -483,6 +486,12 @@ fun Navigation(
                 navController = navController,
                 status = status,
                 orderCode = orderCode,
+            )
+        }
+
+        composable(Screen.Notification.route) {
+            NotificationScreen(
+                onBackClick = { navController.popBackStack() },
             )
         }
     }
