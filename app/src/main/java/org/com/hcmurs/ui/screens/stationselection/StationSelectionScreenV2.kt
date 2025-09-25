@@ -19,21 +19,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import org.com.hcmurs.RouteResponse
 import org.com.hcmurs.Screen
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.components.card.station.StationCard
@@ -140,7 +135,7 @@ fun StationSelectionScreen(
                 title = { Text("Chọn ga") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, "Trở lại", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Trở lại", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -166,7 +161,7 @@ fun StationSelectionScreen(
                     if (fareMatrixUiState.isLoading && isNavigationTriggered) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                     } else {
-                        Icon(Icons.Default.ArrowForward, "Tính cước", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, "Tính cước", tint = Color.White)
                     }
                 }
             }
@@ -213,7 +208,7 @@ fun StationSelectionScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        items(uiState.stations.filterNotNull()) { station ->
+                        items(uiState.stations) { station ->
                             val isSelected = when (selectedAction) {
                                 "Ga vào" -> station.stationId == selectedEntryStation?.stationId
                                 "Ga ra" -> station.stationId == selectedExitStation?.stationId
@@ -252,34 +247,6 @@ private fun SectionTitle(text: String) {
         fontWeight = FontWeight.Bold,
         color = PrimaryGreen,
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RouteSelector(
-    routes: List<RouteResponse>,
-    selectedRoute: RouteResponse?,
-    onRouteSelected: (RouteResponse) -> Unit,
-) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 4.dp),
-    ) {
-        items(
-            items = routes,
-            key = { route -> route.routeId },
-        ) { route ->
-            FilterChip(
-                selected = route.routeId == selectedRoute?.routeId,
-                onClick = { onRouteSelected(route) },
-                label = { Text(route.routeName) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = PrimaryGreen,
-                    selectedLabelColor = Color.White,
-                ),
-            )
-        }
-    }
 }
 
 @Composable
@@ -350,8 +317,6 @@ fun SelectedStationsSummary(entryStation: Station?, exitStation: Station?) {
         }
     }
 }
-
-val LightOrange = Color(0xFFFFA726)
 
 //
 // @Preview(showBackground = true)

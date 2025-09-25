@@ -24,10 +24,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Schedule
@@ -131,7 +131,7 @@ fun StaffMenuItemRow(
         // Arrow
         if (item.hasArrow) {
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Navigate",
                 tint = Color(0xFF9E9E9E),
                 modifier = Modifier.size(20.dp),
@@ -172,7 +172,6 @@ fun StaffBadge() {
 @Composable
 fun StaffAccountScreen(
     navController: NavController,
-    onMenuItemClick: (StaffMenuItem) -> Unit = {},
     viewModel: LoginViewModel,
 ) {
     // Lắng nghe userProfile từ ViewModel
@@ -265,7 +264,7 @@ fun StaffAccountScreen(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
                         tint = Color.White,
                     )
@@ -355,7 +354,7 @@ fun StaffAccountScreen(
                     // Logout Button
                     StaffMenuItemRow(
                         item = StaffMenuItem(
-                            icon = Icons.Default.ExitToApp,
+                            icon = Icons.AutoMirrored.Filled.ExitToApp,
                             title = "Đăng xuất",
                             subtitle = "Thoát khỏi tài khoản nhân viên",
                             hasArrow = false,

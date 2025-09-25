@@ -24,7 +24,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material3.Button
@@ -61,7 +62,6 @@ import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
 
 private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
 private val LightGreenBackground = Color(0xFFE8F5E9)
 private val TextPrimaryColor = Color(0xFF212121)
 private val TextSecondaryColor = Color(0xFF757575)
@@ -89,7 +89,7 @@ fun CalculatedFareScreen(
                 title = { Text("Xác nhận hành trình", color = DarkGreen, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = DarkGreen)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
@@ -129,7 +129,7 @@ fun CalculatedFareScreen(
                 FareDetailCard(
                     entryStationName = entryStation.name,
                     exitStationName = exitStation.name,
-                    fare = currentFareResponse.data!!,
+                    fare = currentFareResponse.data,
                 )
             } else {
                 Box(
@@ -254,7 +254,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
                 StationDisplay(name = entryStationName, isEntry = true)
                 Spacer(modifier = Modifier.width(12.dp)) // Reduced spacing
                 Icon(
-                    imageVector = Icons.Default.ArrowForward,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "to",
                     tint = TextSecondaryColor,
                     modifier = Modifier.size(20.dp), // Smaller icon

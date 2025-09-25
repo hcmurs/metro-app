@@ -7,7 +7,6 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +24,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CreditCard
@@ -61,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.stripe.android.paymentsheet.PaymentSheet
@@ -100,7 +102,6 @@ fun OrderInfoScreen(
     val context = LocalContext.current
     val currentLanguage = LanguageManager.getLocale(context)
     val exchangeRate by currencyManager.exchangeRate.collectAsState()
-    val isLoadingRate by currencyManager.isLoading.collectAsState()
 
     // Initialize currency manager on first load
     LaunchedEffect(Unit) {
@@ -166,7 +167,7 @@ fun OrderInfoScreen(
     }
     LaunchedEffect(key1 = uiState.payOSCheckoutUrl) {
         uiState.payOSCheckoutUrl?.let { url ->
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val browserIntent = Intent(Intent.ACTION_VIEW, url.toUri())
             context.startActivity(browserIntent)
             viewModel.clearCheckoutStatus()
         }
@@ -207,8 +208,7 @@ fun OrderInfoScreen(
         if (ticket != null) {
             // Convert price based on current language
             val vndPrice = when (val price = ticket.price) {
-                is Number -> price.toDouble()
-                else -> 0.0
+                else -> price.toDouble()
             }
             val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
@@ -296,7 +296,7 @@ fun OrderInfoScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Payment Button
-            val currentSelectedMethod = selectedPaymentMethod
+            selectedPaymentMethod
             Button(
                 onClick = {
 //                    val paymentMethodId = 2
@@ -353,7 +353,7 @@ fun OrderInfoTopBar(
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = Color(0xFF1A237E),
                 )
@@ -422,7 +422,7 @@ fun PaymentMethodSection(
                         )
                     }
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Arrow Right",
                         tint = Color(0xFF999999),
                         modifier = Modifier.size(20.dp),
@@ -467,7 +467,7 @@ fun PaymentMethodSection(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowRight,
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = "Change",
                             tint = Color(0xFF999999),
                             modifier = Modifier.size(20.dp),
@@ -613,7 +613,7 @@ fun TicketInfoSection(
                     color = Color(0xFF1A237E),
                 )
                 Icon(
-                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
+                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = if (isExpanded) "Collapse" else "Expand",
                     tint = Color(0xFF1A237E),
                     modifier = Modifier.size(20.dp),

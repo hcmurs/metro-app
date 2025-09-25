@@ -89,7 +89,7 @@ fun TicketInformationScreen(navController: NavHostController) {
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Image(
-                        painter = painterResource(id = org.com.hcmurs.R.drawable.hurc),
+                        painter = painterResource(id = R.drawable.hurc),
                         contentDescription = "HURC Logo",
                         modifier = Modifier.size(120.dp),
                     )

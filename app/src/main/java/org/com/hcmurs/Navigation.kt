@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,6 +56,7 @@ import org.com.hcmurs.ui.screens.metro.setting.SettingScreen
 import org.com.hcmurs.ui.screens.metro.ticketinformation.TicketInformationScreen
 import org.com.hcmurs.ui.screens.news.BlogDetailScreen
 import org.com.hcmurs.ui.screens.news.BlogListScreen
+import org.com.hcmurs.ui.screens.notification.NotificationScreen
 import org.com.hcmurs.ui.screens.osmap.OsmdroidMapScreen
 import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.ui.screens.scanqr.ScanQRScreen
@@ -138,6 +138,8 @@ sealed class Screen(val route: String) {
 
     // Test
     object OsmdroidMap : Screen("osmdroidMap")
+
+    object Notification : Screen("notification")
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -153,7 +155,6 @@ fun Navigation(
     val context = LocalContext.current
 
     val loginViewModel: LoginViewModel = hiltViewModel()
-    val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
     LaunchedEffect(mainState.value.error) {
         if (mainState.value.error.isNotEmpty()) {
             Toast.makeText(context, mainState.value.error, Toast.LENGTH_LONG).show()
@@ -179,7 +180,7 @@ fun Navigation(
             val actionTypeString = backStackEntry.arguments?.getString("actionType")
             val actionType = try {
                 ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 ActionType.ENTRY
             }
 
@@ -325,7 +326,7 @@ fun Navigation(
 
             val actionType = try {
                 ActionType.valueOf(actionTypeString ?: ActionType.ENTRY.name)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 ActionType.ENTRY
             }
 
@@ -483,6 +484,12 @@ fun Navigation(
                 navController = navController,
                 status = status,
                 orderCode = orderCode,
+            )
+        }
+
+        composable(Screen.Notification.route) {
+            NotificationScreen(
+                onBackClick = { navController.popBackStack() },
             )
         }
     }

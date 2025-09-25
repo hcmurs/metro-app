@@ -27,7 +27,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Send
@@ -69,7 +71,6 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 
 private val PrimaryGreen = Color(0xFF4CAF50)
-private val SecondaryGreen = Color(0xFF66BB6A)
 private val LightGreen = Color(0xFFE8F5E8)
 private val DarkGreen = Color(0xFF2E7D32)
 private val BackgroundGray = Color(0xFFF8F9FA)
@@ -113,7 +114,7 @@ fun CreateFeedbackScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.Default.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = Color.White,
                         )
@@ -216,7 +217,7 @@ fun CreateFeedbackScreen(
                         },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.Message,
+                                Icons.AutoMirrored.Filled.Message,
                                 contentDescription = "Content",
                                 tint = PrimaryGreen,
                             )
@@ -240,7 +241,6 @@ fun CreateFeedbackScreen(
                 ) {
                     Box(modifier = Modifier.padding(16.dp)) {
                         ImagePicker(
-                            label = "Ảnh đính kèm (tùy chọn)",
                             selectedImageUri = imageUri,
                             onImageSelected = { imageUri = it },
                         )
@@ -274,7 +274,7 @@ fun CreateFeedbackScreen(
                     )
                 } else {
                     Icon(
-                        Icons.Default.Send,
+                        Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send",
                         tint = Color.White,
                         modifier = Modifier.size(24.dp),
@@ -294,7 +294,7 @@ fun CreateFeedbackScreen(
 
 @Composable
 private fun ImagePicker(
-    label: String,
+    label: String = "Ảnh đính kèm (tùy chọn)",
     selectedImageUri: Uri?,
     onImageSelected: (Uri?) -> Unit,
 ) {

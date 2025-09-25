@@ -25,7 +25,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.LocalActivity
@@ -108,7 +108,7 @@ fun BuyTicketTopBar(onBackClick: () -> Unit) {
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Trở về",
                     tint = PrimaryGreen,
                 )
@@ -196,7 +196,6 @@ fun TicketCard(
     val userProfile by viewModel.userProfile.collectAsState()
     val context = LocalContext.current
     val currentLanguage = org.com.hcmurs.utils.LanguageManager.getLocale(context)
-    val exchangeRate by currencyManager.exchangeRate.collectAsState()
     val isLoadingRate by currencyManager.isLoading.collectAsState()
 
     // Initialize currency manager on first load
@@ -276,8 +275,7 @@ fun TicketCard(
                     if (ticket.name != "Vé đơn") {
                         // Convert price based on current language
                         val vndPrice = when (val price = ticket.price) {
-                            is Number -> price.toDouble()
-                            else -> 0.0
+                            else -> price.toDouble()
                         }
                         val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
@@ -313,7 +311,6 @@ fun TicketCard(
 fun RouteCard(fareMatrix: FareMatrix, currencyManager: CurrencyManager) {
     val context = LocalContext.current
     val currentLanguage = org.com.hcmurs.utils.LanguageManager.getLocale(context)
-    val exchangeRate by currencyManager.exchangeRate.collectAsState()
     val isLoadingRate by currencyManager.isLoading.collectAsState()
 
     // Convert price based on current language
@@ -469,40 +466,6 @@ fun TicketOptionsSection(
                         currencyManager = currencyManager,
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun RoutesSection(viewModel: FareMatrixViewModel, currencyManager: CurrencyManager) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        if (uiState.fareMatrices.isEmpty() && !uiState.isLoading && uiState.errorMessage == null) {
-            viewModel.fetchFareMatrices()
-        }
-    }
-
-    if (uiState.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator(color = PrimaryGreen)
-        }
-    } else if (uiState.errorMessage != null) {
-        Text(
-            text = stringResource(R.string.error_loading_routes, uiState.errorMessage!!),
-            color = Color.Red,
-            modifier = Modifier.padding(16.dp),
-        )
-    } else {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            uiState.fareMatrices.forEach { fareMatrix ->
-                RouteCard(fareMatrix = fareMatrix, currencyManager = currencyManager)
             }
         }
     }

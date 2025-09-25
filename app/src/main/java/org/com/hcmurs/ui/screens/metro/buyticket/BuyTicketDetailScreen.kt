@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -103,7 +104,7 @@ fun TicketDetailTopBar(
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = DarkGreen,
                 )
@@ -156,8 +157,7 @@ fun TicketDetailCard(
 
     // Convert price based on current language
     val vndPrice = when (val price = ticketDetail.price) {
-        is Number -> price.toDouble()
-        else -> 0.0
+        else -> price.toDouble()
     }
     val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
@@ -372,7 +372,7 @@ fun TicketDetailScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
                         ) {
                             Text(
-                                text = stringResource(org.com.hcmurs.R.string.next),
+                                text = stringResource(R.string.next),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -392,7 +392,7 @@ fun TicketDetailScreen(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = PrimaryGreen),
                         ) {
                             Text(
-                                text = stringResource(org.com.hcmurs.R.string.cancel),
+                                text = stringResource(R.string.cancel),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
                             )

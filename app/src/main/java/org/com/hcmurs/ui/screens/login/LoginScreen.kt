@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -67,7 +67,7 @@ fun LoginScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     val isAuthenticated by viewModel.isAuthenticated.collectAsState()
 
-    val context = LocalContext.current
+    LocalContext.current
 
     // Create launcher for Google Sign-In
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -190,7 +190,7 @@ private fun LoginScreenContent(
                         navController.navigate(Screen.Home.route)
                     }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = Color.Gray,
                         )

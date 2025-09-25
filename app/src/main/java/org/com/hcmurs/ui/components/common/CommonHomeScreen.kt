@@ -118,6 +118,7 @@ fun AppHomeScreen(
         HomeTopBar(
             navController = navController,
             isScrolled = isScrolled,
+            isAuthenticated = isAuthenticated,
             modifier = Modifier.align(Alignment.TopCenter),
         )
 
