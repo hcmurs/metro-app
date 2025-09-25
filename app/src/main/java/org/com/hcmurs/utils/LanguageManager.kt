@@ -8,6 +8,7 @@ package org.com.hcmurs.utils
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.core.content.edit
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ object LanguageManager {
         languageCode: String,
     ) {
         val prefs = context.getSharedPreferences("language_prefs", Context.MODE_PRIVATE)
-        prefs.edit().putString(LANGUAGE_KEY, languageCode).apply()
+        prefs.edit { putString(LANGUAGE_KEY, languageCode) }
 
         val locale = Locale(languageCode)
         Locale.setDefault(locale)

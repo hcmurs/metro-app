@@ -6,8 +6,6 @@
  */
 package org.com.hcmurs.ui.screens.news
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +45,6 @@ import coil3.compose.AsyncImage
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BlogTile(
     blog: BlogResponse,
@@ -111,7 +108,6 @@ fun BlogTile(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BlogSection(
     navController: NavController,
@@ -184,7 +180,6 @@ fun BlogSection(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview(showBackground = true)
 fun BlogSectionPreview() {

@@ -188,7 +188,7 @@ fun TicketCard(
     val currentLanguage = LanguageManager.getLocale(context)
 
     // Convert price based on current language
-    val vndPrice = order.amount.toDouble()
+    val vndPrice = order.amount
     val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
     // Get localized ticket name

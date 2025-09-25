@@ -96,7 +96,7 @@ constructor(
             try {
                 val response = repository.getBlogs(page = 0, size = 5, sort = "createdAt,desc")
                 if (response.isSuccessful) {
-                    val blogs = response.body()?.data?.content ?: emptyList<BlogResponse>()
+                    val blogs = response.body()?.data?.content ?: emptyList()
                     _homeBlogsState.value = BlogUiState.Success(blogs)
                 } else {
                     _homeBlogsState.value = BlogUiState.Error("Failed to load blogs: ${response.message()}")
@@ -127,7 +127,7 @@ constructor(
 
                 if (response.isSuccessful) {
                     val pageData = response.body()?.data
-                    val blogs = pageData?.content ?: emptyList<BlogResponse>()
+                    val blogs = pageData?.content ?: emptyList()
 
                     if (refresh) {
                         allBlogs.clear()
@@ -161,7 +161,7 @@ constructor(
 
                     if (response.isSuccessful) {
                         val pageData = response.body()?.data
-                        val blogs = pageData?.content ?: emptyList<BlogResponse>()
+                        val blogs = pageData?.content ?: emptyList()
 
                         allBlogs.addAll(blogs)
                         _blogsState.value = BlogUiState.Success(allBlogs.toList())
@@ -204,7 +204,7 @@ constructor(
             try {
                 val response = repository.getBlogs(page = 0, size = quantity, sort = "createdAt,desc")
                 if (response.isSuccessful) {
-                    val blogs = response.body()?.data?.content ?: emptyList<BlogResponse>()
+                    val blogs = response.body()?.data?.content ?: emptyList()
                     _featuredBlogs.value = blogs
                 } else {
                     _featuredBlogs.value = emptyList()

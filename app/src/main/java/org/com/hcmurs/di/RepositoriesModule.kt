@@ -11,8 +11,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import org.com.hcmurs.repositories.Api
-import org.com.hcmurs.repositories.ApiImpl
 import org.com.hcmurs.repositories.MainLog
 import org.com.hcmurs.repositories.MainLogImpl
 import org.com.hcmurs.repositories.Store
@@ -26,10 +24,6 @@ abstract class RepositoriesModule {
     abstract fun bindMainLog(
         log: MainLogImpl,
     ): MainLog
-
-    @Binds
-    @Singleton
-    abstract fun bindApi(api: ApiImpl): Api
 
     @Binds
     @Singleton

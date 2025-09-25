@@ -6,13 +6,10 @@
  */
 package org.com.hcmurs.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun formatDate(dateString: String?): String = try {
     val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
     val date = LocalDateTime.parse(dateString, formatter)

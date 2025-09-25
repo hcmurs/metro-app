@@ -58,7 +58,7 @@ fun QuickActionsSection(
     onGridItemClick: (String) -> Unit,
 ) {
     // Filter the list based on user role
-    val allScreenTitles = ScreenTitle.values().toList()
+    val allScreenTitles = ScreenTitle.entries
 
     // Define which items should only be visible to STAFF
     val staffOnlyScreens = listOf(

@@ -7,8 +7,6 @@
 package org.com.hcmurs.ui.screens.news
 
 // import item
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,7 +59,6 @@ import org.com.hcmurs.model.BlogResponse
 import org.com.hcmurs.ui.components.topbar.BlogListTopBar
 import org.com.hcmurs.utils.formatDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BlogListScreen(
@@ -117,7 +114,6 @@ fun BlogListScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun BlogListContent(
     blogsState: BlogUiState,
@@ -231,7 +227,6 @@ private fun BlogListContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BlogListItem(
     blog: BlogResponse,

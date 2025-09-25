@@ -42,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -246,12 +245,4 @@ private fun LanguageOptionItem(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ChangeLanguageScreenPreview() {
-    // For preview, we'll create a mock CurrencyManager
-    // In real usage, this will be injected via Hilt
-    // ChangeLanguageScreen(navController = rememberNavController(), currencyManager = mockCurrencyManager)
 }
