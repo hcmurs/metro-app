@@ -12,13 +12,24 @@ import androidx.compose.ui.graphics.Color
 
 // val GreenPrimary = Color(0xFF347433)
 val PrimaryGreen = Color(0xFF4CAF50)
+val SecondaryGreen = Color(0xFF66BB6A)
 val DarkGreen = Color(0xFF388E3C)
+val LightGreen = Color(0xFFE8F5E8)
+val LightGreenBackground = Color(0xFFE8F5E9)
+val TextPrimaryColor = Color(0xFF212121)
+val TextSecondaryColor = Color(0xFF757575)
 val LightOrange = Color(0xFFFF6F3C)
 val LightYellow = Color(0xFFFFC107)
 val LightBeige = Color(0xFFB4D2BA)
 val PaleYellow = Color(0xFFDCE2AA)
 val EarthBrown = Color(0xFFB57F50)
 val ErrorRed = Color(0xFFD32F2F)
+val BackgroundGray = Color(0xFFF8F9FA)
+val BorderColor = Color(0xFFE0E0E0)
+val PureWhite = Color(0xFFFFFFFF)
+val PureBlack = Color(0xFF000000)
+val SuccessGreen = Color(0xFF10B981)
+val LightGray = Color(0xFFF0F0F0)
 
 val LightColorScheme =
     lightColorScheme(

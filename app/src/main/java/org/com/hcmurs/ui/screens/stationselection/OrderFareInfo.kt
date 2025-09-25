@@ -27,7 +27,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AlertDialog
@@ -76,13 +75,12 @@ import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.Station
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFF1F8E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
-private val CardBackgroundColor = Color.White
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.PureWhite
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 private val DividerColor = Color.Black.copy(alpha = 0.08f)
 
 data class LocalPaymentMethod(
@@ -183,7 +181,7 @@ fun OrderFareInfoScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = DarkGreen)
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = CardBackgroundColor),
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PureWhite),
             )
         },
         bottomBar = {
@@ -238,7 +236,7 @@ private fun PaymentMethodSection(selectedMethod: LocalPaymentMethod, onClick: ()
                 .fillMaxWidth()
                 .clickable(onClick = onClick),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
+            colors = CardDefaults.cardColors(containerColor = PureWhite),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Row(
@@ -350,7 +348,7 @@ private fun PaymentBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(elevation = 8.dp)
-            .background(CardBackgroundColor)
+            .background(PureWhite)
             .padding(16.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -436,7 +434,7 @@ private fun PaymentInfoSection(fare: FareMatrix, entryStation: Station, exitStat
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
+            colors = CardDefaults.cardColors(containerColor = PureWhite),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -464,7 +462,7 @@ private fun TicketDetailsSection(entryStation: Station, exitStation: Station) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = CardBackgroundColor),
+            colors = CardDefaults.cardColors(containerColor = PureWhite),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

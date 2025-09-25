@@ -71,6 +71,11 @@ import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import org.com.hcmurs.ui.screens.login.LoginViewModel
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.TranslationHelper
 
@@ -85,12 +90,6 @@ data class RouteInfo(
     val to: String,
     val details: String = "Xem chi tiết",
 )
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFE8F5E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
 
 // --- TOP BAR ---
 @OptIn(ExperimentalMaterial3Api::class)
@@ -211,7 +210,7 @@ fun TicketCard(
             confirmButton = {
                 Button(
                     onClick = { showDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = org.com.hcmurs.ui.screens.metro.account.PrimaryGreen),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
                 ) {
                     Text(stringResource(R.string.ok))
                 }

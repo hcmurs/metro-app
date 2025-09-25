@@ -45,7 +45,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.com.hcmurs.R
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

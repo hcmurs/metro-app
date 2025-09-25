@@ -35,10 +35,8 @@ import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -82,18 +80,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.feedback.FeedbackDto
+import org.com.hcmurs.ui.theme.BackgroundGray
+import org.com.hcmurs.ui.theme.BorderColor
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.PureWhite
+import org.com.hcmurs.ui.theme.SecondaryGreen
+import org.com.hcmurs.ui.theme.SuccessGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 import org.com.hcmurs.utils.navigateToHome
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val SecondaryGreen = Color(0xFF66BB6A)
-private val LightGreen = Color(0xFFE8F5E8)
-private val DarkGreen = Color(0xFF2E7D32)
-private val BackgroundGray = Color(0xFFF5F7FA)
-private val CardBackground = Color(0xFFFFFFFF)
-private val BorderColor = Color(0xFFE1E5E9)
-private val TextSecondary = Color(0xFF6B7280)
-private val TextPrimary = Color(0xFF1F2937)
-private val SuccessGreen = Color(0xFF10B981)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -167,7 +164,7 @@ fun FeedbackScreen(
                 ) {
                     Card(
                         colors = CardDefaults.cardColors(
-                            containerColor = CardBackground,
+                            containerColor = PureWhite,
                         ),
                         modifier = Modifier
                             .padding(32.dp)
@@ -187,7 +184,7 @@ fun FeedbackScreen(
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(
                                 "Đang tải dữ liệu...",
-                                color = TextPrimary,
+                                color = TextPrimaryColor,
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
                             )
@@ -264,7 +261,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
         modifier = Modifier
             .fillMaxWidth()
             .shadow(8.dp, RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        colors = CardDefaults.cardColors(containerColor = PureWhite),
         shape = RoundedCornerShape(20.dp),
     ) {
         var showImageDialog by remember { mutableStateOf(false) }
@@ -353,7 +350,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
             // Content với improved styling
             Text(
                 feedback.content,
-                color = TextSecondary,
+                color = TextSecondaryColor,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Normal,
@@ -437,7 +434,7 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         Text(
                             feedback.reply,
                             fontSize = 14.sp,
-                            color = TextPrimary,
+                            color = TextPrimaryColor,
                             lineHeight = 20.sp,
                         )
                     }
@@ -465,14 +462,14 @@ fun FeedbackCard(feedback: FeedbackDto) {
                         Icon(
                             Icons.Default.Schedule,
                             contentDescription = "Time",
-                            tint = TextSecondary,
+                            tint = TextSecondaryColor,
                             modifier = Modifier.size(16.dp),
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             feedback.createdAt,
                             fontSize = 12.sp,
-                            color = TextSecondary,
+                            color = TextSecondaryColor,
                             fontWeight = FontWeight.Medium,
                         )
                     }
@@ -501,7 +498,7 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
 
             Card(
                 colors = CardDefaults.cardColors(
-                    containerColor = CardBackground,
+                    containerColor = PureWhite,
                 ),
                 modifier = Modifier.shadow(12.dp, RoundedCornerShape(24.dp)),
                 shape = RoundedCornerShape(24.dp),
@@ -539,7 +536,7 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                         text = message,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
+                        color = TextPrimaryColor,
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -547,7 +544,7 @@ fun EmptyFeedbackContent(message: String, showSearch: Boolean = false) {
                     Text(
                         text = "Hãy gửi phản ánh đầu tiên của bạn",
                         fontSize = 15.sp,
-                        color = TextSecondary,
+                        color = TextSecondaryColor,
                     )
                 }
             }
@@ -562,7 +559,7 @@ fun SearchBarWithButtons() {
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .shadow(8.dp, RoundedCornerShape(20.dp)),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
+        colors = CardDefaults.cardColors(containerColor = PureWhite),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -571,7 +568,7 @@ fun SearchBarWithButtons() {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                placeholder = { Text("Tìm kiếm phản ánh...", color = TextSecondary) },
+                placeholder = { Text("Tìm kiếm phản ánh...", color = TextSecondaryColor) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
                     Icon(
