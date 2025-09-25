@@ -6,9 +6,7 @@
  */
 package org.com.hcmurs.ui.screens.staffhome
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,7 +43,6 @@ import org.com.hcmurs.ui.components.quickaction.StaffAccountQuickAccess
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StaffHomeScreen(
     navController: NavHostController,
@@ -129,7 +126,6 @@ fun StaffHomeScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun StaffHomeScreenPreview() {

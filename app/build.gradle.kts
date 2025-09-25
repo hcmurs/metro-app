@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey.alias
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -111,7 +109,17 @@ dependencies {
     implementation(libs.appauth)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.animation)
-    implementation("com.stripe:stripe-android:20.42.0")
+    implementation(libs.stripe.android)
+
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-analytics-ktx
+    implementation(libs.google.firebase.analytics.ktx)
+    // messaging
+    implementation(libs.firebase.messaging.ktx)
+
+    // notification permission
+    implementation(libs.accompanist.permissions)
 
     // firebase
     implementation(libs.firebase.bom)

@@ -6,8 +6,6 @@
  */
 package org.com.hcmurs.ui.screens.news
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -47,9 +45,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.com.hcmurs.R
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BlogDetailScreen(

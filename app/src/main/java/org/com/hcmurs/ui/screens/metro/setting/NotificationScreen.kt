@@ -24,7 +24,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DoneAll
@@ -57,10 +56,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import org.com.hcmurs.ui.screens.metro.account.DarkGreen
-import org.com.hcmurs.ui.screens.metro.account.LightGreen
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
-import org.com.hcmurs.ui.screens.metro.account.SecondaryGreen
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.SecondaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

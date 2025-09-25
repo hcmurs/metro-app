@@ -26,8 +26,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.Card
@@ -57,12 +55,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import org.com.hcmurs.RouteResponse
 import org.com.hcmurs.Screen
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFE8F5E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 
 // --- TOP BAR ---
 @OptIn(ExperimentalMaterial3Api::class)

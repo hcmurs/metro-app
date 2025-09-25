@@ -7,8 +7,8 @@
 package org.com.hcmurs.oauth
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,7 +22,7 @@ class OAuth2Service @Inject constructor(
     }
 
     fun initiateGoogleLogin() {
-        val authUri = Uri.parse(GOOGLE_AUTH_URL)
+        val authUri = GOOGLE_AUTH_URL.toUri()
             .buildUpon()
             .appendQueryParameter("response_type", "code")
             .appendQueryParameter("scope", "openid email profile")

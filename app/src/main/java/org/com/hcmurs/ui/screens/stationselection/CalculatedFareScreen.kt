@@ -26,7 +26,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.DirectionsBus
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -60,12 +59,11 @@ import org.com.hcmurs.FareMatrix
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.screens.metro.buyticket.FareMatrixViewModel
 import org.com.hcmurs.ui.theme.DarkGreen
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val LightGreenBackground = Color(0xFFE8F5E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
-private val WarningColor = Color(0xFFD32F2F)
+import org.com.hcmurs.ui.theme.ErrorRed
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -233,7 +231,7 @@ fun FareDetailCard(entryStationName: String, exitStationName: String, fare: Fare
                 InfoRow(
                     title = "Lưu ý:",
                     value = "Tự động kích hoạt sau 30 ngày kể từ ngày mua.",
-                    valueColor = WarningColor,
+                    valueColor = ErrorRed,
                 )
                 InfoRow(
                     title = "Mô tả:",

@@ -23,12 +23,7 @@ fun vibrateOnSuccess(context: Context) {
         }
 
     vibrator?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            it.vibrate(100)
-        }
+        it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 }
 
@@ -43,16 +38,10 @@ fun vibrateOnError(context: Context) {
         }
 
     vibrator?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Pattern: vibrate 100ms, sleep 100ms, vibrate 100ms, sleep 100ms, vibrate 100ms
-            val timings = longArrayOf(0, 100, 100, 100, 100, 100)
-            val amplitudes =
-                intArrayOf(0, VibrationEffect.DEFAULT_AMPLITUDE, 0, VibrationEffect.DEFAULT_AMPLITUDE, 0, VibrationEffect.DEFAULT_AMPLITUDE)
-            it.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
-        } else {
-            @Suppress("DEPRECATION")
-            // Pattern: vibrate 100ms, sleep 100ms, vibrate 100ms, sleep 100ms, vibrate 100ms
-            it.vibrate(longArrayOf(0, 100, 100, 100, 100, 100), -1)
-        }
+        // Pattern: vibrate 100ms, sleep 100ms, vibrate 100ms, sleep 100ms, vibrate 100ms
+        val timings = longArrayOf(0, 100, 100, 100, 100, 100)
+        val amplitudes =
+            intArrayOf(0, VibrationEffect.DEFAULT_AMPLITUDE, 0, VibrationEffect.DEFAULT_AMPLITUDE, 0, VibrationEffect.DEFAULT_AMPLITUDE)
+        it.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
     }
 }

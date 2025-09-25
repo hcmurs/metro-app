@@ -6,8 +6,6 @@
  */
 package org.com.hcmurs.repositories.apis.weather
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import javax.inject.Inject
@@ -22,7 +20,7 @@ class WeatherRepository
 constructor(
     private val api: WeatherApi,
 ) {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     suspend fun getTemperature(
         lat: Double,
         lon: Double,
@@ -33,7 +31,6 @@ constructor(
         return response.hourly.temperature_2m.getOrNull(index)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getCurrentWeather(
         lat: Double,
         lon: Double,

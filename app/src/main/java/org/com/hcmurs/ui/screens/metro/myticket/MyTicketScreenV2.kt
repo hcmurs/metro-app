@@ -67,15 +67,14 @@ import java.util.TimeZone
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.order.OrderWithTicketDetails
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 import org.com.hcmurs.utils.TranslationHelper
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFF1F8E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -188,7 +187,7 @@ fun TicketCard(
     val currentLanguage = LanguageManager.getLocale(context)
 
     // Convert price based on current language
-    val vndPrice = order.amount.toDouble()
+    val vndPrice = order.amount
     val convertedPrice = currencyManager.convertPrice(vndPrice, currentLanguage)
 
     // Get localized ticket name

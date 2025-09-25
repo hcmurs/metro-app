@@ -65,10 +65,9 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
             } else {
                 featuredBlogs.value.forEach { blog ->
                     BlogTile(
-                        title = blog.title ?: "",
+                        title = blog.title,
                         subtitle = blog.excerpt ?: "",
                         thumbnailUrl = blog.image,
-                        color = Color.White,
                         modifier = Modifier.width(300.dp),
                     ) {
                         navController.navigate("blog_detail/${blog.id}")
@@ -121,7 +120,7 @@ fun BlogTile(
     title: String,
     thumbnailUrl: String?,
     subtitle: String,
-    color: Color,
+    color: Color = Color.White,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {

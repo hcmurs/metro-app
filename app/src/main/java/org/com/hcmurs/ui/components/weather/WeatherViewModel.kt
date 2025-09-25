@@ -6,9 +6,7 @@
  */
 package org.com.hcmurs.ui.components.weather
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -19,7 +17,6 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.repositories.apis.weather.WeatherRepository
 import org.com.hcmurs.repositories.apis.weather.WeatherResult
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class WeatherViewModel
 @Inject
@@ -36,7 +33,6 @@ constructor(
         fetchWeather()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun fetchTemperature() {
         viewModelScope.launch {
             try {

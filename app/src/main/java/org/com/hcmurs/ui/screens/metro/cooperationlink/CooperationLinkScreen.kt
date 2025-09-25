@@ -7,7 +7,6 @@
 package org.com.hcmurs.ui.screens.metro.cooperationlink
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.R
@@ -81,7 +81,7 @@ fun CooperationLinkScreen(navController: NavHostController) {
                             .aspectRatio(0.85f) // Fixed aspect ratio ensures same proportions
                             .clickable {
                                 if (item.tapUrl.isNotEmpty()) {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.tapUrl))
+                                    val intent = Intent(Intent.ACTION_VIEW, item.tapUrl.toUri())
                                     context.startActivity(intent)
                                 }
                             },

@@ -7,6 +7,7 @@
 package org.com.hcmurs.oauth
 
 import android.content.Context
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -18,7 +19,7 @@ constructor(
     private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     fun saveToken(token: String) {
-        prefs.edit().putString("jwt_token", token).apply()
+        prefs.edit { putString("jwt_token", token) }
     }
 
     fun getToken(): String? = prefs.getString("jwt_token", null)

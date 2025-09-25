@@ -10,6 +10,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 import javax.inject.Inject
@@ -44,7 +45,7 @@ constructor(
             existingId
         } else {
             val newId = UUID.randomUUID().toString()
-            sharedPrefs.edit().putString("device_id", newId).apply()
+            sharedPrefs.edit { putString("device_id", newId) }
             newId
         }
     }
