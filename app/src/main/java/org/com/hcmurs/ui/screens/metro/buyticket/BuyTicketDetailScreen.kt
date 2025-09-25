@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -61,16 +60,15 @@ import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.repositories.apis.ticket.TicketType
 import org.com.hcmurs.ui.components.logo.HurcLogo
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.ErrorRed
+import org.com.hcmurs.ui.theme.LightGreenBackground
+import org.com.hcmurs.ui.theme.PrimaryGreen
+import org.com.hcmurs.ui.theme.TextPrimaryColor
+import org.com.hcmurs.ui.theme.TextSecondaryColor
 import org.com.hcmurs.utils.CurrencyManager
 import org.com.hcmurs.utils.LanguageManager
 import org.com.hcmurs.utils.TranslationHelper
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val DarkGreen = Color(0xFF388E3C)
-private val LightGreenBackground = Color(0xFFE8F5E9)
-private val TextPrimaryColor = Color(0xFF212121)
-private val TextSecondaryColor = Color(0xFF757575)
-private val ErrorColor = Color(0xFFD32F2F)
 
 data class TicketDetailInfo(
     val type: String,
@@ -212,7 +210,7 @@ fun TicketDetailCard(
                 TicketInfoRow(
                     label = stringResource(R.string.note),
                     value = noteText,
-                    valueColor = ErrorColor,
+                    valueColor = ErrorRed,
                 )
                 Divider(color = Color.Black.copy(alpha = 0.08f))
 
@@ -302,7 +300,7 @@ fun TicketDetailScreen(
         // Show error or fallback UI
         Text(
             text = stringResource(R.string.error),
-            color = ErrorColor,
+            color = ErrorRed,
             modifier = Modifier.padding(16.dp),
         )
         return
@@ -342,7 +340,7 @@ fun TicketDetailScreen(
                 uiState.errorMessage != null -> {
                     Text(
                         text = stringResource(R.string.error) + ": ${uiState.errorMessage}",
-                        color = ErrorColor,
+                        color = ErrorRed,
                         modifier = Modifier.padding(16.dp),
                     )
                 }

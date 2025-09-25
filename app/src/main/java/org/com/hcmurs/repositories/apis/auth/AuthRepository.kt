@@ -9,6 +9,7 @@ package org.com.hcmurs.repositories.apis.auth
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -80,7 +81,7 @@ constructor(
         }
     }
 
-    suspend fun logout() {
+    fun logout() {
         tokenProvider.clearToken()
         _userProfile.value = null
         Log.d("AuthRepository", "User logged out and token cleared.")
@@ -98,7 +99,7 @@ constructor(
     }
 
     suspend fun storeUserEmail(email: String) = withContext(Dispatchers.IO) {
-        sharedPrefs.edit().putString("user_email", email).apply()
+        sharedPrefs.edit { putString("user_email", email) }
     }
 
     suspend fun getStoredUserEmail(): String? = withContext(Dispatchers.IO) {

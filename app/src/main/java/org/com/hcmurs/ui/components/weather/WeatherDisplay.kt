@@ -6,8 +6,6 @@
  */
 package org.com.hcmurs.ui.components.weather
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherDisplay(
     viewModel: WeatherViewModel = hiltViewModel(),

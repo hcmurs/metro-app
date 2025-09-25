@@ -92,7 +92,7 @@ class CurrencyManager @Inject constructor(
     }
 
     fun getExchangeRateDisplay(): String = if (_exchangeRate.value > 0) {
-        "1 VND = ${String.format("%.6f", _exchangeRate.value)} USD"
+        "1 VND = ${String.format(Locale.US, "%.6f", _exchangeRate.value)} USD"
     } else {
         ""
     }

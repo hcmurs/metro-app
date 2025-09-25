@@ -31,8 +31,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -69,12 +67,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-
-private val PrimaryGreen = Color(0xFF4CAF50)
-private val LightGreen = Color(0xFFE8F5E8)
-private val DarkGreen = Color(0xFF2E7D32)
-private val BackgroundGray = Color(0xFFF8F9FA)
-private val BorderColor = Color(0xFFE0E0E0)
+import org.com.hcmurs.ui.theme.BackgroundGray
+import org.com.hcmurs.ui.theme.BorderColor
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.LightGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

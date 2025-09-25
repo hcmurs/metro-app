@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.com.hcmurs.ui.screens.metro.account.DarkGreen
-import org.com.hcmurs.ui.screens.metro.account.PrimaryGreen
+import org.com.hcmurs.ui.theme.DarkGreen
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
 @Composable
 fun LoginRequiredDialog(

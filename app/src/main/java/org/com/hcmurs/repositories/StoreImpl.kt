@@ -8,6 +8,7 @@ package org.com.hcmurs.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -23,6 +24,6 @@ constructor(
         key: String,
         value: String,
     ) {
-        sharedPreferences.edit().putString(key, value).apply()
+        sharedPreferences.edit { putString(key, value) }
     }
 }
