@@ -55,7 +55,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
-import org.com.hcmurs.constant.UserRole
+import org.com.hcmurs.core.constant.UserRole
 import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
 import org.com.hcmurs.ui.components.topbar.HomeTopBar

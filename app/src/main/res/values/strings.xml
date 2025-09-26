@@ -49,6 +49,7 @@ and secure shopping experience</string>
     //continue_with_google
     <string name="continue_with_google">Continue with Google</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="continue_with_auth0">Continue with Auth0</string>
 
     <!--  Account Screen  -->
     <string name="account_information">Account Information</string>

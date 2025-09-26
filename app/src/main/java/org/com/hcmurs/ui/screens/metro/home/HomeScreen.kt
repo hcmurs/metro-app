@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.Screen
-import org.com.hcmurs.constant.UserRole
+import org.com.hcmurs.core.constant.UserRole
 import org.com.hcmurs.ui.components.common.AppHomeScreen
 import org.com.hcmurs.ui.components.dialog.LoginRequiredDialog
 import org.com.hcmurs.ui.components.featured.FeaturedBlogsSection

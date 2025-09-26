@@ -4,7 +4,7 @@
  * You shall not disclose such confidential information and shall use it only in
  * accordance with the terms of the license agreement you entered into with hcmurs.
  */
-package org.com.hcmurs.constant
+package org.com.hcmurs.core.constant
 
 enum class UserRole {
     USER,

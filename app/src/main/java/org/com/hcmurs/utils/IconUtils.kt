@@ -7,7 +7,7 @@
 package org.com.hcmurs.utils
 
 import org.com.hcmurs.R
-import org.com.hcmurs.constant.ScreenTitle
+import org.com.hcmurs.core.constant.ScreenTitle
 
 val screenTitleIconMap =
     mapOf<ScreenTitle, Int>(

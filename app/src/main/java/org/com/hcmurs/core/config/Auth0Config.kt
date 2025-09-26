@@ -4,8 +4,11 @@
  * You shall not disclose such confidential information and shall use it only in
  * accordance with the terms of the license agreement you entered into with hcmurs.
  */
-package org.com.hcmurs.oauth
+package org.com.hcmurs.core.config
 
-object AuthConstants {
-    const val TOKEN_KEY = "jwt_token"
+import org.com.hcmurs.BuildConfig
+
+object Auth0Config {
+    const val AUTH0_DOMAIN = BuildConfig.AUTH0_DOMAIN
+    const val AUTH0_CLIENT_ID = BuildConfig.AUTH0_CLIENT_ID
 }

@@ -4,9 +4,18 @@
  * You shall not disclose such confidential information and shall use it only in
  * accordance with the terms of the license agreement you entered into with hcmurs.
  */
-package org.com.hcmurs.constant
+package org.com.hcmurs.core.common.enum
 
-object AuthConstants {
-    const val SHARED_PREFS_NAME = "auth_prefs"
-    const val TOKEN_KEY = "access_token"
+sealed class LoadStatus(
+    val description: String = "",
+) {
+    class Init : LoadStatus()
+
+    class Loading : LoadStatus()
+
+    class Success : LoadStatus()
+
+    class Error(
+        val error: String,
+    ) : LoadStatus(error)
 }

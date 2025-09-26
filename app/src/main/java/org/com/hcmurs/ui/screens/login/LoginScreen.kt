@@ -8,6 +8,7 @@ package org.com.hcmurs.ui.screens.login
 
 import android.app.Activity
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -54,9 +55,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import com.auth0.android.Auth0
+import com.auth0.android.authentication.AuthenticationException
+import com.auth0.android.callback.Callback
+import com.auth0.android.provider.WebAuthProvider
+import com.auth0.android.result.Credentials
+import com.auth0.android.result.UserProfile
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
-import org.com.hcmurs.common.enum.LoadStatus
+import org.com.hcmurs.core.common.enum.LoadStatus
+import org.com.hcmurs.core.config.Auth0Config
 
 @Composable
 fun LoginScreen(
@@ -67,7 +75,11 @@ fun LoginScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     val isAuthenticated by viewModel.isAuthenticated.collectAsState()
 
-    LocalContext.current
+    lateinit var account: Auth0
+    var cachedCredentials: Credentials? = null
+    var cachedUserProfile: UserProfile? = null
+
+    val context = LocalContext.current
 
     // Create launcher for Google Sign-In
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -80,6 +92,40 @@ fun LoginScreen(
         } else {
             Log.w("LoginFlow", "Google sign-in canceled or failed with resultCode: ${result.resultCode}")
             viewModel.updateLoginError("Sign-in was canceled or failed")
+        }
+    }
+
+    fun loginWithBrowser() {
+        Log.d("LoginScreen", "Initiating Auth0 login with browser")
+        try {
+            // Set up the account object with the Auth0 application details
+            account = Auth0(Auth0Config.AUTH0_CLIENT_ID, Auth0Config.AUTH0_DOMAIN)
+
+            // Setup the WebAuthProvider, using the custom scheme and scope.
+            WebAuthProvider.login(account)
+                .withScheme("org.com.hcmurs")
+                .withScope("openid profile email read:current_user update:current_user_metadata")
+                .withAudience("https://${Auth0Config.AUTH0_DOMAIN}/api/v2/")
+                .start(
+                    context as ComponentActivity,
+                    object : Callback<Credentials, AuthenticationException> {
+                        override fun onSuccess(result: Credentials) {
+                            Log.d("LoginScreen", "Auth0 login successful")
+                            cachedCredentials = result
+                            // Handle successful authentication here
+                            // You might want to call a viewModel method to process the credentials
+                            viewModel.handleAuth0LoginSuccess(result)
+                        }
+
+                        override fun onFailure(error: AuthenticationException) {
+                            Log.e("LoginScreen", "Auth0 login failed: ${error.message}", error)
+                            viewModel.updateLoginError("Auth0 login failed: ${error.message}")
+                        }
+                    },
+                )
+        } catch (e: Exception) {
+            Log.e("LoginScreen", "Error initiating Auth0 login", e)
+            viewModel.updateLoginError("Error initiating Auth0 login: ${e.message}")
         }
     }
 
@@ -140,6 +186,10 @@ fun LoginScreen(
             // Add Facebook login logic here if needed
             // For now, this is a placeholder since your original code only had Google login
         },
+        onLoginWithAuth0Click = {
+            Log.d("LoginScreen", "Auth0 login button clicked")
+            loginWithBrowser()
+        },
     )
 }
 
@@ -149,6 +199,7 @@ private fun LoginScreenContent(
     status: LoadStatus,
     onGoogleLoginClick: () -> Unit,
     onFacebookLoginClick: () -> Unit,
+    onLoginWithAuth0Click: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -263,6 +314,16 @@ private fun LoginScreenContent(
                             contentColor = Color.White,
                         )
 
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LoginButton(
+                            onClick = { onLoginWithAuth0Click() },
+                            text = stringResource(R.string.continue_with_auth0),
+                            logoRes = R.drawable.auth0,
+                            backgroundColor = Color(0xFFF1F1F1),
+                            contentColor = Color.Black,
+                        )
+
                         // Show error message if there's an error
                         if (status is LoadStatus.Error) {
                             Spacer(modifier = Modifier.height(16.dp))
@@ -326,6 +387,7 @@ fun LoginScreenInitPreview() {
         status = LoadStatus.Init(),
         onGoogleLoginClick = {},
         onFacebookLoginClick = {},
+        onLoginWithAuth0Click = {},
     )
 }
 
@@ -337,6 +399,7 @@ fun LoginScreenLoadingPreview() {
         status = LoadStatus.Loading(),
         onGoogleLoginClick = {},
         onFacebookLoginClick = {},
+        onLoginWithAuth0Click = {},
     )
 }
 
@@ -348,6 +411,7 @@ fun LoginScreenSuccessPreview() {
         status = LoadStatus.Success(),
         onGoogleLoginClick = {},
         onFacebookLoginClick = {},
+        onLoginWithAuth0Click = {},
     )
 }
 
@@ -359,5 +423,6 @@ fun LoginScreenErrorPreview() {
         status = LoadStatus.Error(stringResource(R.string.error)),
         onGoogleLoginClick = {},
         onFacebookLoginClick = {},
+        onLoginWithAuth0Click = {},
     )
 }

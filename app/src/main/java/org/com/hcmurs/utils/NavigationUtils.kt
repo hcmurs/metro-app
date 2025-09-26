@@ -7,7 +7,7 @@
 package org.com.hcmurs.utils
 
 import org.com.hcmurs.Screen
-import org.com.hcmurs.constant.ScreenTitle
+import org.com.hcmurs.core.constant.ScreenTitle
 
 // Helper function to map ScreenTitle to navigation routes
 fun getNavigationRoute(screenTitle: ScreenTitle): String = when (screenTitle) {

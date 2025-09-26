@@ -107,6 +107,15 @@
                     <data android:scheme="org.com.hcmurs" />
                     <data android:host="callback" />
                 </intent-filter>
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data
+                        android:pathPrefix="${auth0CallbackUrl}"
+                        android:scheme="${auth0Scheme}"
+                        android:host="${auth0Domain}" />
+                </intent-filter>
             </activity>
 
         </application>

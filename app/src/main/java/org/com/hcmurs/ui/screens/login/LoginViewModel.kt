@@ -200,4 +200,37 @@ constructor(
             }
         }
     }
+
+    // Handle Auth0 login success
+    fun handleAuth0LoginSuccess(credentials: com.auth0.android.result.Credentials) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            try {
+                Log.d("LoginFlow", "Processing Auth0 credentials")
+                Log.d("LoginFlow", "Access token length: ${credentials.accessToken.length}")
+                Log.d("LoginFlow", "ID token available: ${credentials.idToken != null}")
+
+                // For now, we'll use the ID token if available, or access token as fallback
+                val tokenToUse = credentials.idToken ?: credentials.accessToken
+
+                // TODO: You might need to create a new backend endpoint for Auth0 login
+                // For now, we'll try to use it as-is or modify the backend to accept Auth0 tokens
+                // This is a placeholder - you'll need to implement auth0 backend integration
+
+                Log.d("LoginFlow", "Auth0 authentication successful")
+                _isAuthenticated.value = true
+
+                // You might want to store Auth0 user info differently
+                // For now, we'll try to refresh the profile from your existing backend
+                refreshUserProfile()
+            } catch (e: Exception) {
+                Log.e("LoginFlow", "Exception during Auth0 login handling", e)
+                _errorMessage.value = "Auth0 login processing failed: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

@@ -41,7 +41,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
-import org.com.hcmurs.constant.ScreenTitle
+import org.com.hcmurs.core.constant.ScreenTitle
 import org.com.hcmurs.ui.screens.scanqr.ActionType
 import org.com.hcmurs.utils.screenTitleIconMap
 

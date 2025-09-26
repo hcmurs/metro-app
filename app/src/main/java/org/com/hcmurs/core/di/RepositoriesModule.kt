@@ -4,7 +4,7 @@
  * You shall not disclose such confidential information and shall use it only in
  * accordance with the terms of the license agreement you entered into with hcmurs.
  */
-package org.com.hcmurs.di
+package org.com.hcmurs.core.di
 
 import dagger.Binds
 import dagger.Module

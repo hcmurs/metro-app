@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -24,7 +26,35 @@ android {
             useSupportLibrary = true
         }
 
+        // Read from local.properties
+        val properties = Properties()
+        if (rootProject.file("local.properties").exists()) {
+            properties.load(project.rootProject.file("local.properties").inputStream())
+        } else {
+            throw RuntimeException("local.properties file not found")
+        }
+
+        val error = "variable not found in local.properties"
+
+        var auth0Domain = properties.getProperty("auth0.domain")
+        var auth0ClientId = properties.getProperty("auth0.client.id")
+
+        // Define BuildConfig fields without revealing fallback values
+        buildConfigField(
+            "String",
+            "AUTH0_DOMAIN",
+            "\"${auth0Domain ?: throw RuntimeException(error)}\"",
+        )
+        buildConfigField(
+            "String",
+            "AUTH0_CLIENT_ID",
+            "\"${auth0ClientId ?: throw RuntimeException(error)}\"",
+        )
+
         manifestPlaceholders["appAuthRedirectScheme"] = "org.com.hcmurs"
+        manifestPlaceholders["auth0Domain"] = auth0Domain
+        manifestPlaceholders["auth0Scheme"] = applicationId.toString()
+        manifestPlaceholders["auth0CallbackUrl"] = "/android/org.com.hcmurs/callback"
     }
 
     buildTypes {
@@ -45,6 +75,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
@@ -121,15 +152,8 @@ dependencies {
     // notification permission
     implementation(libs.accompanist.permissions)
 
-    // firebase
-    implementation(libs.firebase.bom)
-    // https://mvnrepository.com/artifact/com.google.firebase/firebase-analytics-ktx
-    implementation(libs.google.firebase.analytics.ktx)
-    // messaging
-    implementation(libs.firebase.messaging.ktx)
-
-    // notification permission
-    implementation(libs.accompanist.permissions)
+    // auth0
+    implementation("com.auth0.android:auth0:2.9.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

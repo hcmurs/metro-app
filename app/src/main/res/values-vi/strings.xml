@@ -50,6 +50,7 @@ and secure shopping experience</string>
     <string name="continue_with_google">Tiếp tục với Google</string>
     //student_account
     <string name="continue_with_facebook">Tiếp tục với Facebook</string>
+    <string name="continue_with_auth0">Tiếp tục với Auth0</string>
 
     <!--  Account Screen  -->
     <string name="account_information">Thông tin tài khoản</string>

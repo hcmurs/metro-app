@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.com.hcmurs.R
-import org.com.hcmurs.constant.ScreenTitle
-import org.com.hcmurs.constant.UserRole
+import org.com.hcmurs.core.constant.ScreenTitle
+import org.com.hcmurs.core.constant.UserRole
 import org.com.hcmurs.ui.theme.LightOrange
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.getNavigationRoute
