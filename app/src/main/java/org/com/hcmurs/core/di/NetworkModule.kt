@@ -334,7 +334,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideNotificationApi(okHttpClient: OkHttpClient): NotificationApi = Retrofit.Builder()
-        .baseUrl("http://192.168.88.172:4008/")
+        .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

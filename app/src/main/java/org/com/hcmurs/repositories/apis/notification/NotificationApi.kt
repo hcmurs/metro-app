@@ -18,17 +18,17 @@ import retrofit2.http.Path
 
 interface NotificationApi {
 
-    @GET("/api/v1/notifications/{email}")
+    @GET("/api/notifications/{email}")
     suspend fun getNotificationsByEmail(
         @Path("email") email: String,
     ): Response<List<NotificationResponse>>
 
-    @PATCH("/api/v1/notifications/{id}/read")
+    @PATCH("/api/notifications/{id}/read")
     suspend fun markAsRead(
         @Path("id") notificationId: Long,
     ): Response<Void>
 
-    @POST("/api/v1/user-device-tokens")
+    @POST("/api/user-device-tokens")
     suspend fun registerFcmToken(
         @Body request: UserDeviceTokenRequest,
     ): Response<UserDeviceTokenResponse>
