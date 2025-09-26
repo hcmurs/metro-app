@@ -133,48 +133,4 @@ class NotificationViewModel @Inject constructor(
             }
         }
     }
-
-    fun sendWelcomeNotification() {
-        viewModelScope.launch {
-            try {
-                val result = notificationRepository.sendTestNotification()
-                result.fold(
-                    onSuccess = { message ->
-                        Log.d("NotificationViewModel", "Test notification sent: $message")
-                        // Refresh notifications to show the new one
-                        refreshNotifications()
-                    },
-                    onFailure = { error ->
-                        Log.e("NotificationViewModel", "Failed to send test notification", error)
-                    },
-                )
-            } catch (e: Exception) {
-                Log.e("NotificationViewModel", "Unexpected error sending test notification", e)
-            }
-        }
-    }
-
-    fun sendCustomNotification(title: String, message: String, type: String = "INFO") {
-        viewModelScope.launch {
-            try {
-                val result = notificationRepository.sendNotificationToUser(
-                    title = title,
-                    body = message,
-                    type = type,
-                )
-                result.fold(
-                    onSuccess = { response ->
-                        Log.d("NotificationViewModel", "Custom notification sent: $response")
-                        // Refresh notifications to show the new one
-                        refreshNotifications()
-                    },
-                    onFailure = { error ->
-                        Log.e("NotificationViewModel", "Failed to send custom notification", error)
-                    },
-                )
-            } catch (e: Exception) {
-                Log.e("NotificationViewModel", "Unexpected error sending custom notification", e)
-            }
-        }
-    }
 }

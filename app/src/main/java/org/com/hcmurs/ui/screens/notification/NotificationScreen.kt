@@ -28,8 +28,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,14 +52,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.com.hcmurs.model.NotificationItem
+import org.com.hcmurs.ui.theme.PrimaryGreen
 
+// Data classes for preview
+data class NotificationScreenState(
+    val uiState: NotificationUiState,
+    val isRefreshing: Boolean = false,
+)
+
+data class NotificationScreenActions(
+    val onBackClick: (() -> Unit)? = null,
+    val onRefreshClick: () -> Unit = {},
+    val onMarkAllAsRead: () -> Unit = {},
+    val onNotificationClick: (NotificationItem) -> Unit = {},
+    val onRetryClick: () -> Unit = {},
+)
+
+// Main Screen Composable with ViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(
@@ -67,66 +87,47 @@ fun NotificationScreen(
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
+    val state = NotificationScreenState(
+        uiState = uiState,
+        isRefreshing = isRefreshing,
+    )
+
+    val actions = NotificationScreenActions(
+        onBackClick = onBackClick,
+        onRefreshClick = { viewModel.refreshNotifications() },
+        onMarkAllAsRead = { viewModel.markAllAsRead() },
+        onNotificationClick = { notification ->
+            if (!notification.isRead) {
+                viewModel.markAsRead(notification.id)
+            }
+        },
+        onRetryClick = { viewModel.loadNotifications() },
+    )
+
+    NotificationScreenContent(
+        state = state,
+        actions = actions,
+    )
+}
+
+// Stateless Content Composable for Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationScreenContent(
+    state: NotificationScreenState,
+    actions: NotificationScreenActions,
+) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Notifications",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                },
-                navigationIcon = {
-                    if (onBackClick != null) {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    // Refresh button
-                    IconButton(
-                        onClick = { viewModel.refreshNotifications() },
-                        enabled = !isRefreshing,
-                    ) {
-                        if (isRefreshing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Refresh notifications",
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-
-                    // Mark all as read button
-                    TextButton(
-                        onClick = { viewModel.markAllAsRead() },
-                    ) {
-                        Text(
-                            text = "Mark all read",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+            NotificationTopAppBar(
+                isRefreshing = state.isRefreshing,
+                onBackClick = actions.onBackClick,
+                onRefreshClick = actions.onRefreshClick,
+                onMarkAllAsRead = actions.onMarkAllAsRead,
             )
         },
     ) { paddingValues ->
-        val currentUiState = uiState
-        when (currentUiState) {
+        when (val currentUiState = state.uiState) {
             is NotificationUiState.Loading -> {
                 LoadingContent(paddingValues)
             }
@@ -134,22 +135,82 @@ fun NotificationScreen(
                 NotificationListContent(
                     notifications = currentUiState.notifications,
                     paddingValues = paddingValues,
-                    onNotificationClick = { notification ->
-                        if (!notification.isRead) {
-                            viewModel.markAsRead(notification.id)
-                        }
-                    },
+                    onNotificationClick = actions.onNotificationClick,
                 )
             }
             is NotificationUiState.Error -> {
                 ErrorContent(
                     message = currentUiState.message,
                     paddingValues = paddingValues,
-                    onRetry = { viewModel.loadNotifications() },
+                    onRetry = actions.onRetryClick,
                 )
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NotificationTopAppBar(
+    isRefreshing: Boolean,
+    onBackClick: (() -> Unit)?,
+    onRefreshClick: () -> Unit,
+    onMarkAllAsRead: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Notifications",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        },
+        navigationIcon = {
+            if (onBackClick != null) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                    )
+                }
+            }
+        },
+        actions = {
+            // Refresh button
+            IconButton(
+                onClick = onRefreshClick,
+                enabled = !isRefreshing,
+            ) {
+                if (isRefreshing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh notifications",
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+
+            // Mark all as read button
+            TextButton(
+                onClick = onMarkAllAsRead,
+            ) {
+                Text(
+                    text = "Mark all read",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 14.sp,
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+    )
 }
 
 @Composable
@@ -219,7 +280,7 @@ private fun ErrorContent(
             Button(
                 onClick = onRetry,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = PrimaryGreen,
                 ),
             ) {
                 Icon(
@@ -400,6 +461,147 @@ fun NotificationItemCard(
                 modifier = Modifier
                     .size(20.dp)
                     .align(Alignment.CenterVertically),
+            )
+        }
+    }
+}
+
+// Mock data and preview functions
+private fun createMockNotifications(): List<NotificationItem> = listOf(
+    NotificationItem(
+        id = 1,
+        title = "New Message",
+        description = "You have received a new message from John Doe. Click to view the details.",
+        time = "2 minutes ago",
+        isRead = false,
+        icon = Icons.Default.Info,
+        type = "INFO",
+        iconColor = Color(0xFF2196F3),
+    ),
+    NotificationItem(
+        id = 2,
+        title = "System Update",
+        description = "Your system has been updated to the latest version. Some new features are available.",
+        time = "1 hour ago",
+        isRead = true,
+        icon = Icons.Default.Refresh,
+        type = "WARNING",
+        iconColor = Color(0xFF4CAF50),
+    ),
+    NotificationItem(
+        id = 3,
+        title = "Warning Alert",
+        description = "Please check your account settings. There might be some security issues.",
+        time = "3 hours ago",
+        isRead = false,
+        icon = Icons.Default.Warning,
+        type = "ERROR",
+        iconColor = Color(0xFFFF9800),
+    ),
+)
+
+// Preview functions
+@Preview(showBackground = true)
+@Composable
+private fun NotificationScreenSuccessPreview() {
+    MaterialTheme {
+        NotificationScreenContent(
+            state = NotificationScreenState(
+                uiState = NotificationUiState.Success(createMockNotifications()),
+                isRefreshing = false,
+            ),
+            actions = NotificationScreenActions(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NotificationScreenLoadingPreview() {
+    MaterialTheme {
+        NotificationScreenContent(
+            state = NotificationScreenState(
+                uiState = NotificationUiState.Loading,
+                isRefreshing = false,
+            ),
+            actions = NotificationScreenActions(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NotificationScreenRefreshingPreview() {
+    MaterialTheme {
+        NotificationScreenContent(
+            state = NotificationScreenState(
+                uiState = NotificationUiState.Success(createMockNotifications()),
+                isRefreshing = true,
+            ),
+            actions = NotificationScreenActions(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NotificationScreenErrorPreview() {
+    MaterialTheme {
+        NotificationScreenContent(
+            state = NotificationScreenState(
+                uiState = NotificationUiState.Error("Network connection failed. Please check your internet connection."),
+                isRefreshing = false,
+            ),
+            actions = NotificationScreenActions(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NotificationScreenEmptyPreview() {
+    MaterialTheme {
+        NotificationScreenContent(
+            state = NotificationScreenState(
+                uiState = NotificationUiState.Success(emptyList()),
+                isRefreshing = false,
+            ),
+            actions = NotificationScreenActions(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NotificationItemCardPreview() {
+    MaterialTheme {
+        Column {
+            NotificationItemCard(
+                notification = NotificationItem(
+                    id = 1,
+                    title = "Unread Notification",
+                    description = "This is an unread notification with a longer description to show how text overflow works.",
+                    time = "2 minutes ago",
+                    isRead = false,
+                    icon = Icons.Default.Info,
+                    type = "INFO",
+                    iconColor = Color(0xFF2196F3),
+                ),
+                onNotificationClick = {},
+            )
+
+            NotificationItemCard(
+                notification = NotificationItem(
+                    id = 2,
+                    title = "Read Notification",
+                    description = "This is a read notification that shows different styling.",
+                    time = "1 hour ago",
+                    isRead = true,
+                    icon = Icons.Default.Refresh,
+                    type = "WARNING",
+                    iconColor = Color(0xFF4CAF50),
+                ),
+                onNotificationClick = {},
             )
         }
     }

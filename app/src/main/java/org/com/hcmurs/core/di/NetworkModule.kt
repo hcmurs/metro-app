@@ -65,7 +65,7 @@ class NetworkModule {
         private const val BASE_STATION_ = "http://10.0.2.2:4004/"
         private const val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
         private const val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
-        private const val BASE_URL = "http://192.168.88.172:4008/api/v1/"
+        private const val BASE_URL = "http://192.168.88.172:4003/"
     }
 
     @Provides
@@ -91,7 +91,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTokenProvider(@ApplicationContext context: Context): TokenProvider {
-        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         return SharedPreferencesTokenProvider(sharedPreferences)
     }
 
@@ -334,7 +334,7 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideNotificationApi(okHttpClient: OkHttpClient): NotificationApi = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl("http://192.168.88.172:4008/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -344,7 +344,6 @@ class NetworkModule {
     @Singleton
     fun provideNotificationRepository(
         api: NotificationApi,
-        tokenProvider: SharedPreferencesTokenProvider,
         authRepository: AuthRepository,
-    ): NotificationRepository = NotificationRepository(api, tokenProvider, authRepository)
+    ): NotificationRepository = NotificationRepository(api, authRepository)
 }

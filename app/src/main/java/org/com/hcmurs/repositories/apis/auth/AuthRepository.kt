@@ -69,6 +69,9 @@ constructor(
             val response = api.getUserProfile()
             if (response.status == 200 && response.data != null) {
                 _userProfile.value = response.data
+                // Store the user email for future use
+                storeUserEmail(response.data.email)
+                Log.d("AuthRepository", "User email stored: ${response.data.email}")
             } else {
                 Log.e("AuthRepository", "Failed to fetch user profile: ${response.message}")
                 _userProfile.value = null
@@ -84,7 +87,10 @@ constructor(
     fun logout() {
         tokenProvider.clearToken()
         _userProfile.value = null
-        Log.d("AuthRepository", "User logged out and token cleared.")
+        // Clear stored user email
+        sharedPrefs.edit { remove("user_email") }
+        clearUserProfile()
+        Log.d("AuthRepository", "User logged out, token and email cleared.")
     }
 
     fun isAuthenticated(): Boolean {

@@ -12,11 +12,9 @@ import org.com.hcmurs.model.NotificationItem
 import org.com.hcmurs.model.UserDeviceTokenRequest
 import org.com.hcmurs.model.UserDeviceTokenResponse
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
-import org.com.hcmurs.security.TokenProvider
 
 class NotificationRepository @Inject constructor(
     private val api: NotificationApi,
-    private val tokenProvider: TokenProvider,
     private val authRepository: AuthRepository,
 ) {
 
@@ -24,30 +22,23 @@ class NotificationRepository @Inject constructor(
     // In a real app, you would get this from user session/preferences
     private val defaultUserEmail = "fallback@example.com"
 
-    suspend fun getNotificationsByEmail(email: String = defaultUserEmail): Result<List<NotificationItem>> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
+    suspend fun getNotificationsByEmail(email: String = defaultUserEmail): Result<List<NotificationItem>> = try {
+        Log.d("NotificationRepository", "Fetching notifications for email: $email...")
 
-            Log.d("NotificationRepository", "Fetching notifications for email: $email with token: $token...")
-
-            val response = api.getNotificationsByEmail(email, "Bearer $token")
-            if (response.isSuccessful && response.body() != null) {
-                val notificationItems = response.body()!!.map { backendResponse ->
-                    NotificationItem.fromBackendResponse(backendResponse)
-                }
-                Result.success(notificationItems)
-            } else {
-                val errorMessage = "Failed to get notifications: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
+        val response = api.getNotificationsByEmail(email)
+        if (response.isSuccessful && response.body() != null) {
+            val notificationItems = response.body()!!.map { backendResponse ->
+                NotificationItem.fromBackendResponse(backendResponse)
             }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error getting notifications", e)
-            Result.failure(e)
+            Result.success(notificationItems)
+        } else {
+            val errorMessage = "Failed to get notifications: ${response.code()} ${response.message()}"
+            Log.e("NotificationRepository", errorMessage)
+            Result.failure(Exception(errorMessage))
         }
+    } catch (e: Exception) {
+        Log.e("NotificationRepository", "Error getting notifications", e)
+        Result.failure(e)
     }
 
     suspend fun getNotificationsForCurrentUser(): Result<List<NotificationItem>> {
@@ -55,118 +46,33 @@ class NotificationRepository @Inject constructor(
         return getNotificationsByEmail(email)
     }
 
-    suspend fun getAllNotifications(): Result<List<NotificationItem>> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
-
-            val response = api.getAllNotifications("Bearer $token")
-            if (response.isSuccessful && response.body() != null) {
-                val notificationItems = response.body()!!.map { backendResponse ->
-                    NotificationItem.fromBackendResponse(backendResponse)
-                }
-                Result.success(notificationItems)
-            } else {
-                val errorMessage = "Failed to get all notifications: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
-            }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error getting all notifications", e)
-            Result.failure(e)
+    suspend fun markAsRead(notificationId: Long): Result<Unit> = try {
+        val response = api.markAsRead(notificationId)
+        if (response.isSuccessful) {
+            Result.success(Unit)
+        } else {
+            val errorMessage = "Failed to mark notification as read: ${response.code()} ${response.message()}"
+            Log.e("NotificationRepository", errorMessage)
+            Result.failure(Exception(errorMessage))
         }
+    } catch (e: Exception) {
+        Log.e("NotificationRepository", "Error marking notification as read", e)
+        Result.failure(e)
     }
 
-    suspend fun markAsRead(notificationId: Long): Result<Unit> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
+    suspend fun registerFcmToken(request: UserDeviceTokenRequest): Result<UserDeviceTokenResponse> = try {
+        Log.d("NotificationRepository", "Registering FCM token for request: $request...")
 
-            val response = api.markAsRead(notificationId, "Bearer $token")
-            if (response.isSuccessful) {
-                Result.success(Unit)
-            } else {
-                val errorMessage = "Failed to mark notification as read: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
-            }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error marking notification as read", e)
-            Result.failure(e)
+        val response = api.registerFcmToken(request)
+        if (response.isSuccessful && response.body() != null) {
+            Result.success(response.body()!!)
+        } else {
+            val errorMessage = "Failed to register FCM token: ${response.code()} ${response.message()}"
+            Log.e("NotificationRepository", errorMessage)
+            Result.failure(Exception(errorMessage))
         }
-    }
-
-    suspend fun registerFcmToken(request: UserDeviceTokenRequest): Result<UserDeviceTokenResponse> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
-
-            Log.d("NotificationRepository", "Registering FCM token for request: $request...")
-
-            val response = api.registerFcmToken("Bearer $token", request)
-            if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
-            } else {
-                val errorMessage = "Failed to register FCM token: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
-            }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error registering FCM token", e)
-            Result.failure(e)
-        }
-    }
-
-    suspend fun sendTestNotification(): Result<String> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
-
-            val response = api.sendTestNotification("Bearer $token")
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: "Test notification sent!")
-            } else {
-                val errorMessage = "Failed to send test notification: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
-            }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error sending test notification", e)
-            Result.failure(e)
-        }
-    }
-
-    suspend fun sendNotificationToUser(
-        email: String = defaultUserEmail,
-        title: String,
-        body: String,
-        type: String = "INFO",
-    ): Result<String> {
-        return try {
-            val token = tokenProvider.getToken()
-            if (token == null) {
-                return Result.failure(Exception("No access token available"))
-            }
-
-            val response = api.sendNotificationToUser("Bearer $token", email, title, body, type)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: "Notification sent to user!")
-            } else {
-                val errorMessage = "Failed to send notification to user: ${response.code()} ${response.message()}"
-                Log.e("NotificationRepository", errorMessage)
-                Result.failure(Exception(errorMessage))
-            }
-        } catch (e: Exception) {
-            Log.e("NotificationRepository", "Error sending notification to user", e)
-            Result.failure(e)
-        }
+    } catch (e: Exception) {
+        Log.e("NotificationRepository", "Error registering FCM token", e)
+        Result.failure(e)
     }
 }
