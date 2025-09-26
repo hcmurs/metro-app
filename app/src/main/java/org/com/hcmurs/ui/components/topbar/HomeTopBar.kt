@@ -78,18 +78,18 @@ fun HomeTopBar(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    if (isAuthenticated) {
-                        IconButton(onClick = {
-                            navController.navigate(Screen.Notification.route)
-                        }) {
-                            Icon(
-                                Icons.Default.Notifications,
-                                contentDescription = "Thông báo",
-                                // Show notification icon in white when not scrolled for better visibility over image
-                                tint = Color.White,
-                            )
-                        }
+//                    if (isAuthenticated) {
+                    IconButton(onClick = {
+                        navController.navigate(Screen.Notification.route)
+                    }) {
+                        Icon(
+                            Icons.Default.Notifications,
+                            contentDescription = "Thông báo",
+                            // Show notification icon in white when not scrolled for better visibility over image
+                            tint = Color.White,
+                        )
                     }
+//                    }
                     LanguageButton(
                         isScrolled = isScrolled,
                         onClick = {

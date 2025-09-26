@@ -65,7 +65,7 @@ class NetworkModule {
         private const val BASE_STATION_ = "http://10.0.2.2:4004/"
         private const val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
         private const val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
-        private const val BASE_URL = "http://192.168.88.172:4003/"
+        private const val BASE_URL = "http://192.168.88.172:4008/api/v1/"
     }
 
     @Provides

@@ -151,6 +151,7 @@ dependencies {
 
     // notification permission
     implementation(libs.accompanist.permissions)
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 
     // auth0
     implementation("com.auth0.android:auth0:2.9.2")
