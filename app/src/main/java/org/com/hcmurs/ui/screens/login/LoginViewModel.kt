@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.oauth.GoogleAuthManager
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.auth.UserProfileData
+import org.com.hcmurs.utils.FCMTokenManager
 
 @HiltViewModel
 class LoginViewModel
@@ -29,6 +30,7 @@ class LoginViewModel
 constructor(
     private val authRepository: AuthRepository,
     private val googleAuthManager: GoogleAuthManager,
+    private val fcmTokenManager: FCMTokenManager,
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -63,6 +65,9 @@ constructor(
             _isAuthenticated.value = authenticated
             if (authenticated) {
                 refreshUserProfile()
+                // Register FCM token if user is already authenticated (app restart case)
+                fcmTokenManager.registerCurrentFCMToken()
+                Log.d("LoginFlow", "User already authenticated, FCM token registration initiated")
             }
             _isLoading.value = false
         }
@@ -125,6 +130,10 @@ constructor(
                             Log.d("LoginFlow", "Authentication successful, proceeding to home")
                             _isAuthenticated.value = true
                             refreshUserProfile()
+
+                            // Register FCM token after successful login
+                            fcmTokenManager.registerCurrentFCMToken()
+                            Log.d("LoginFlow", "FCM token registration initiated after successful login")
                         } else {
                             Log.e("LoginFlow", "Empty JWT token received from server")
                             _errorMessage.value = "Failed to get JWT token from server"
@@ -225,6 +234,10 @@ constructor(
                 // You might want to store Auth0 user info differently
                 // For now, we'll try to refresh the profile from your existing backend
                 refreshUserProfile()
+
+                // Register FCM token after successful Auth0 login
+                fcmTokenManager.registerCurrentFCMToken()
+                Log.d("LoginFlow", "FCM token registration initiated after successful Auth0 login")
             } catch (e: Exception) {
                 Log.e("LoginFlow", "Exception during Auth0 login handling", e)
                 _errorMessage.value = "Auth0 login processing failed: ${e.message}"
