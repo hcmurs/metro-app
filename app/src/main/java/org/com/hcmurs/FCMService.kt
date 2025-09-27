@@ -10,8 +10,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -20,18 +18,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.com.hcmurs.model.UserDeviceTokenRequest
-import org.com.hcmurs.repositories.apis.notification.NotificationRepository
-import org.com.hcmurs.security.TokenProvider
+import org.com.hcmurs.repositories.apis.auth.AuthRepository
+import org.com.hcmurs.utils.FCMTokenManager
 
 @AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
 
     @Inject
-    lateinit var notificationRepository: NotificationRepository
+    lateinit var authRepository: AuthRepository
 
     @Inject
-    lateinit var tokenProvider: TokenProvider
+    lateinit var fcmTokenManager: FCMTokenManager
 
     companion object {
         private const val CHANNEL_ID = "GenEdu_Notifications"
@@ -81,8 +78,19 @@ class FCMService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.d("FCMService", "Refreshed token: $token")
 
-        // Send the new token to your server
-        sendTokenToServer(token)
+        // Check authentication status and log details
+        val isAuthenticated = authRepository.isAuthenticated()
+        val currentToken = authRepository.getToken()
+        Log.d("FCMService", "Authentication status: $isAuthenticated")
+        Log.d("FCMService", "Current auth token exists: ${!currentToken.isNullOrEmpty()}")
+        if (!currentToken.isNullOrEmpty()) {
+            Log.d("FCMService", "Auth token expired: ${org.com.hcmurs.utils.JwtUtils.isTokenExpired(currentToken)}")
+        }
+
+        // Use FCMTokenManager to handle token registration
+        GlobalScope.launch {
+            fcmTokenManager.registerFCMToken(token)
+        }
     }
 
     private fun createNotificationChannel() {
@@ -155,49 +163,4 @@ class FCMService : FirebaseMessagingService() {
             }
         }
     }
-
-    private fun sendTokenToServer(token: String) {
-        Log.d("FCMService", "Sending token to server: $token")
-
-        // Send FCM token to backend server
-        GlobalScope.launch {
-            try {
-                val request = UserDeviceTokenRequest(
-                    email = getCurrentUserId(),
-                    deviceId = getUniqueDeviceId(),
-                    fcmToken = token,
-                    deviceName = getDeviceName(),
-                    platform = "Android",
-                )
-
-                val result = notificationRepository.registerFcmToken(request)
-                result.fold(
-                    onSuccess = { response ->
-                        Log.d("FCMService", "FCM token registered successfully: ${response.id}")
-                    },
-                    onFailure = { error ->
-                        Log.e("FCMService", "Failed to register FCM token", error)
-                    },
-                )
-            } catch (e: Exception) {
-                Log.e("FCMService", "Error registering FCM token", e)
-            }
-        }
-    }
-
-    private fun getCurrentUserId(): String {
-        // TODO: Get actual user ID from user session/preferences
-        // For now, return the default test user ID
-        return "3f77c248-042e-4824-9d8f-c8b9ee17db17"
-    }
-
-    private fun getUniqueDeviceId(): String {
-        // Get unique device identifier
-        return Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ANDROID_ID,
-        )
-    }
-
-    private fun getDeviceName(): String = "${Build.MANUFACTURER} ${Build.MODEL}"
 }

@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 import org.com.hcmurs.ui.theme.AppTheme
 import org.com.hcmurs.utils.CurrencyManager
-import org.com.hcmurs.utils.FcmTokenManager
+import org.com.hcmurs.utils.FCMTokenManager
 import org.com.hcmurs.utils.LanguageManager
 
 @dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
     lateinit var currencyManager: CurrencyManager
 
     @Inject
-    lateinit var fcmTokenManager: FcmTokenManager
+    lateinit var fcmTokenManager: FCMTokenManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
