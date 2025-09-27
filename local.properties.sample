@@ -1,0 +1,6 @@
+## Android SDK dir (local dev only)
+sdk.dir=/path/to/your/Android/Sdk
+
+## Auth0 (replace in CI or dev machine)
+auth0.domain=YOUR_AUTH0_DOMAIN
+auth0.client.id=YOUR_AUTH0_CLIENT_ID
