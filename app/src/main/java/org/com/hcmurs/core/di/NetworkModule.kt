@@ -197,6 +197,11 @@ class NetworkModule {
         retrofit: Retrofit,
     ): TicketApi = retrofit.create(TicketApi::class.java)
 
+    @Provides
+    @Singleton
+    fun provideChatApiService(retrofit: Retrofit): org.com.hcmurs.repositories.apis.chat.ChatApiService =
+        retrofit.create(org.com.hcmurs.repositories.apis.chat.ChatApiService::class.java)
+
     // Provide the TicketRepository
     @Provides
     @Singleton

@@ -18,6 +18,7 @@ enum class ScreenTitle(
     MAPS(R.string.maps),
     REDEEM_CODE_FOR_TICKET(R.string.redeem_code_for_ticket),
     VIRTUAL_TOUR(R.string.virtual_tour),
+    CHATBOT(R.string.chatbot),
     TICKET_INFORMATION(R.string.ticket_information),
     ACCOUNT(R.string.account),
     FEEDBACK(R.string.feedback),

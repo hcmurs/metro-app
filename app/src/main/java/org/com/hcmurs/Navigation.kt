@@ -121,6 +121,7 @@ sealed class Screen(val route: String) {
     object Route : Screen("route")
     object Maps : Screen("maps")
     object VirtualTour : Screen("virtualTour")
+    object Chatbot : Screen("chatbot")
     object TicketInformation : Screen("ticketInformation")
     object Account : Screen("account")
     object CCCD : Screen("cccd")
@@ -401,6 +402,10 @@ fun Navigation(
 
         composable(Screen.VirtualTour.route) {
             PlaceholderScreen(navController, "Virtual Tour Screen")
+        }
+
+        composable(Screen.Chatbot.route) {
+            org.com.hcmurs.ui.screens.metro.chatbot.ChatbotScreen(navController)
         }
 
         composable(Screen.TicketInformation.route) {

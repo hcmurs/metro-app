@@ -18,6 +18,7 @@ fun getNavigationRoute(screenTitle: ScreenTitle): String = when (screenTitle) {
     ScreenTitle.ROUTE -> Screen.Route.route
     ScreenTitle.MAPS -> Screen.Maps.route
     ScreenTitle.VIRTUAL_TOUR -> Screen.VirtualTour.route
+    ScreenTitle.CHATBOT -> Screen.Chatbot.route
     ScreenTitle.TICKET_INFORMATION -> Screen.TicketInformation.route
     ScreenTitle.ACCOUNT -> Screen.Account.route
     ScreenTitle.EVENT -> Screen.Event.route
