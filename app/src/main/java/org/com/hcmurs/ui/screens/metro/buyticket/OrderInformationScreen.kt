@@ -300,7 +300,7 @@ fun OrderInfoScreen(
 //                    val paymentMethodId = 2
 //                    viewModel.startCheckoutFlow(paymentMethodId)
 
-                    val paymentMethodId = 5
+                    val paymentMethodId = 1
                     viewModel.startPayOSCheckoutFlow(paymentMethodId)
                 },
                 enabled = !uiState.isProcessing,
