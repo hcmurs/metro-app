@@ -85,7 +85,7 @@ class ChatViewModel @Inject constructor(
                         _messages.value = _messages.value + botMessage
                     },
                     onFailure = { exception ->
-                        Log.e("ChatViewModel", "Error sending message", exception)
+                        Log.e("ChatViewModel", "Error sending chat bot message: ${exception.message}")
                         val errorMessage = when {
                             exception.message?.contains("timeout") == true ->
                                 "Kết nối bị chậm. Vui lòng thử lại."

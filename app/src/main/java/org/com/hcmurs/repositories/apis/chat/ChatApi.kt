@@ -9,9 +9,10 @@ package org.com.hcmurs.repositories.apis.chat
 import org.com.hcmurs.repositories.apis.request.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
-interface ChatApiService {
-    @POST("api/users/chatbot/chat")
+interface ChatApi {
+    @POST("/api/users/chatbot/chat")
     suspend fun sendMessage(@Body request: ChatRequest): Response<ApiResponse<ChatResponse>>
 }

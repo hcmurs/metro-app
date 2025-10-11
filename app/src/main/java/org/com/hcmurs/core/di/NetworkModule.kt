@@ -27,6 +27,8 @@ import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.blog.BlogRepository
 import org.com.hcmurs.repositories.apis.blog.PublicBlogApi
+import org.com.hcmurs.repositories.apis.chat.ChatApi
+import org.com.hcmurs.repositories.apis.chat.ChatRepository
 import org.com.hcmurs.repositories.apis.currency.CurrencyApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
@@ -197,10 +199,7 @@ class NetworkModule {
         retrofit: Retrofit,
     ): TicketApi = retrofit.create(TicketApi::class.java)
 
-    @Provides
-    @Singleton
-    fun provideChatApiService(retrofit: Retrofit): org.com.hcmurs.repositories.apis.chat.ChatApiService =
-        retrofit.create(org.com.hcmurs.repositories.apis.chat.ChatApiService::class.java)
+
 
     // Provide the TicketRepository
     @Provides
@@ -227,6 +226,34 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideStationRepository(api: StationApi): StationRepository = StationRepository(api)
+
+    //Chatbot
+    @Provides
+    @Singleton
+    fun provideChatApi(retrofit: Retrofit
+    ): ChatApi = retrofit.create(ChatApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(api: ChatApi): ChatRepository = ChatRepository(api)
+
+    /*
+        @Provides
+    @Singleton
+    fun provideNotificationApi(okHttpClient: OkHttpClient): NotificationApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(NotificationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(
+        api: NotificationApi,
+        authRepository: AuthRepository,
+    ): NotificationRepository = NotificationRepository(api, authRepository)
+    */
 
     // order
     @Provides

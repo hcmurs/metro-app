@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ChatRepository @Inject constructor(
-    private val chatApiService: ChatApiService
+    private val chatApi: ChatApi
 ) {
     private val sessionId: String = UUID.randomUUID().toString()
 
@@ -24,7 +24,7 @@ class ChatRepository @Inject constructor(
             Log.d("ChatRepository", "Sending message with sessionId: $sessionId, message: $message")
 
             val request = ChatRequest(sessionId = sessionId, message = message)
-            val response: Response<ApiResponse<ChatResponse>> = chatApiService.sendMessage(request)
+            val response: Response<ApiResponse<ChatResponse>> = chatApi.sendMessage(request)
 
             if (response.isSuccessful) {
                 val apiResponse = response.body()
