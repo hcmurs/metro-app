@@ -7,6 +7,7 @@
 package org.com.hcmurs.ui.screens.metro.buyticket
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -221,17 +222,31 @@ fun TicketCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
+                Log.d("TicketCard", "=== Ticket clicked ===")
+                Log.d("TicketCard", "Ticket name: '${ticket.name}'")
+                Log.d("TicketCard", "Ticket id: ${ticket.id}")
+                Log.d("TicketCard", "Ticket description: '${ticket.description}'")
+                Log.d("TicketCard", "User profile: $userProfile")
+                Log.d("TicketCard", "Is student: ${userProfile?.isStudent}")
+
                 if (ticket.name == "Vé đơn") {
+                    Log.d("TicketCard", "Condition: Navigating to StationSelection for 'Vé đơn'")
                     navController.navigate(Screen.StationSelection.route)
                 } else if (ticket.name == "Vé sinh viên") {
+                    Log.d("TicketCard", "Condition: Processing 'Vé sinh viên' ticket")
                     if (userProfile?.isStudent == true) {
+                        Log.d("TicketCard", "User is student - navigating to BuyTicketDetail")
                         navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
                     } else {
+                        Log.d("TicketCard", "User is NOT student - showing dialog")
                         showDialog = true
                     }
                 } else {
+                    Log.d("TicketCard", "Condition: Other ticket type - navigating to BuyTicketDetail")
                     navController.navigate(Screen.BuyTicketDetail.createRoute(ticket.id))
                 }
+
+                Log.d("TicketCard", "=== End ticket click handling ===")
             },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

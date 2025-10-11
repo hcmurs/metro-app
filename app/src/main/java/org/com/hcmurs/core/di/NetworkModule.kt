@@ -27,6 +27,8 @@ import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.blog.BlogRepository
 import org.com.hcmurs.repositories.apis.blog.PublicBlogApi
+import org.com.hcmurs.repositories.apis.chat.ChatApi
+import org.com.hcmurs.repositories.apis.chat.ChatRepository
 import org.com.hcmurs.repositories.apis.currency.CurrencyApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackApi
 import org.com.hcmurs.repositories.apis.feedback.FeedbackRepository
@@ -65,7 +67,9 @@ class NetworkModule {
         private const val BASE_STATION_ = "http://10.0.2.2:4004/"
         private const val BASE_WEATHER_URL = "https://api.open-meteo.com/v1/"
         private const val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
-        private const val BASE_URL = "http://192.168.88.172:4003/"
+
+//        private const val BASE_URL = "http://192.168.101.3:4003/"
+        private const val BASE_URL = "http://10.0.2.2:4003/"
     }
 
     @Provides
@@ -220,6 +224,35 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideStationRepository(api: StationApi): StationRepository = StationRepository(api)
+
+    // Chatbot
+    @Provides
+    @Singleton
+    fun provideChatApi(
+        retrofit: Retrofit,
+    ): ChatApi = retrofit.create(ChatApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(api: ChatApi): ChatRepository = ChatRepository(api)
+
+    /*
+        @Provides
+    @Singleton
+    fun provideNotificationApi(okHttpClient: OkHttpClient): NotificationApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(NotificationApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRepository(
+        api: NotificationApi,
+        authRepository: AuthRepository,
+    ): NotificationRepository = NotificationRepository(api, authRepository)
+     */
 
     // order
     @Provides
