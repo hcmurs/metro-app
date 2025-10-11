@@ -199,8 +199,6 @@ class NetworkModule {
         retrofit: Retrofit,
     ): TicketApi = retrofit.create(TicketApi::class.java)
 
-
-
     // Provide the TicketRepository
     @Provides
     @Singleton
@@ -227,10 +225,11 @@ class NetworkModule {
     @Singleton
     fun provideStationRepository(api: StationApi): StationRepository = StationRepository(api)
 
-    //Chatbot
+    // Chatbot
     @Provides
     @Singleton
-    fun provideChatApi(retrofit: Retrofit
+    fun provideChatApi(
+        retrofit: Retrofit,
     ): ChatApi = retrofit.create(ChatApi::class.java)
 
     @Provides
@@ -253,7 +252,7 @@ class NetworkModule {
         api: NotificationApi,
         authRepository: AuthRepository,
     ): NotificationRepository = NotificationRepository(api, authRepository)
-    */
+     */
 
     // order
     @Provides

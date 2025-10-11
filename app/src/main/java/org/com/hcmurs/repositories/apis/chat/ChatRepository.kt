@@ -7,41 +7,39 @@
 package org.com.hcmurs.repositories.apis.chat
 
 import android.util.Log
-import org.com.hcmurs.repositories.apis.request.ApiResponse
-import retrofit2.Response
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.com.hcmurs.repositories.apis.request.ApiResponse
+import retrofit2.Response
 
 @Singleton
 class ChatRepository @Inject constructor(
-    private val chatApi: ChatApi
+    private val chatApi: ChatApi,
 ) {
     private val sessionId: String = UUID.randomUUID().toString()
 
-    suspend fun sendMessage(message: String): Result<ChatResponse> {
-        return try {
-            Log.d("ChatRepository", "Sending message with sessionId: $sessionId, message: $message")
+    suspend fun sendMessage(message: String): Result<ChatResponse> = try {
+        Log.d("ChatRepository", "Sending message with sessionId: $sessionId, message: $message")
 
-            val request = ChatRequest(sessionId = sessionId, message = message)
-            val response: Response<ApiResponse<ChatResponse>> = chatApi.sendMessage(request)
+        val request = ChatRequest(sessionId = sessionId, message = message)
+        val response: Response<ApiResponse<ChatResponse>> = chatApi.sendMessage(request)
 
-            if (response.isSuccessful) {
-                val apiResponse = response.body()
-                if (    apiResponse?.data != null) {
-                    Log.d("ChatRepository", "Chat response received: ${apiResponse.data.response}")
-                    Result.success(apiResponse.data)
-                } else {
-                    Log.e("ChatRepository", "API returned error: ${apiResponse?.message}")
-                    Result.failure(Exception(apiResponse?.message ?: "Unknown error"))
-                }
+        if (response.isSuccessful) {
+            val apiResponse = response.body()
+            if (apiResponse?.data != null) {
+                Log.d("ChatRepository", "Chat response received: ${apiResponse.data.response}")
+                Result.success(apiResponse.data)
             } else {
-                Log.e("ChatRepository", "HTTP error: ${response.code()} ${response.message()}")
-                Result.failure(Exception("Server error: ${response.code()}"))
+                Log.e("ChatRepository", "API returned error: ${apiResponse?.message}")
+                Result.failure(Exception(apiResponse?.message ?: "Unknown error"))
             }
-        } catch (e: Exception) {
-            Log.e("ChatRepository", "Exception in sendMessage", e)
-            Result.failure(e)
+        } else {
+            Log.e("ChatRepository", "HTTP error: ${response.code()} ${response.message()}")
+            Result.failure(Exception("Server error: ${response.code()}"))
         }
+    } catch (e: Exception) {
+        Log.e("ChatRepository", "Exception in sendMessage", e)
+        Result.failure(e)
     }
 }

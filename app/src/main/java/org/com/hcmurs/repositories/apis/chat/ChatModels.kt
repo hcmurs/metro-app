@@ -12,7 +12,7 @@ data class ChatRequest(
     @SerializedName("sessionId")
     val sessionId: String,
     @SerializedName("message")
-    val message: String
+    val message: String,
 )
 
 data class ChatResponse(
@@ -21,12 +21,12 @@ data class ChatResponse(
     @SerializedName("response")
     val response: String,
     @SerializedName("timestamp")
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
 )
 
 data class ChatMessage(
     val id: String = java.util.UUID.randomUUID().toString(),
     val message: String,
     val isFromUser: Boolean,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
 )

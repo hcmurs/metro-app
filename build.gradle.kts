@@ -37,7 +37,7 @@ subprojects {
   }
 
   // Tự động chạy spotlessApply trước khi build
-//  afterEvaluate { tasks.named("preBuild") { dependsOn("spotlessApply") } }
+  //  afterEvaluate { tasks.named("preBuild") { dependsOn("spotlessApply") } }
 }
 
 spotless {

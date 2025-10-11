@@ -10,19 +10,19 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.com.hcmurs.repositories.apis.auth.AuthRepository
 import org.com.hcmurs.repositories.apis.chat.ChatMessage
 import org.com.hcmurs.repositories.apis.chat.ChatRepository
-import org.com.hcmurs.repositories.apis.auth.AuthRepository
-import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val authRepository: AuthRepository // Add this dependency
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
@@ -42,7 +42,7 @@ class ChatViewModel @Inject constructor(
     private fun addWelcomeMessage() {
         val welcomeMessage = ChatMessage(
             message = "Xin chào! Tôi là trợ lý AI của hệ thống Metro. Tôi có thể giúp bạn tìm hiểu thông tin về tàu điện ngầm, cách mua vé, lộ trình, và các dịch vụ khác. Bạn có câu hỏi gì không?",
-            isFromUser = false
+            isFromUser = false,
         )
         _messages.value = listOf(welcomeMessage)
     }
@@ -55,7 +55,7 @@ class ChatViewModel @Inject constructor(
             Log.e("ChatViewModel", "User not authenticated")
             val errorMessage = ChatMessage(
                 message = "Bạn cần đăng nhập để sử dụng trợ lý AI.",
-                isFromUser = false
+                isFromUser = false,
             )
             _messages.value = _messages.value + errorMessage
             return
@@ -80,7 +80,7 @@ class ChatViewModel @Inject constructor(
                         Log.d("ChatViewModel", "Received response: ${response.response}")
                         val botMessage = ChatMessage(
                             message = response.response,
-                            isFromUser = false
+                            isFromUser = false,
                         )
                         _messages.value = _messages.value + botMessage
                     },
@@ -97,17 +97,17 @@ class ChatViewModel @Inject constructor(
 
                         val botErrorMessage = ChatMessage(
                             message = errorMessage,
-                            isFromUser = false
+                            isFromUser = false,
                         )
                         _messages.value = _messages.value + botErrorMessage
                         _errorMessage.value = exception.message
-                    }
+                    },
                 )
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Unexpected error", e)
                 val botErrorMessage = ChatMessage(
                     message = "Đã có lỗi không mong muốn xảy ra. Vui lòng thử lại.",
-                    isFromUser = false
+                    isFromUser = false,
                 )
                 _messages.value = _messages.value + botErrorMessage
                 _errorMessage.value = e.message

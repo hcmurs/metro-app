@@ -35,7 +35,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -59,32 +58,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.com.hcmurs.R
 import org.com.hcmurs.repositories.apis.chat.ChatMessage
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.ui.theme.TextPrimaryColor
 import org.com.hcmurs.ui.theme.TextSecondaryColor
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatbotTopBar(
     onBackClick: () -> Unit,
-    onClearChat: () -> Unit
+    onClearChat: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Icon(
                     imageVector = Icons.Default.SmartToy,
                     contentDescription = "Chatbot",
                     tint = PrimaryGreen,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
@@ -122,11 +121,11 @@ fun ChatbotTopBar(
 @Composable
 fun ChatMessageItem(
     message: ChatMessage,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start
+        horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start,
     ) {
         if (message.isFromUser) {
             Spacer(modifier = Modifier.weight(0.2f))
@@ -138,21 +137,21 @@ fun ChatMessageItem(
                 topStart = 16.dp,
                 topEnd = 16.dp,
                 bottomStart = if (message.isFromUser) 16.dp else 4.dp,
-                bottomEnd = if (message.isFromUser) 4.dp else 16.dp
+                bottomEnd = if (message.isFromUser) 4.dp else 16.dp,
             ),
             colors = CardDefaults.cardColors(
-                containerColor = if (message.isFromUser) PrimaryGreen else Color(0xFFF5F5F5)
+                containerColor = if (message.isFromUser) PrimaryGreen else Color(0xFFF5F5F5),
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         ) {
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(12.dp),
             ) {
                 Text(
                     text = message.message,
                     color = if (message.isFromUser) Color.White else TextPrimaryColor,
                     fontSize = 14.sp,
-                    lineHeight = 20.sp
+                    lineHeight = 20.sp,
                 )
 
                 Text(
@@ -160,7 +159,7 @@ fun ChatMessageItem(
                     color = if (message.isFromUser) Color.White.copy(alpha = 0.7f) else TextSecondaryColor,
                     fontSize = 11.sp,
                     modifier = Modifier.padding(top = 4.dp),
-                    textAlign = if (message.isFromUser) TextAlign.End else TextAlign.Start
+                    textAlign = if (message.isFromUser) TextAlign.End else TextAlign.Start,
                 )
             }
         }
@@ -177,7 +176,7 @@ fun ChatInputField(
     onMessageChange: (String) -> Unit,
     onSendClick: () -> Unit,
     isLoading: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -185,7 +184,7 @@ fun ChatInputField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         OutlinedTextField(
             value = message,
@@ -194,7 +193,7 @@ fun ChatInputField(
             placeholder = {
                 Text(
                     text = "Nhập câu hỏi của bạn...",
-                    color = TextSecondaryColor
+                    color = TextSecondaryColor,
                 )
             },
             enabled = !isLoading,
@@ -205,10 +204,10 @@ fun ChatInputField(
                         onSendClick()
                         keyboardController?.hide()
                     }
-                }
+                },
             ),
             maxLines = 4,
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
         )
 
         Spacer(modifier = Modifier.size(8.dp))
@@ -220,19 +219,19 @@ fun ChatInputField(
                     keyboardController?.hide()
                 }
             },
-            enabled = message.trim().isNotEmpty() && !isLoading
+            enabled = message.trim().isNotEmpty() && !isLoading,
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     color = PrimaryGreen,
-                    strokeWidth = 2.dp
+                    strokeWidth = 2.dp,
                 )
             } else {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Gửi",
-                    tint = if (message.trim().isNotEmpty()) PrimaryGreen else TextSecondaryColor
+                    tint = if (message.trim().isNotEmpty()) PrimaryGreen else TextSecondaryColor,
                 )
             }
         }
@@ -242,7 +241,7 @@ fun ChatInputField(
 @Composable
 fun ChatbotScreen(
     navController: NavHostController,
-    viewModel: ChatViewModel = hiltViewModel()
+    viewModel: ChatViewModel = hiltViewModel(),
 ) {
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -262,7 +261,7 @@ fun ChatbotScreen(
         topBar = {
             ChatbotTopBar(
                 onBackClick = { navController.popBackStack() },
-                onClearChat = { viewModel.clearChat() }
+                onClearChat = { viewModel.clearChat() },
             )
         },
         containerColor = Color.White,
@@ -275,42 +274,42 @@ fun ChatbotScreen(
                     currentMessage = ""
                 },
                 isLoading = isLoading,
-                modifier = Modifier.background(Color.White)
+                modifier = Modifier.background(Color.White),
             )
-        }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
         ) {
             if (messages.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Icon(
                             imageVector = Icons.Default.SmartToy,
                             contentDescription = "Chatbot",
                             tint = TextSecondaryColor,
-                            modifier = Modifier.size(64.dp)
+                            modifier = Modifier.size(64.dp),
                         )
                         Spacer(modifier = Modifier.size(16.dp))
                         Text(
                             text = "Chào mừng đến với Trợ lý AI Metro!",
                             color = TextSecondaryColor,
                             fontSize = 16.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
                         Text(
                             text = "Hãy đặt câu hỏi để bắt đầu cuộc trò chuyện",
                             color = TextSecondaryColor,
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
                         )
                     }
                 }
@@ -319,7 +318,7 @@ fun ChatbotScreen(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     items(messages) { message ->
                         ChatMessageItem(message = message)
