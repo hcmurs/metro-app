@@ -172,5 +172,7 @@ and secure shopping experience</string>
     <string name="view">Xem</string>
     <string name="creating_order">Đang tạo đơn hàng...</string>
     <string name="chatbot">Trợ lý ảo Metro</string>
+    <string name="notifications">Thông báo</string>
+    <string name="mark_all_read">Đánh dấu tất cả đã đọc</string>
 
 </resources>

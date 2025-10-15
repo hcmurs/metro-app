@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,7 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.com.hcmurs.model.NotificationItem
 import org.com.hcmurs.ui.theme.PrimaryGreen
-
+import org.com.hcmurs.R
 // Data classes for preview
 data class NotificationScreenState(
     val uiState: NotificationUiState,
@@ -160,7 +161,7 @@ private fun NotificationTopAppBar(
     TopAppBar(
         title = {
             Text(
-                text = "Notifications",
+                text = stringResource(R.string.notifications),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -201,15 +202,12 @@ private fun NotificationTopAppBar(
                 onClick = onMarkAllAsRead,
             ) {
                 Text(
-                    text = "Mark all read",
+                    text = stringResource(R.string.mark_all_read),
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                 )
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
     )
 }
 

@@ -35,6 +35,9 @@ class NotificationViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _unreadCount = MutableStateFlow(0)
+    val unreadCount: StateFlow<Int> = _unreadCount.asStateFlow()
+
     init {
         loadNotifications()
     }
@@ -50,6 +53,8 @@ class NotificationViewModel @Inject constructor(
                     onSuccess = { notifications ->
                         Log.d("NotificationViewModel", "Loaded ${notifications.size} notifications")
                         _uiState.value = NotificationUiState.Success(notifications)
+                        // Update unread count
+                        _unreadCount.value = notifications.count { !it.isRead }
                     },
                     onFailure = { error ->
                         Log.e("NotificationViewModel", "Failed to load notifications", error)
@@ -75,6 +80,8 @@ class NotificationViewModel @Inject constructor(
                     onSuccess = { notifications ->
                         Log.d("NotificationViewModel", "Refreshed ${notifications.size} notifications")
                         _uiState.value = NotificationUiState.Success(notifications)
+                        // Update unread count
+                        _unreadCount.value = notifications.count { !it.isRead }
                     },
                     onFailure = { error ->
                         Log.e("NotificationViewModel", "Failed to refresh notifications", error)
@@ -107,6 +114,8 @@ class NotificationViewModel @Inject constructor(
                                 }
                             }
                             _uiState.value = NotificationUiState.Success(updatedNotifications)
+                            // Update unread count
+                            _unreadCount.value = updatedNotifications.count { !it.isRead }
                         }
                     },
                     onFailure = { error ->

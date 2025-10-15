@@ -7,28 +7,15 @@
 package org.com.hcmurs.ui.components.topbar
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,17 +23,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.R
 import org.com.hcmurs.Screen
+import org.com.hcmurs.ui.components.button.LanguageButton
+import org.com.hcmurs.ui.components.button.NotificationButton
 import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.weather.WeatherViewModel
+import org.com.hcmurs.ui.screens.notification.NotificationViewModel
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.LanguageManager
 
+// ✅ Wrapper Composable (uses ViewModel + NavController)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
@@ -55,116 +48,82 @@ fun HomeTopBar(
     isScrolled: Boolean = false,
     isAuthenticated: Boolean = false,
 ) {
-    LocalContext.current
+    val weatherViewModel: WeatherViewModel = hiltViewModel()
+    val notificationViewModel: NotificationViewModel = hiltViewModel()
+    val unreadCount by notificationViewModel.unreadCount.collectAsState()
 
-    // Weather data - would come from ViewModel in real app
-    val weatherViewModel: WeatherViewModel = hiltViewModel<WeatherViewModel>()
+    HomeTopBarContent(
+        modifier = modifier,
+        isScrolled = isScrolled,
+        unreadCount = unreadCount,
+        onNotificationClick = { navController.navigate(Screen.Notification.route) },
+        onChangeLanguageClick = { navController.navigate(Screen.ChangeLanguage.route) },
+        weatherContent = {
+            WeatherDisplay(viewModel = weatherViewModel, isScrolled = isScrolled)
+        }
+    )
+}
 
-    LaunchedEffect(Unit) {
-    }
-
+// ✅ Pure composable — easy to preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeTopBarContent(
+    modifier: Modifier = Modifier,
+    isScrolled: Boolean,
+    unreadCount: Int,
+    onNotificationClick: () -> Unit,
+    onChangeLanguageClick: () -> Unit,
+    weatherContent: @Composable () -> Unit
+) {
     TopAppBar(
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                WeatherDisplay(
-                    viewModel = weatherViewModel,
-                    isScrolled = isScrolled,
-                )
+                weatherContent()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-//                    if (isAuthenticated) {
-                    IconButton(onClick = {
-                        navController.navigate(Screen.Notification.route)
-                    }) {
-                        Icon(
-                            Icons.Default.Notifications,
-                            contentDescription = "Thông báo",
-                            // Show notification icon in white when not scrolled for better visibility over image
-                            tint = Color.White,
-                        )
-                    }
-//                    }
+                    NotificationButton(
+                        unreadCount = unreadCount,
+                        onClick = onNotificationClick
+                    )
                     LanguageButton(
                         isScrolled = isScrolled,
-                        onClick = {
-                            navController.navigate(Screen.ChangeLanguage.route)
-                        },
+                        onClick = onChangeLanguageClick
                     )
                 }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            // Use semi-transparent background when not scrolled for floating effect
-            containerColor = if (isScrolled) {
+            containerColor = if (isScrolled)
                 PrimaryGreen
-            } else {
-                Color.Black.copy(alpha = 0.3f) // Semi-transparent overlay
-            },
+            else
+                Color.Black.copy(alpha = 0.3f)
         ),
-        modifier = modifier.then(
-            if (isScrolled) Modifier.shadow(4.dp) else Modifier,
-        ),
+        modifier = if (isScrolled) modifier.shadow(4.dp) else modifier
     )
 }
 
+
+
+@Preview(showBackground = true)
 @Composable
-private fun LanguageButton(
-    isScrolled: Boolean,
-    onClick: () -> Unit,
-) {
-    val context = LocalContext.current
-    "\uD83C\uDDFB\uD83C\uDDF3"
-    "\uD83C\uDDFA\uD83C\uDDF8"
-
-    // Get current language from LanguageManager
-    val currentLang = LanguageManager.getLocale(context)
-    val currentDisplayText = when (currentLang) {
-        "vi" -> stringResource(R.string.vietnamese)
-        "en" -> stringResource(R.string.english)
-        else -> stringResource(R.string.vietnamese)
-    }
-
-    Box(
-        modifier = Modifier
-            .wrapContentSize(Alignment.TopEnd)
-            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
-    ) {
-        Card(
-            modifier = Modifier.clickable { onClick() },
-            colors = CardDefaults.cardColors(
-                containerColor = if (isScrolled) {
-                    Color.White.copy(alpha = 0.9f)
-                } else {
-                    Color.White.copy(
-                        alpha = 0.8f,
-                    )
-                },
-            ),
-            shape = RoundedCornerShape(20.dp),
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = currentDisplayText,
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-                Icon(
-                    Icons.Default.Language,
-                    contentDescription = "Change Language",
-                    tint = Color.Black,
-                    modifier = Modifier.padding(start = 4.dp),
-                )
-            }
+private fun HomeTopBarPreview() {
+    HomeTopBarContent(
+        isScrolled = false,
+        unreadCount = 3,
+        onNotificationClick = {},
+        onChangeLanguageClick = {},
+        weatherContent = {
+            Text(
+                text = "☀️ 33°C - Sunny",
+                color = Color.White,
+                fontSize = 16.sp
+            )
         }
-    }
+    )
 }

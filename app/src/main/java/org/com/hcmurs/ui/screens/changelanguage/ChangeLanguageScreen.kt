@@ -57,6 +57,21 @@ data class LanguageOption(
     val flag: String,
 )
 
+val languageOptions = listOf(
+    LanguageOption(
+        code = "vi",
+        name = "Vietnamese",
+        localizedName = "Tiếng Việt",
+        flag = "\uD83C\uDDFB\uD83C\uDDF3",
+    ),
+    LanguageOption(
+        code = "en",
+        name = "English",
+        localizedName = "English",
+        flag = "\uD83C\uDDFA\uD83C\uDDF8",
+    ),
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeLanguageScreen(
@@ -67,20 +82,7 @@ fun ChangeLanguageScreen(
     val currentLanguage = LanguageManager.getLocale(context)
     val isUpdatingRate by currencyManager.isLoading.collectAsState()
 
-    val languageOptions = listOf(
-        LanguageOption(
-            code = "vi",
-            name = "Vietnamese",
-            localizedName = "Tiếng Việt",
-            flag = "\uD83C\uDDFB\uD83C\uDDF3",
-        ),
-        LanguageOption(
-            code = "en",
-            name = "English",
-            localizedName = "English",
-            flag = "\uD83C\uDDFA\uD83C\uDDF8",
-        ),
-    )
+
 
     Scaffold(
         topBar = {

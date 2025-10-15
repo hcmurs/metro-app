@@ -25,9 +25,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +59,7 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
+import org.com.hcmurs.Screen
 import org.com.hcmurs.core.constant.UserRole
 import org.com.hcmurs.ui.components.floatingButton.FloatingButton
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
@@ -70,9 +75,6 @@ fun AppHomeScreen(
     contentAfterBanner: LazyListScope.() -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val isScrolled by remember {
-        derivedStateOf { listState.firstVisibleItemScrollOffset > 0 }
-    }
 
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -117,12 +119,24 @@ fun AppHomeScreen(
 
         HomeTopBar(
             navController = navController,
-            isScrolled = isScrolled,
+            isScrolled = false,
             isAuthenticated = isAuthenticated,
             modifier = Modifier.align(Alignment.TopCenter),
         )
 
         if (isAuthenticated) {
+            // 🔹 Nút Chat với AI – luôn hiển thị
+            FloatingButton(
+                onClick = {
+                    navController.navigate(Screen.Chatbot.route)
+                },
+                icon = Icons.Outlined.SmartToy,
+                contentDescription = "Chat với AI",
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 130.dp, end = 16.dp)
+            )
+
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -157,7 +171,7 @@ fun AppHomeScreen(
                         expanded = !expanded
                         Log.d("FloatingButton", "Toggled menu: $expanded")
                     },
-                    icon = Icons.Default.Phone,
+                    icon = Icons.Outlined.Phone,
                     contentDescription = "Phone Icon",
                 )
             }
