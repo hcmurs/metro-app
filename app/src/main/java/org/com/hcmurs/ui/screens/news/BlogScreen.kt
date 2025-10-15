@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,12 +45,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
-import org.com.hcmurs.R
-import org.com.hcmurs.model.BlogResponse
-import androidx.compose.ui.platform.LocalContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import androidx.compose.foundation.layout.size
+import org.com.hcmurs.R
+import org.com.hcmurs.model.BlogResponse
 
 @Composable
 fun BlogTile(
@@ -84,11 +84,11 @@ fun BlogTile(
                     loading = {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
-                                color = Color.Gray
+                                color = Color.Gray,
                             )
                         }
                     },
@@ -98,9 +98,9 @@ fun BlogTile(
                             model = R.drawable.no_image,
                             contentDescription = "Placeholder",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
-                    }
+                    },
                 )
             }
 
@@ -178,7 +178,7 @@ fun BlogSection(
             is BlogUiState.Error -> {
                 // Show placeholder blog cards with error message
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     // Error message banner
                     Card(
@@ -186,45 +186,45 @@ fun BlogSection(
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFFEBEE)
+                            containerColor = Color(0xFFFFEBEE),
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Unable to load blogs",
                                     color = Color(0xFFC62828),
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
                                 )
                                 Text(
                                     text = (homeBlogsState as BlogUiState.Error).message,
                                     color = Color(0xFFC62828),
                                     fontSize = 12.sp,
                                     maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             }
                             TextButton(
-                                onClick = { viewModel.loadHomeBlogs() }
+                                onClick = { viewModel.loadHomeBlogs() },
                             ) {
                                 Text(
                                     text = "Retry",
                                     color = Color(0xFF2196F3),
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
                                 )
                             }
                         }
                     }
-                    
+
                     // Show placeholder blog cards
                     Row(
                         modifier = Modifier
@@ -252,7 +252,7 @@ fun BlogSection(
                                             model = R.drawable.no_image,
                                             contentDescription = "Placeholder",
                                             modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop
+                                            contentScale = ContentScale.Crop,
                                         )
                                     }
                                     Column(

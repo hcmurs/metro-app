@@ -82,8 +82,6 @@ fun ChangeLanguageScreen(
     val currentLanguage = LanguageManager.getLocale(context)
     val isUpdatingRate by currencyManager.isLoading.collectAsState()
 
-
-
     Scaffold(
         topBar = {
             TopAppBar(

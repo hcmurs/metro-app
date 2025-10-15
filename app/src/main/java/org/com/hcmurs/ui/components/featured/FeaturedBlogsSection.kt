@@ -26,9 +26,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -141,7 +141,7 @@ fun BlogErrorPlaceholder(modifier: Modifier) {
                     model = R.drawable.no_image,
                     contentDescription = "Placeholder",
                     modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
             }
 
@@ -204,11 +204,11 @@ fun BlogTile(
                 loading = {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                     }
                 },
@@ -218,9 +218,9 @@ fun BlogTile(
                         model = R.drawable.no_image,
                         contentDescription = "Placeholder",
                         modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
-                }
+                },
             )
 
             // Blog info

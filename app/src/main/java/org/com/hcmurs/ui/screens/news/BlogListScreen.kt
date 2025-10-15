@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,7 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -153,21 +153,21 @@ private fun BlogListContent(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFFEBEE)
+                            containerColor = Color(0xFFFFEBEE),
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
                                 text = "Unable to load blogs",
                                 color = Color(0xFFC62828),
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
@@ -175,7 +175,7 @@ private fun BlogListContent(
                                 color = Color(0xFFC62828),
                                 fontSize = 14.sp,
                                 maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Button(onClick = onRetry) {
@@ -184,7 +184,7 @@ private fun BlogListContent(
                         }
                     }
                 }
-                
+
                 // Show placeholder blog items
                 items(5) { index ->
                     Card(
@@ -206,7 +206,7 @@ private fun BlogListContent(
                                     model = R.drawable.no_image,
                                     contentDescription = "Placeholder",
                                     modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
+                                    contentScale = ContentScale.Crop,
                                 )
                             }
                             Column(
@@ -341,11 +341,11 @@ fun BlogListItem(
                 loading = {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.Gray
+                            color = Color.Gray,
                         )
                     }
                 },
@@ -355,9 +355,9 @@ fun BlogListItem(
                         model = R.drawable.no_image,
                         contentDescription = "Placeholder",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
                     )
-                }
+                },
             )
 
             Spacer(modifier = Modifier.width(16.dp))

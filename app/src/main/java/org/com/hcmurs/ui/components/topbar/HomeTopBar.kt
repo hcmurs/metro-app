@@ -6,13 +6,13 @@
  */
 package org.com.hcmurs.ui.components.topbar
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,16 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import org.com.hcmurs.R
 import org.com.hcmurs.Screen
 import org.com.hcmurs.ui.components.button.LanguageButton
 import org.com.hcmurs.ui.components.button.NotificationButton
@@ -37,7 +32,6 @@ import org.com.hcmurs.ui.components.weather.WeatherDisplay
 import org.com.hcmurs.ui.components.weather.WeatherViewModel
 import org.com.hcmurs.ui.screens.notification.NotificationViewModel
 import org.com.hcmurs.ui.theme.PrimaryGreen
-import org.com.hcmurs.utils.LanguageManager
 
 // ✅ Wrapper Composable (uses ViewModel + NavController)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +54,7 @@ fun HomeTopBar(
         onChangeLanguageClick = { navController.navigate(Screen.ChangeLanguage.route) },
         weatherContent = {
             WeatherDisplay(viewModel = weatherViewModel, isScrolled = isScrolled)
-        }
+        },
     )
 }
 
@@ -73,42 +67,41 @@ fun HomeTopBarContent(
     unreadCount: Int,
     onNotificationClick: () -> Unit,
     onChangeLanguageClick: () -> Unit,
-    weatherContent: @Composable () -> Unit
+    weatherContent: @Composable () -> Unit,
 ) {
     TopAppBar(
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 weatherContent()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     NotificationButton(
                         unreadCount = unreadCount,
-                        onClick = onNotificationClick
+                        onClick = onNotificationClick,
                     )
                     LanguageButton(
                         isScrolled = isScrolled,
-                        onClick = onChangeLanguageClick
+                        onClick = onChangeLanguageClick,
                     )
                 }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = if (isScrolled)
+            containerColor = if (isScrolled) {
                 PrimaryGreen
-            else
+            } else {
                 Color.Black.copy(alpha = 0.3f)
+            },
         ),
-        modifier = if (isScrolled) modifier.shadow(4.dp) else modifier
+        modifier = if (isScrolled) modifier.shadow(4.dp) else modifier,
     )
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
@@ -122,8 +115,8 @@ private fun HomeTopBarPreview() {
             Text(
                 text = "☀️ 33°C - Sunny",
                 color = Color.White,
-                fontSize = 16.sp
+                fontSize = 16.sp,
             )
-        }
+        },
     )
 }

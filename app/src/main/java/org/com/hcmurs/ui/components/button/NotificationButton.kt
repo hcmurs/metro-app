@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2025 hcmurs. All rights reserved.
+ * This software is the confidential and proprietary information of hcmurs.
+ * You shall not disclose such confidential information and shall use it only in
+ * accordance with the terms of the license agreement you entered into with hcmurs.
+ */
 package org.com.hcmurs.ui.components.button
 
 import androidx.compose.foundation.background
@@ -25,14 +31,14 @@ fun NotificationButton(
     bellColor: Color = Color.White,
     dotSize: Dp = 10.dp,
     dotOffsetX: Dp = (-8).dp,
-    dotOffsetY: Dp = (8).dp
+    dotOffsetY: Dp = (8).dp,
 ) {
     Box(modifier = Modifier.wrapContentSize()) {
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = Icons.Default.Notifications,
                 contentDescription = "Thông báo",
-                tint = bellColor
+                tint = bellColor,
             )
         }
 
@@ -42,7 +48,7 @@ fun NotificationButton(
                     .align(Alignment.TopEnd)
                     .offset(x = dotOffsetX, y = dotOffsetY)
                     .size(dotSize)
-                    .background(color = Color.Red, shape = CircleShape)
+                    .background(color = Color.Red, shape = CircleShape),
             )
         }
     }

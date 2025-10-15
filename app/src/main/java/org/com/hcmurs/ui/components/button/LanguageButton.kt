@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2025 hcmurs. All rights reserved.
+ * This software is the confidential and proprietary information of hcmurs.
+ * You shall not disclose such confidential information and shall use it only in
+ * accordance with the terms of the license agreement you entered into with hcmurs.
+ */
 package org.com.hcmurs.ui.components.button
 
 import androidx.compose.foundation.clickable
@@ -23,35 +29,36 @@ import org.com.hcmurs.utils.LanguageManager
 @Composable
 fun LanguageButton(
     isScrolled: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val currentLang = LanguageManager.getLocale(context)
     val (displayText, flagEmoji) = when (currentLang) {
         "vi" -> stringResource(R.string.vietnamese) to "\uD83C\uDDFB\uD83C\uDDF3" // 🇻🇳
-        "en" -> stringResource(R.string.english) to "\uD83C\uDDFA\uD83C\uDDF8"   // 🇺🇸
+        "en" -> stringResource(R.string.english) to "\uD83C\uDDFA\uD83C\uDDF8" // 🇺🇸
         else -> stringResource(R.string.vietnamese) to "\uD83C\uDDFB\uD83C\uDDF3"
     }
 
     Card(
         modifier = Modifier.clickable { onClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isScrolled)
+            containerColor = if (isScrolled) {
                 Color.White.copy(alpha = 0.9f)
-            else
+            } else {
                 Color.White.copy(alpha = 0.8f)
+            },
         ),
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "$flagEmoji $displayText",
                 color = Color.Black,
                 fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         }
     }

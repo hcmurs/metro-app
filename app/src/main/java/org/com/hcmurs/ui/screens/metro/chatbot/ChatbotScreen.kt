@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -195,8 +193,7 @@ fun ChatInputField(
             .background(Color.White)
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .padding(bottom = 15.dp)
-        ,
+            .padding(bottom = 15.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
         OutlinedTextField(
@@ -213,7 +210,7 @@ fun ChatInputField(
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Send,
                 keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Sentences
+                capitalization = KeyboardCapitalization.Sentences,
             ),
             keyboardActions = KeyboardActions(
                 onSend = {
