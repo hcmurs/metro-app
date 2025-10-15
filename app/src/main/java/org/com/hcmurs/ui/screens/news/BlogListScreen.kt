@@ -53,7 +53,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
 import org.com.hcmurs.ui.components.topbar.BlogListTopBar
@@ -137,20 +141,100 @@ private fun BlogListContent(
             }
         }
         blogsState is BlogUiState.Error -> {
-            Box(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = Alignment.Center,
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = blogsState.message,
-                        color = Color.Red,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onRetry) {
-                        Text("Retry")
+                item {
+                    // Error message banner
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFEBEE)
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Unable to load blogs",
+                                color = Color(0xFFC62828),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = blogsState.message,
+                                color = Color(0xFFC62828),
+                                fontSize = 14.sp,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(onClick = onRetry) {
+                                Text("Retry", color = Color.White)
+                            }
+                        }
+                    }
+                }
+                
+                // Show placeholder blog items
+                items(5) { index ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        shape = RoundedCornerShape(12.dp),
+                    ) {
+                        Row(modifier = Modifier.fillMaxSize()) {
+                            Box(
+                                modifier = Modifier
+                                    .width(140.dp)
+                                    .height(140.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                AsyncImage(
+                                    model = R.drawable.no_image,
+                                    contentDescription = "Placeholder",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                verticalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "Unable to load blog content",
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Gray,
+                                        fontSize = 16.sp,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "Please check your connection and try again",
+                                        fontSize = 14.sp,
+                                        color = Color.Gray,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -244,13 +328,36 @@ fun BlogListItem(
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            AsyncImage(
-                model = blog.image,
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(blog.image)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.Gray
+                        )
+                    }
+                },
+                error = {
+                    // Show placeholder image when loading fails
+                    AsyncImage(
+                        model = R.drawable.no_image,
+                        contentDescription = "Placeholder",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.width(16.dp))

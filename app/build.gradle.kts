@@ -38,6 +38,7 @@ android {
 
         var auth0Domain = properties.getProperty("auth0.domain")
         var auth0ClientId = properties.getProperty("auth0.client.id")
+        var baseUrl = properties.getProperty("base.url")
 
         // Define BuildConfig fields without revealing fallback values
         buildConfigField(
@@ -50,6 +51,7 @@ android {
             "AUTH0_CLIENT_ID",
             "\"${auth0ClientId ?: throw RuntimeException(error)}\"",
         )
+        buildConfigField("String", "BASE_URL", "\"${baseUrl ?: throw RuntimeException(error)}\"")
 
         manifestPlaceholders["appAuthRedirectScheme"] = "org.com.hcmurs"
         manifestPlaceholders["auth0Domain"] = auth0Domain

@@ -171,5 +171,6 @@ and secure shopping experience</string>
     <string name="previous">Quay lại</string>
     <string name="view">Xem</string>
     <string name="creating_order">Đang tạo đơn hàng...</string>
+    <string name="chatbot">Trợ lý ảo Metro</string>
 
 </resources>

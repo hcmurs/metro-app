@@ -22,6 +22,7 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
+import org.com.hcmurs.BuildConfig
 import org.com.hcmurs.repositories.SharedPreferencesTokenProvider
 import org.com.hcmurs.repositories.apis.auth.AuthApi
 import org.com.hcmurs.repositories.apis.auth.AuthRepository
@@ -69,7 +70,7 @@ class NetworkModule {
         private const val BASE_CURRENCY_URL = "https://api.exchangerate-api.com/"
 
 //        private const val BASE_URL = "http://192.168.101.3:4003/"
-        private const val BASE_URL = "http://10.0.2.2:4003/"
+        private const val BASE_URL = BuildConfig.BASE_URL
     }
 
     @Provides

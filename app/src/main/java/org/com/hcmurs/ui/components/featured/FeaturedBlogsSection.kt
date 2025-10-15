@@ -9,20 +9,24 @@ package org.com.hcmurs.ui.components.featured
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -37,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
@@ -58,9 +63,9 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (featuredBlogs.value.isEmpty()) {
-                // Loading state
+                // Loading or error state - show placeholders
                 repeat(2) {
-                    BlogLoadingPlaceholder(modifier = Modifier.width(300.dp))
+                    BlogErrorPlaceholder(modifier = Modifier.width(300.dp))
                 }
             } else {
                 featuredBlogs.value.forEach { blog ->
@@ -116,6 +121,58 @@ fun BlogLoadingPlaceholder(modifier: Modifier) {
 }
 
 @Composable
+fun BlogErrorPlaceholder(modifier: Modifier) {
+    Card(
+        modifier = modifier
+            .height(300.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column {
+            // Show placeholder image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(170.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                AsyncImage(
+                    model = R.drawable.no_image,
+                    contentDescription = "Placeholder",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            // Blog info
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+            ) {
+                Text(
+                    text = "Unable to load featured content",
+                    color = Color.Gray,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Please check your connection and try again",
+                    color = Color.Gray,
+                    fontSize = 12.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun BlogTile(
     title: String,
     thumbnailUrl: String?,
@@ -133,8 +190,8 @@ fun BlogTile(
         shape = RoundedCornerShape(16.dp),
     ) {
         Column {
-            // Blog thumbnail
-            AsyncImage(
+            // Blog thumbnail with error handling
+            SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(thumbnailUrl)
                     .crossfade(true)
@@ -144,6 +201,26 @@ fun BlogTile(
                     .fillMaxWidth()
                     .height(170.dp),
                 contentScale = ContentScale.Crop,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.Gray
+                        )
+                    }
+                },
+                error = {
+                    // Show placeholder image when loading fails
+                    AsyncImage(
+                        model = R.drawable.no_image,
+                        contentDescription = "Placeholder",
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             )
 
             // Blog info

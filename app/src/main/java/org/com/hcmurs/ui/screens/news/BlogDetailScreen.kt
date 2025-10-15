@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -40,7 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -110,13 +115,36 @@ fun BlogDetailScreen(
                         .padding(paddingValues)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    AsyncImage(
-                        model = blog.image,
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(blog.image)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(250.dp),
                         contentScale = ContentScale.Crop,
+                        loading = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = Color.Gray
+                                )
+                            }
+                        },
+                        error = {
+                            // Show placeholder image when loading fails
+                            AsyncImage(
+                                model = R.drawable.no_image,
+                                contentDescription = "Placeholder",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     )
 
                     Column(

@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,6 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -53,7 +59,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -106,7 +115,7 @@ fun ChatbotTopBar(
         actions = {
             IconButton(onClick = onClearChat) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
+                    imageVector = Icons.Outlined.Delete,
                     contentDescription = "Xóa cuộc trò chuyện",
                     tint = PrimaryGreen,
                 )
@@ -183,7 +192,11 @@ fun ChatInputField(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .background(Color.White)
+            .windowInsetsPadding(WindowInsets.navigationBars)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 15.dp)
+        ,
         verticalAlignment = Alignment.Bottom,
     ) {
         OutlinedTextField(
@@ -197,7 +210,11 @@ fun ChatInputField(
                 )
             },
             enabled = !isLoading,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Send,
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Sentences
+            ),
             keyboardActions = KeyboardActions(
                 onSend = {
                     if (message.trim().isNotEmpty() && !isLoading) {
@@ -238,6 +255,174 @@ fun ChatInputField(
     }
 }
 
+// Preview Functions
+@Preview(name = "Empty Chat Screen", showBackground = true)
+@Composable
+private fun PreviewChatbotScreenEmpty() {
+    ChatbotScreenContent(
+        messages = emptyList(),
+        isLoading = false,
+        currentMessage = "",
+        onMessageChange = {},
+        onSendClick = {},
+        onBackClick = {},
+        onClearChat = {},
+        listState = rememberLazyListState(),
+    )
+}
+
+@Preview(name = "Chat with Messages", showBackground = true)
+@Composable
+private fun PreviewChatbotScreenWithMessages() {
+    val sampleMessages = listOf(
+        ChatMessage(
+            message = "Xin chào! Tôi cần hỏi về tuyến metro số 1.",
+            isFromUser = true,
+            timestamp = System.currentTimeMillis() - 180000,
+        ),
+        ChatMessage(
+            message = "Xin chào! Tôi có thể giúp gì cho bạn về tuyến metro số 1?",
+            isFromUser = false,
+            timestamp = System.currentTimeMillis() - 120000,
+        ),
+        ChatMessage(
+            message = "Giá vé bao nhiêu và giờ hoạt động thế nào?",
+            isFromUser = true,
+            timestamp = System.currentTimeMillis() - 60000,
+        ),
+        ChatMessage(
+            message = "Giá vé tuyến metro số 1 từ 7.000đ - 20.000đ tùy theo khoảng cách. Giờ hoạt động từ 5:00 sáng đến 22:00 tối hàng ngày.",
+            isFromUser = false,
+            timestamp = System.currentTimeMillis(),
+        ),
+    )
+
+    ChatbotScreenContent(
+        messages = sampleMessages,
+        isLoading = false,
+        currentMessage = "",
+        onMessageChange = {},
+        onSendClick = {},
+        onBackClick = {},
+        onClearChat = {},
+        listState = rememberLazyListState(),
+    )
+}
+
+@Preview(name = "Loading State", showBackground = true)
+@Composable
+private fun PreviewChatbotScreenLoading() {
+    val sampleMessages = listOf(
+        ChatMessage(
+            message = "Cho tôi biết về các ga dừng?",
+            isFromUser = true,
+            timestamp = System.currentTimeMillis(),
+        ),
+    )
+
+    ChatbotScreenContent(
+        messages = sampleMessages,
+        isLoading = true,
+        currentMessage = "",
+        onMessageChange = {},
+        onSendClick = {},
+        onBackClick = {},
+        onClearChat = {},
+        listState = rememberLazyListState(),
+    )
+}
+
+@Preview(name = "Typing Message", showBackground = true)
+@Composable
+private fun PreviewChatbotScreenTyping() {
+    ChatbotScreenContent(
+        messages = emptyList(),
+        isLoading = false,
+        currentMessage = "Tôi muốn biết thông tin về...",
+        onMessageChange = {},
+        onSendClick = {},
+        onBackClick = {},
+        onClearChat = {},
+        listState = rememberLazyListState(),
+    )
+}
+
+@Preview(name = "User Message Item", showBackground = true)
+@Composable
+private fun PreviewChatMessageItemUser() {
+    Box(modifier = Modifier.padding(16.dp)) {
+        ChatMessageItem(
+            message = ChatMessage(
+                message = "Xin chào! Tôi cần hỏi về lịch trình tàu metro.",
+                isFromUser = true,
+                timestamp = System.currentTimeMillis(),
+            ),
+        )
+    }
+}
+
+@Preview(name = "Bot Message Item", showBackground = true)
+@Composable
+private fun PreviewChatMessageItemBot() {
+    Box(modifier = Modifier.padding(16.dp)) {
+        ChatMessageItem(
+            message = ChatMessage(
+                message = "Xin chào! Tôi sẵn sàng giúp bạn với thông tin về lịch trình tàu metro. Bạn muốn biết thông tin về tuyến nào?",
+                isFromUser = false,
+                timestamp = System.currentTimeMillis(),
+            ),
+        )
+    }
+}
+
+@Preview(name = "Long Message", showBackground = true)
+@Composable
+private fun PreviewChatMessageItemLong() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        ChatMessageItem(
+            message = ChatMessage(
+                message = "Metro số 1 Bến Thành - Suối Tiên là tuyến metro đầu tiên của Thành phố Hồ Chí Minh với tổng chiều dài 19.7km, gồm 14 ga (3 ga ngầm và 11 ga trên cao). Tuyến này kết nối trung tâm thành phố với khu vực phía Đông.",
+                isFromUser = false,
+                timestamp = System.currentTimeMillis(),
+            ),
+        )
+        Spacer(modifier = Modifier.size(12.dp))
+        ChatMessageItem(
+            message = ChatMessage(
+                message = "Cảm ơn bạn! Thông tin rất chi tiết và hữu ích. Vậy tôi có thể mua vé ở đâu và bằng cách nào?",
+                isFromUser = true,
+                timestamp = System.currentTimeMillis(),
+            ),
+        )
+    }
+}
+
+@Preview(name = "Input Field", showBackground = true)
+@Composable
+private fun PreviewChatInputField() {
+    Box(modifier = Modifier.background(Color.White)) {
+        ChatInputField(
+            message = "Nhập tin nhắn ở đây",
+            onMessageChange = {},
+            onSendClick = {},
+            isLoading = false,
+        )
+    }
+}
+
+@Preview(name = "Input Field Loading", showBackground = true)
+@Composable
+private fun PreviewChatInputFieldLoading() {
+    Box(modifier = Modifier.background(Color.White)) {
+        ChatInputField(
+            message = "Đang chờ phản hồi...",
+            onMessageChange = {},
+            onSendClick = {},
+            isLoading = true,
+        )
+    }
+}
+
 @Composable
 fun ChatbotScreen(
     navController: NavHostController,
@@ -257,24 +442,47 @@ fun ChatbotScreen(
         }
     }
 
+    ChatbotScreenContent(
+        messages = messages,
+        isLoading = isLoading,
+        currentMessage = currentMessage,
+        onMessageChange = { currentMessage = it },
+        onSendClick = {
+            viewModel.sendMessage(currentMessage)
+            currentMessage = ""
+        },
+        onBackClick = { navController.popBackStack() },
+        onClearChat = { viewModel.clearChat() },
+        listState = listState,
+    )
+}
+
+@Composable
+internal fun ChatbotScreenContent(
+    messages: List<ChatMessage>,
+    isLoading: Boolean,
+    currentMessage: String,
+    onMessageChange: (String) -> Unit,
+    onSendClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onClearChat: () -> Unit,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+) {
     Scaffold(
         topBar = {
             ChatbotTopBar(
-                onBackClick = { navController.popBackStack() },
-                onClearChat = { viewModel.clearChat() },
+                onBackClick = onBackClick,
+                onClearChat = onClearChat,
             )
         },
         containerColor = Color.White,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             ChatInputField(
                 message = currentMessage,
-                onMessageChange = { currentMessage = it },
-                onSendClick = {
-                    viewModel.sendMessage(currentMessage)
-                    currentMessage = ""
-                },
+                onMessageChange = onMessageChange,
+                onSendClick = onSendClick,
                 isLoading = isLoading,
-                modifier = Modifier.background(Color.White),
             )
         },
     ) { padding ->
