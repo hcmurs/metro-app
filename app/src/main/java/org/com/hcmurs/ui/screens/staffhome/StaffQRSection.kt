@@ -49,7 +49,7 @@ import org.com.hcmurs.utils.screenTitleIconMap
 fun StaffQRSection(
     navController: NavHostController,
 ) {
-    val iconRes = screenTitleIconMap[ScreenTitle.SCAN_QR_CODE] ?: R.drawable.btn_5
+    val iconRes = screenTitleIconMap[ScreenTitle.SCAN_QR_CODE] ?: R.drawable.no_image
     val localizedTitle = stringResource(id = ScreenTitle.SCAN_QR_CODE.titleRes)
 
     Box(

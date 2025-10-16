@@ -17,6 +17,7 @@ val screenTitleIconMap =
         ScreenTitle.MAPS to R.drawable.ic_map,
         ScreenTitle.REDEEM_CODE_FOR_TICKET to R.drawable.ic_redeem_code_for_ticket,
         ScreenTitle.VIRTUAL_TOUR to R.drawable.ic_virtual,
+        ScreenTitle.CHATBOT to R.drawable.ic_chatbot,
         ScreenTitle.TICKET_INFORMATION to R.drawable.ic_ticket_info,
         ScreenTitle.ACCOUNT to R.drawable.ic_account,
         ScreenTitle.FEEDBACK to R.drawable.ic_feedback,

@@ -22,7 +22,7 @@ import org.com.hcmurs.ui.theme.PrimaryGreen
 @Composable
 fun FloatingButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.shadow(8.dp, CircleShape),
+    modifier: Modifier = Modifier,
     containerColor: Color = PrimaryGreen,
     contentColor: Color = Color.White,
     icon: ImageVector = Icons.Default.Leaderboard,
@@ -32,8 +32,13 @@ fun FloatingButton(
         onClick = onClick,
         containerColor = containerColor,
         contentColor = contentColor,
-        modifier = modifier,
+        shape = CircleShape,
+        modifier = modifier
+            .shadow(8.dp, CircleShape),
     ) {
-        Icon(icon, contentDescription)
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+        )
     }
 }

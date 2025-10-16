@@ -23,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import org.com.hcmurs.ui.theme.PrimaryGreen
 import org.com.hcmurs.utils.navigateToHome
 
@@ -66,4 +68,13 @@ fun CommonTopBar(
 
         bottomContent?.invoke()
     }
+}
+
+@Preview
+@Composable
+fun CommonTopBarPreview() {
+    CommonTopBar(
+        navController = rememberNavController(),
+        title = "Tiêu đề chung",
+    )
 }

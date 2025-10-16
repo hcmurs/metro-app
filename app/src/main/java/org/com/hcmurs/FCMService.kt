@@ -126,7 +126,7 @@ class FCMService : FirebaseMessagingService() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(body)
-            .setSmallIcon(R.drawable.star) // Make sure this icon exists
+            .setSmallIcon(R.drawable.hurc) // Make sure this icon exists
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

@@ -112,7 +112,7 @@ fun QuickActionsSection(
                     ) {
                         items(pages[page].size) { index ->
                             val item = pages[page][index]
-                            val iconRes = screenTitleIconMap[item] ?: R.drawable.btn_5
+                            val iconRes = screenTitleIconMap[item] ?: R.drawable.no_image
                             val painter = painterResource(id = iconRes)
                             val localizedTitle = stringResource(id = item.titleRes)
 
