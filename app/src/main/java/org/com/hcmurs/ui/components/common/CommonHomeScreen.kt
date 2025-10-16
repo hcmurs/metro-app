@@ -6,11 +6,6 @@
  */
 package org.com.hcmurs.ui.components.common
 
-import android.content.Intent
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,16 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -47,20 +37,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import org.com.hcmurs.R
-import org.com.hcmurs.Screen
 import org.com.hcmurs.core.constant.UserRole
-import org.com.hcmurs.ui.components.floatingButton.FloatingButton
+import org.com.hcmurs.ui.components.floatingButton.FloatingUtility
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
 import org.com.hcmurs.ui.screens.login.LoginViewModel
@@ -90,17 +74,18 @@ fun AppHomeScreen(
             contentPadding = PaddingValues(top = 0.dp, bottom = 240.dp),
         ) {
             item {
-                Box(modifier = Modifier.height(450.dp)) {
+                Box(modifier = Modifier.height(480.dp)) {
                     AsyncImage(
                         model = R.drawable.metro1,
-                        contentDescription = "Social link",
+                        contentDescription = "Banner",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(320.dp)
                             .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
                         contentScale = ContentScale.Crop,
                     )
 
+                    // Quick Actions positioned to overlap banner nicely
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -126,8 +111,6 @@ fun AppHomeScreen(
         )
 
         FloatingUtility(
-            navController = navController,
-            isAuthenticated = isAuthenticated,
             expanded = expanded,
             onExpandedChange = { expanded = it },
         )
@@ -176,113 +159,5 @@ fun PhoneOptionButton(
                 ),
             )
         }
-    }
-}
-
-@Composable
-fun FloatingUtility(
-    navController: NavController,
-    isAuthenticated: Boolean,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-) {
-    val context = LocalContext.current
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (isAuthenticated) {
-            FloatingButton(
-                onClick = {
-                    navController.navigate(Screen.Chatbot.route)
-                },
-                icon = Icons.Outlined.SmartToy,
-                contentDescription = "Chat với AI",
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 150.dp, end = 16.dp),
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 70.dp, end = 16.dp),
-            horizontalAlignment = Alignment.End,
-        ) {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Column(
-                    modifier = Modifier.padding(end = 70.dp).offset(y = 55.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.End,
-                ) {
-                    PhoneOptionButton("Lịch trình và thời gian tàu chạy", "028 7300 6659") {
-                        val intent = Intent(Intent.ACTION_DIAL, "tel:02873006659".toUri())
-                        context.startActivity(intent)
-                        onExpandedChange(false)
-                    }
-
-                    PhoneOptionButton("Vé và các dịch vụ hành khách", "028 7300 3885") {
-                        val intent = Intent(Intent.ACTION_DIAL, "tel:02873003885".toUri())
-                        context.startActivity(intent)
-                        onExpandedChange(false)
-                    }
-                }
-            }
-
-            FloatingButton(
-                onClick = {
-                    onExpandedChange(!expanded)
-                    Log.d("FloatingButton", "Toggled menu: $expanded")
-                },
-                icon = if (expanded) Icons.Outlined.Close else Icons.Outlined.Phone,
-                contentDescription = "Phone Icon",
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FloatingUtilityCollapsedPreview() {
-    var expanded by remember { mutableStateOf(false) }
-    FloatingUtility(
-        navController = rememberNavController(),
-        isAuthenticated = true,
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FloatingUtilityExpandedPreview() {
-    var expanded by remember { mutableStateOf(true) }
-    FloatingUtility(
-        navController = rememberNavController(),
-        isAuthenticated = true,
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PhoneOptionButtonPreview() {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.End,
-    ) {
-        PhoneOptionButton(
-            phoneNumber = "028 7300 6659",
-            label = "Lịch trình và thời gian tàu chạy",
-        ) {}
-
-        PhoneOptionButton(
-            phoneNumber = "028 7300 3885",
-            label = "Vé và các dịch vụ hành khách",
-        ) {}
     }
 }
