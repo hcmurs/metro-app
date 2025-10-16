@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +35,16 @@ import org.com.hcmurs.ui.screens.news.BlogSection
 fun HomeScreen(
     navController: NavHostController,
     loginViewModel: LoginViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
 ) {
     val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
+    val homeUiState by homeViewModel.uiState.collectAsState()
     var showLoginDialog by remember { mutableStateOf(false) }
+
+    // Trigger initial load
+    LaunchedEffect(Unit) {
+        homeViewModel.refresh()
+    }
 
     val protectedRoutesWithDialog = setOf(
         Screen.RedeemCodeForTicket.route,
@@ -69,21 +77,30 @@ fun HomeScreen(
         onGridItemClick = { screen ->
             handleNavigation(screen)
         },
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(30.dp))
-            Box(modifier = Modifier.padding(start = 16.dp)) {
-                FeaturedBlogsSection(navController)
+        isBannerLoading = homeUiState.isBannerLoading,
+        isQuickActionsLoading = homeUiState.isQuickActionsLoading,
+        contentAfterBanner = {
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+                Box(modifier = Modifier.padding(start = 16.dp)) {
+                    FeaturedBlogsSection(
+                        navController = navController,
+                        isLoading = homeUiState.isFeaturedBlogsLoading,
+                    )
+                }
             }
-        }
 
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(modifier = Modifier.padding(start = 16.dp)) {
-                BlogSection(navController)
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+                Box(modifier = Modifier.padding(start = 16.dp)) {
+                    BlogSection(
+                        navController = navController,
+                        isLoading = homeUiState.isBlogSectionLoading,
+                    )
+                }
             }
-        }
-    }
+        },
+    )
 }
 
 @Preview(showBackground = true)

@@ -45,10 +45,15 @@ import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
+import org.com.hcmurs.ui.components.shimmer.FeaturedBlogCardShimmer
 import org.com.hcmurs.ui.screens.news.BlogViewModel
 
 @Composable
-fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewModel = hiltViewModel()) {
+fun FeaturedBlogsSection(
+    navController: NavHostController,
+    viewModel: BlogViewModel = hiltViewModel(),
+    isLoading: Boolean = false,
+) {
     val featuredBlogs = viewModel.featuredBlogs.collectAsState(initial = emptyList())
 
     LaunchedEffect(key1 = Unit) {
@@ -62,12 +67,18 @@ fun FeaturedBlogsSection(navController: NavHostController, viewModel: BlogViewMo
                 .padding(vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            if (featuredBlogs.value.isEmpty()) {
-                // Loading or error state - show placeholders
+            // Always show shimmer if isLoading is true, regardless of data state
+            if (isLoading) {
                 repeat(2) {
-                    BlogErrorPlaceholder(modifier = Modifier.width(300.dp))
+                    FeaturedBlogCardShimmer()
+                }
+            } else if (featuredBlogs.value.isEmpty()) {
+                // Show shimmer if no data yet (but not explicitly loading)
+                repeat(2) {
+                    FeaturedBlogCardShimmer()
                 }
             } else {
+                // Show actual blog tiles once loaded and isLoading is false
                 featuredBlogs.value.forEach { blog ->
                     BlogTile(
                         title = blog.title,

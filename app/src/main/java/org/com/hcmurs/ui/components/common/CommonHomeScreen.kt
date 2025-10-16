@@ -46,6 +46,8 @@ import org.com.hcmurs.R
 import org.com.hcmurs.core.constant.UserRole
 import org.com.hcmurs.ui.components.floatingButton.FloatingUtility
 import org.com.hcmurs.ui.components.quickaction.QuickActionsSection
+import org.com.hcmurs.ui.components.shimmer.BannerShimmer
+import org.com.hcmurs.ui.components.shimmer.QuickActionsSectionShimmer
 import org.com.hcmurs.ui.components.topbar.HomeTopBar
 import org.com.hcmurs.ui.screens.login.LoginViewModel
 
@@ -56,6 +58,8 @@ fun AppHomeScreen(
     role: UserRole = UserRole.GUEST,
     onGridItemClick: (String) -> Unit,
     contentAfterBanner: LazyListScope.() -> Unit,
+    isBannerLoading: Boolean = false,
+    isQuickActionsLoading: Boolean = false,
 ) {
     val listState = rememberLazyListState()
     val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
@@ -75,15 +79,19 @@ fun AppHomeScreen(
         ) {
             item {
                 Box(modifier = Modifier.height(480.dp)) {
-                    AsyncImage(
-                        model = R.drawable.metro1,
-                        contentDescription = "Banner",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(320.dp)
-                            .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
+                    if (isBannerLoading) {
+                        BannerShimmer()
+                    } else {
+                        AsyncImage(
+                            model = R.drawable.metro1,
+                            contentDescription = "Banner",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(320.dp)
+                                .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
 
                     // Quick Actions positioned to overlap banner nicely
                     Box(
@@ -91,11 +99,15 @@ fun AppHomeScreen(
                             .align(Alignment.BottomCenter)
                             .offset(y = 30.dp),
                     ) {
-                        QuickActionsSection(
-                            navController,
-                            userRole = role,
-                            onGridItemClick = onGridItemClick,
-                        )
+                        if (isQuickActionsLoading) {
+                            QuickActionsSectionShimmer()
+                        } else {
+                            QuickActionsSection(
+                                navController,
+                                userRole = role,
+                                onGridItemClick = onGridItemClick,
+                            )
+                        }
                     }
                 }
             }

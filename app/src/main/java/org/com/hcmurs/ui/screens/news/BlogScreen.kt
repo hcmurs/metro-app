@@ -49,6 +49,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import org.com.hcmurs.R
 import org.com.hcmurs.model.BlogResponse
+import org.com.hcmurs.ui.components.shimmer.BlogCardShimmer
 
 @Composable
 fun BlogTile(
@@ -140,6 +141,7 @@ fun BlogTile(
 fun BlogSection(
     navController: NavController,
     viewModel: BlogViewModel = hiltViewModel(),
+    isLoading: Boolean = false,
 ) {
     val homeBlogsState by viewModel.homeBlogsState.collectAsState()
 
@@ -163,139 +165,108 @@ fun BlogSection(
             }
         }
 
-        when (homeBlogsState) {
-            is BlogUiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
+        // Always show shimmer if isLoading is true, regardless of API state
+        if (isLoading) {
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                repeat(3) {
+                    BlogCardShimmer()
                 }
+                Spacer(modifier = Modifier.width(16.dp))
             }
-
-            is BlogUiState.Error -> {
-                // Show placeholder blog cards with error message
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    // Error message banner
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFFFFEBEE),
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Unable to load blogs",
-                                    color = Color(0xFFC62828),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                                Text(
-                                    text = (homeBlogsState as BlogUiState.Error).message,
-                                    color = Color(0xFFC62828),
-                                    fontSize = 12.sp,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                            TextButton(
-                                onClick = { viewModel.loadHomeBlogs() },
-                            ) {
-                                Text(
-                                    text = "Retry",
-                                    color = Color(0xFF2196F3),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-                    }
-
-                    // Show placeholder blog cards
+        } else {
+            // Only show actual content/errors after isLoading becomes false
+            when (homeBlogsState) {
+                is BlogUiState.Loading -> {
                     Row(
                         modifier = Modifier
                             .horizontalScroll(rememberScrollState())
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        repeat(3) { index ->
-                            Card(
-                                modifier = Modifier
-                                    .width(280.dp)
-                                    .height(160.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.White),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                                shape = RoundedCornerShape(12.dp),
-                            ) {
-                                Column(modifier = Modifier.fillMaxSize()) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(120.dp),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        AsyncImage(
-                                            model = R.drawable.no_image,
-                                            contentDescription = "Placeholder",
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop,
-                                        )
-                                    }
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(12.dp),
-                                    ) {
-                                        Text(
-                                            text = "Unable to load blog",
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.Gray,
-                                            fontSize = 14.sp,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis,
-                                        )
-                                    }
-                                }
-                            }
+                        repeat(3) {
+                            BlogCardShimmer()
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                     }
                 }
-            }
 
-            is BlogUiState.Success -> {
-                val scrollState = rememberScrollState()
-                val allBlogs = (homeBlogsState as BlogUiState.Success).blogs
-                val featured = featuredBlogs.value
-                val remainingBlogs = allBlogs.filter { blog -> blog !in featured }
-
-                Row(
-                    modifier = Modifier
-                        .horizontalScroll(scrollState)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    remainingBlogs.forEach { blog ->
-                        BlogTile(
-                            blog = blog,
-                            onClick = { navController.navigate("blog_detail/${blog.id}") },
-                        )
+                is BlogUiState.Error -> {
+                    // Show placeholder blog cards with error message
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        // Error message banner
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFFFEBEE),
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Unable to load blogs",
+                                        color = Color(0xFFC62828),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                    )
+                                    Text(
+                                        text = (homeBlogsState as BlogUiState.Error).message,
+                                        color = Color(0xFFC62828),
+                                        fontSize = 12.sp,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                                TextButton(
+                                    onClick = { viewModel.loadHomeBlogs() },
+                                ) {
+                                    Text(
+                                        text = "Retry",
+                                        color = Color(0xFF2196F3),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                    )
+                                }
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.width(16.dp))
+                }
+
+                is BlogUiState.Success -> {
+                    val scrollState = rememberScrollState()
+                    val allBlogs = (homeBlogsState as BlogUiState.Success).blogs
+                    val featured = featuredBlogs.value
+                    val remainingBlogs = allBlogs.filter { blog -> blog !in featured }
+
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(scrollState)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        remainingBlogs.forEach { blog ->
+                            BlogTile(
+                                blog = blog,
+                                onClick = { navController.navigate("blog_detail/${blog.id}") },
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
                 }
             }
         }
