@@ -142,4 +142,32 @@ class NotificationViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteNotification(notificationId: Long) {
+        viewModelScope.launch {
+            try {
+                var result = notificationRepository.deleteNotification(notificationId)
+                result.fold(
+                    onSuccess = {
+                        Log.d("NotificationViewModel", "Deleted notification $notificationId")
+                        // Update the local state
+                        val currentState = _uiState.value
+                        if (currentState is NotificationUiState.Success) {
+                            val updatedNotifications =
+                                currentState.notifications.filter { it.id != notificationId }
+                            _uiState.value = NotificationUiState.Success(updatedNotifications)
+                            // Update unread count
+                            _unreadCount.value = updatedNotifications.count { !it.isRead }
+                        }
+                    },
+                    onFailure = { error ->
+                        Log.e("NotificationViewModel", "Failed to delete notification", error)
+                        // Could show a toast or snackbar here
+                    },
+                )
+            } catch (e: Exception) {
+                Log.e("NotificationViewModel", "Unexpected error deleting notification", e)
+            }
+        }
+    }
 }

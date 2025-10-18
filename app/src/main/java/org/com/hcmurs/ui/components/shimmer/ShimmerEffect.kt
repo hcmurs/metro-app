@@ -252,7 +252,7 @@ fun QuickActionsSectionShimmer(modifier: Modifier = Modifier) {
                 .shimmerEffect(),
         )
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Grid of quick action shimmers
         Column {
             repeat(2) { rowIndex ->

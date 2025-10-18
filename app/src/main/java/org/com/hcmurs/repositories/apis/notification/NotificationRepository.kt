@@ -60,6 +60,20 @@ class NotificationRepository @Inject constructor(
         Result.failure(e)
     }
 
+    suspend fun deleteNotification(notificationId: Long): Result<Unit> = try {
+        val response = api.deleteNotification(notificationId)
+        if (response.isSuccessful) {
+            Result.success(Unit)
+        } else {
+            val errorMessage = "Failed to delete notification: ${response.code()} ${response.message()}"
+            Log.e("NotificationRepository", errorMessage)
+            Result.failure(Exception(errorMessage))
+        }
+    } catch (e: Exception) {
+        Log.e("NotificationRepository", "Error deleting notification", e)
+        Result.failure(e)
+    }
+
     suspend fun registerFcmToken(request: UserDeviceTokenRequest): Result<UserDeviceTokenResponse> = try {
         Log.d("NotificationRepository", "Registering FCM token for request: $request...")
 

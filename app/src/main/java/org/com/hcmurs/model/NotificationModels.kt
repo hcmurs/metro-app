@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
@@ -25,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.graphics.toColorInt
 import com.google.gson.annotations.SerializedName
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 // Backend Response Models that match the backend NotificationRes structure
@@ -34,7 +33,7 @@ data class NotificationResponse(
     @SerializedName("type") val type: String,
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
-    @SerializedName("time") val time: String, // ISO string from backend
+    @SerializedName("createdOn") val createdOn: String, // ISO string from backend
     @SerializedName("isRead") val read: Boolean, // Backend uses "isRead" but serializes to "read"
     @SerializedName("iconName") val iconName: String?,
     @SerializedName("iconColorHex") val iconColorHex: String?,
@@ -47,7 +46,7 @@ data class NotificationItem(
     val type: String,
     val title: String,
     val description: String,
-    val time: String, // Formatted for display
+    val createdOn: String, // Formatted for display
     val isRead: Boolean,
     val icon: ImageVector,
     val iconColor: Color,
@@ -59,7 +58,7 @@ data class NotificationItem(
             type = response.type,
             title = response.title,
             description = response.description,
-            time = formatTimeFromBackend(response.time),
+            createdOn = formatTimeFromBackend(response.createdOn),
             isRead = response.read,
             icon = mapIconFromBackend(response.iconName),
             iconColor = mapColorFromBackend(response.iconColorHex),
@@ -67,24 +66,18 @@ data class NotificationItem(
         )
 
         private fun formatTimeFromBackend(timeString: String): String = try {
-            // Handle various date formats from backend
-            val dateTime = when {
-                timeString.contains('T') -> LocalDateTime.parse(timeString.substring(0, 19))
-                else -> LocalDateTime.parse(timeString)
-            }
-
-            val now = LocalDateTime.now()
+            val dateTime = OffsetDateTime.parse(timeString) // handles +07:00 automatically
+            val now = OffsetDateTime.now()
             val diff = Duration.between(dateTime, now)
 
             when {
-                diff.toMinutes() < 1 -> "Just now"
-                diff.toMinutes() < 60 -> "${diff.toMinutes()} min ago"
-                diff.toHours() < 24 -> "${diff.toHours()} hour${if (diff.toHours() > 1) "s" else ""} ago"
-                diff.toDays() < 7 -> "${diff.toDays()} day${if (diff.toDays() > 1) "s" else ""} ago"
+                diff.toMinutes() < 1 -> "just now"
+                diff.toMinutes() < 60 -> "${diff.toMinutes()} m"
+                diff.toHours() < 24 -> "${diff.toHours()} h${if (diff.toHours() > 1) "s" else ""}"
+                diff.toDays() < 7 -> "${diff.toDays()} d${if (diff.toDays() > 1) "s" else ""}"
                 else -> dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
             }
-        } catch (e: Exception) {
-            // Fallback to relative time if parsing fails
+        } catch (_: Exception) {
             "Recently"
         }
 

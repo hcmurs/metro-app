@@ -174,5 +174,9 @@ and secure shopping experience</string>
     <string name="chatbot">Trợ lý ảo Metro</string>
     <string name="notifications">Thông báo</string>
     <string name="mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="try_again">Thử lại</string>
+    <string name="something_went_wrong">Ôi không! Đã có lỗi xảy ra</string>
+    <string name="all_clear">Tất cả đã xem hết 🎉!</string>
+    <string name="all_caught_up">Bạn đã xem hết rồi.</string>
 
 </resources>
