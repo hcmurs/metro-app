@@ -158,6 +158,9 @@ dependencies {
     // auth0
     implementation("com.auth0.android:auth0:2.9.2")
 
+    // https://mvnrepository.com/artifact/androidx.compose.ui/ui-text
+    implementation("androidx.compose.ui:ui-text:1.9.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

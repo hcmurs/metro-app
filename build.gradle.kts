@@ -24,6 +24,7 @@ subprojects {
             "ktlint_standard_filename" to "disabled", // cho phép tên file tự do hơn
             "ij_kotlin_imports_layout" to "*", // optimize imports
             "ij_kotlin_allow_trailing_comma" to "true",
+            "ktlint_standard_no-wildcard-imports" to "disabled", // cho phép wildcard imports
             "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
           )
         )

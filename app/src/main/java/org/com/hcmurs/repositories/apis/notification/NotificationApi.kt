@@ -11,6 +11,7 @@ import org.com.hcmurs.model.UserDeviceTokenRequest
 import org.com.hcmurs.model.UserDeviceTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -25,6 +26,11 @@ interface NotificationApi {
 
     @PATCH("/api/notifications/{id}/read")
     suspend fun markAsRead(
+        @Path("id") notificationId: Long,
+    ): Response<Void>
+
+    @DELETE("/api/notifications/{id}")
+    suspend fun deleteNotification(
         @Path("id") notificationId: Long,
     ): Response<Void>
 

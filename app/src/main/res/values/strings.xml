@@ -173,5 +173,8 @@ and secure shopping experience</string>
     <string name="chatbot">Metro AI Assistant</string>
     <string name="notifications">Notifications</string>
     <string name="mark_all_read">Mark all read</string>
-
+    <string name="try_again">Try again</string>
+    <string name="something_went_wrong">Oops! Something went wrong</string>
+    <string name="all_clear">All clear 🎉!</string>
+    <string name="all_caught_up">You\'re all caught up! We\'ll notify you when something new happens.</string>
 </resources>
