@@ -37,6 +37,7 @@ data class NotificationResponse(
     @SerializedName("isRead") val read: Boolean, // Backend uses "isRead" but serializes to "read"
     @SerializedName("iconName") val iconName: String?,
     @SerializedName("iconColorHex") val iconColorHex: String?,
+    @SerializedName("active") val active: Boolean,
     @SerializedName("userId") val userId: String?,
 )
 
