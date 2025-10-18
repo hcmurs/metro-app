@@ -297,11 +297,10 @@ fun OrderInfoScreen(
             selectedPaymentMethod
             Button(
                 onClick = {
-//                    val paymentMethodId = 2
-//                    viewModel.startCheckoutFlow(paymentMethodId)
-
-                    val paymentMethodId = 1
-                    viewModel.startPayOSCheckoutFlow(paymentMethodId)
+                     when (selectedPaymentMethod?.id) {
+                        "stripe" -> viewModel.startStripeCheckoutFlow(1) // Stripe
+                        "payos" -> viewModel.startPayOSCheckoutFlow(2) // PayOS
+                    }
                 },
                 enabled = !uiState.isProcessing,
                 modifier = Modifier

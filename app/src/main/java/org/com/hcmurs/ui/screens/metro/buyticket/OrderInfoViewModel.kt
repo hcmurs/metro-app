@@ -102,7 +102,7 @@ class OrderInfoViewModel @Inject constructor(
             }
         }
     }
-    fun startCheckoutFlow(paymentMethodId: Int) {
+    fun startStripeCheckoutFlow(paymentMethodId: Int) {
         val currentTicketType = uiState.value.ticketType
         if (currentTicketType == null) {
             _uiState.update { it.copy(processMessage = "Lỗi: Không có thông tin loại vé.") }
