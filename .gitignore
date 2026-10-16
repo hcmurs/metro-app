@@ -88,3 +88,4 @@ lint/tmp/
 apikey.properties
 
 app/google-services.json
+.frontdoor/

@@ -1,0 +1,50 @@
+/* Illustration tokens for the README figures; the rules behind them are in ../frontdoor.md.
+   Colours and the logo are HCMC Metro's own (blue #00599D, red #E83A27, measured on hurc.vn and in its logo file).
+   Shapes and type are an expressive layer on top of them: big flat circles that bleed off the edges, a heavy rounded
+   geometric sans, one route line. Contract with render.py: .item blocks inside .sheet, 1200 CSS px wide, zoom 2,
+   theming through html[data-theme="dark"], --cardline in both themes. */
+:root {
+  --blue: #00599D;      /* official site computed heading colour and logo modal colour */
+  --red: #E83A27;       /* official logo modal colour of the arc */
+  --white: #FFFFFF;     /* official site ground */
+  --black: #000000;     /* official site text */
+  --chip: #F5F5F6;     /* official site unselected chip ground */
+  --font: "Montserrat", "Segoe UI", system-ui, sans-serif;
+
+  --paper: var(--white); --ink: var(--black); --title: var(--blue);
+  --big: var(--blue); --small: var(--red);
+  --h1: var(--blue); --h2: var(--red); --h3: var(--blue);
+  --inv-bg: var(--blue); --inv-ink: var(--white);
+  --cardline: var(--chip);
+}
+html[data-theme="dark"] {
+  /* the site's footer treatment: solid blue ground, white tiles; red and white carry the shapes */
+  --paper: var(--blue); --ink: var(--white); --title: var(--white);
+  --big: var(--red); --small: var(--white);
+  --h1: var(--white); --h2: var(--white); --h3: var(--white);
+  --inv-bg: var(--white); --inv-ink: var(--blue);
+  --cardline: var(--blue);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #888; }
+.sheet { width: max-content; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.item { zoom: 2; position: relative; overflow: hidden; width: 1200px; font-family: var(--font); color: var(--ink); background: var(--paper); }
+.circle { position: absolute; border-radius: 50%; }
+.logo { position: absolute; display: flex; }
+html[data-theme="dark"] .logo { background: var(--white); border-radius: 8px; padding: 12px 16px; }
+.logo img { display: block; }
+
+/* roles: icon discs swap with the half they sit on */
+:root { --icon2-bg: var(--white); --icon2-fg: var(--blue); }
+html[data-theme="dark"] { --icon2-bg: var(--blue); --icon2-fg: var(--white); }
+
+/* poster tiles and chips, used by features.html and tech.html: tile a is blue (white in the dark theme), tile b is grey */
+.t { position: relative; flex: 1; height: 400px; border-radius: 32px; overflow: hidden; padding: 32px 36px; }
+.t.a { --bg: var(--blue); --m1: #fff; --m2: var(--red); --tt: #fff; --tx: #fff; --ca: var(--red); --cc: var(--blue); --cb: #fff; background: var(--blue); }
+.t.b { --bg: var(--chip); --m1: var(--blue); --m2: var(--red); --tt: var(--blue); --tx: var(--black); --ca: var(--blue); --cc: #fff; --cb: var(--blue); background: var(--chip); }
+html[data-theme="dark"] .t.a { --bg: #fff; --m1: var(--blue); --tt: var(--blue); --tx: var(--black); --ca: var(--red); --cc: #fff; --cb: var(--blue); background: #fff; }
+.acc { position: absolute; width: 250px; height: 250px; border-radius: 50%; right: -80px; top: -90px; background: var(--ca); }
+.t h3 { position: relative; margin: 12px 0 0; font: 900 46px/1 var(--font); letter-spacing: -0.04em; color: var(--tt); }
+.t p { position: relative; margin: 8px 0 0; font: 500 19px/1.35 var(--font); color: var(--tx); max-width: 470px; }
+.chips { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.c { display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border-radius: 999px; background: var(--cb); color: var(--cc); font: 700 16px/1 var(--font); white-space: nowrap; }

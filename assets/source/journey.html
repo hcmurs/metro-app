@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>from ticket to gate</title>
+<!-- Signature note:
+       concept: one route line threads four stops, choose, pay, show, scan; the last stop is the red you-are-here dot at the gate
+       shape language: circles that bleed off two corners, a 10px rounded route line with 56px ring nodes, flat, no outlines on cards because there are no cards
+       typeface: Montserrat 900 for the title and the stop names, 500 for the lines under them
+       palette logic: official blue #00599D for line and title, official red #E83A27 for the last stop and one corner, white ground; night: blue ground, white line, white nodes, red and white corner circles
+       presentation: stop names alternate above and below the line so the eye follows the route instead of reading a row of cards
+       not: four equal boxes, a table, a screenshot
+     Render: uvx --from playwright --with pillow python -I <skill-dir>/scripts/render.py assets/source/journey.html --root assets --out assets -->
+<script src="shared.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800;900&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.fig { height: 540px; }
+.fig .tr { width: 250px; height: 250px; left: 1010px; top: -120px; background: var(--big); }
+.fig .bl { width: 320px; height: 320px; left: -130px; top: 410px; background: var(--small); }
+.title { position: absolute; left: 56px; top: 44px; font: 900 56px/1 var(--font); letter-spacing: -0.04em; color: var(--title); }
+svg.line { position: absolute; left: 0; top: 0; width: 1200px; height: 540px; }
+.stop { position: absolute; width: 245px; }
+.stop h3 { margin: 0; font: 900 34px/1 var(--font); letter-spacing: -0.03em; color: var(--ink); }
+.stop p { margin: 8px 0 0; font: 500 19px/1.35 var(--font); color: var(--ink); }
+.stop.up { transform: translateY(-100%); }
+</style>
+</head>
+<body>
+<div class="sheet">
+<div class="item fig" id="journey">
+  <div class="circle tr" data-bleed></div>
+  <div class="circle bl" data-bleed></div>
+  <div class="title">from ticket to gate.</div>
+  <svg class="line" viewBox="0 0 1200 540">
+    <path d="M30 350 C90 350 100 330 150 330 S340 290 420 290 S610 330 690 330 S880 290 960 290 S1100 265 1180 255" fill="none" stroke="var(--title)" stroke-width="10" stroke-linecap="round"/>
+    <g font-family="Montserrat, sans-serif" font-weight="900" font-size="26" text-anchor="middle">
+      <circle cx="150" cy="330" r="30" fill="#fff" stroke="var(--title)" stroke-width="9"/><text x="150" y="340" fill="#00599D">1</text>
+      <circle cx="420" cy="290" r="30" fill="#fff" stroke="var(--title)" stroke-width="9"/><text x="420" y="300" fill="#00599D">2</text>
+      <circle cx="690" cy="330" r="30" fill="#fff" stroke="var(--title)" stroke-width="9"/><text x="690" y="340" fill="#00599D">3</text>
+      <circle cx="960" cy="290" r="34" fill="#E83A27"/><circle cx="960" cy="290" r="34" fill="none" stroke="#fff" stroke-width="0"/><text x="960" y="300" fill="#fff">4</text>
+    </g>
+  </svg>
+  <div class="stop up" style="left:120px;top:264px"><h3>choose.</h3><p>Pick a ticket type, or two stations for a single trip.</p></div>
+  <div class="stop" style="left:390px;top:342px"><h3>pay.</h3><p>Card with Stripe, or PayOS for day and student tickets.</p></div>
+  <div class="stop up" style="left:660px;top:264px"><h3>show.</h3><p>My Ticket opens a QR that refreshes every 60 seconds.</p></div>
+  <div class="stop" style="left:930px;top:342px"><h3>scan.</h3><p>Station staff scan it on entry and on exit.</p></div>
+</div>
+</div>
+</body>
+</html>

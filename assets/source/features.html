@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>feature sheets</title>
+<!-- Signature note:
+       concept: every feature of the app gets its own poster tile, a flat motif, a heavy lowercase name and one honest line; two tiles per sheet
+       shape language: 32px tiles filled flat blue or grey, a big circle bleeding off one corner, bold 8px-stroke motifs with a red accent, pill chips for real labels
+       typeface: Montserrat 900 for the names, 500 for the lines, 700 for chips; loaded from Google Fonts
+       palette logic: official blue #00599D and red #E83A27 with white and the site's chip grey #F5F5F6; the left tile is blue with white text, the right tile grey with blue names; night: both tiles light on the blue ground
+       presentation: left and right tiles keep the same colour rule on every sheet, so the set reads as one family
+       not: cards with borders, a screenshot, an invented headline, a number the app does not show
+     Render: uvx --from playwright --with pillow python -I <skill-dir>/scripts/render.py assets/source/features.html --root assets --out assets -->
+<script src="shared.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.feat { height: 448px; display: flex; gap: 32px; padding: 24px; }
+.mo { position: relative; width: 190px; height: 163px; display: block; }
+</style>
+</head>
+<body>
+<div class="sheet">
+<div class="item feat" id="features-tickets"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><g transform="rotate(-14 70 64)"><rect x="12" y="16" width="96" height="58" rx="12" fill="var(--m2)"/></g>
+<g transform="rotate(-6 70 64)"><rect x="17" y="26" width="96" height="58" rx="12" fill="var(--m1)" opacity=".55"/></g>
+<rect x="22" y="34" width="96" height="58" rx="12" fill="var(--bg)" stroke="var(--m1)" stroke-width="7"/>
+<line x1="84" y1="44" x2="84" y2="82" stroke="var(--m1)" stroke-width="5" stroke-dasharray="3 8" stroke-linecap="round"/>
+<circle cx="52" cy="63" r="11" fill="var(--m2)"/></svg><h3>buy tickets.</h3><p>Single tickets pay with Stripe; day and student tickets also take PayOS.</p><div class="chips"><span class="c">Single</span><span class="c">Day</span><span class="c">Student</span></div></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><line x1="20" y1="84" x2="120" y2="84" stroke="var(--m1)" stroke-width="9" stroke-linecap="round"/>
+<circle cx="24" cy="84" r="13" fill="var(--bg)" stroke="var(--m1)" stroke-width="8"/>
+<circle cx="116" cy="84" r="13" fill="var(--bg)" stroke="var(--m1)" stroke-width="8"/>
+<circle cx="70" cy="40" r="26" fill="var(--m2)"/><circle cx="70" cy="40" r="11" fill="none" stroke="#fff" stroke-width="6"/></svg><h3>check the fare.</h3><p>Pick two stations and the fare comes from the backend.</p></div></div>
+<div class="item feat" id="features-gate"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><g fill="var(--m1)"><rect x="8" y="22" width="30" height="30" rx="4"/><rect x="48" y="22" width="30" height="30" rx="4"/><rect x="8" y="62" width="30" height="30" rx="4"/><rect x="48" y="62" width="14" height="14" rx="2"/><rect x="66" y="78" width="14" height="14" rx="2"/></g>
+<g fill="var(--bg)"><rect x="16" y="30" width="14" height="14" rx="2"/><rect x="56" y="30" width="14" height="14" rx="2"/><rect x="16" y="70" width="14" height="14" rx="2"/></g>
+<circle cx="112" cy="58" r="22" fill="none" stroke="var(--m1)" stroke-width="8" opacity=".25"/>
+<circle cx="112" cy="58" r="22" fill="none" stroke="var(--m2)" stroke-width="8" stroke-linecap="round" stroke-dasharray="104 140" transform="rotate(-90 112 58)"/></svg><h3>show your QR.</h3><p>My Ticket sorts tickets by status, and the QR refreshes every 60 seconds.</p><div class="chips"><span class="c">Not used</span><span class="c">Used</span><span class="c">Expired</span></div></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><path d="M12 40V16H36M104 16H128V40M128 80V104H104M36 104H12V80" fill="none" stroke="var(--m1)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="28" y1="60" x2="112" y2="60" stroke="var(--m2)" stroke-width="9" stroke-linecap="round"/></svg><h3>scan at the gate.</h3><p>Staff pick a route and a station, then scan ticket QR codes.</p><div class="chips"><span class="c">ENTRY</span><span class="c">EXIT</span></div></div></div>
+<div class="item feat" id="features-news"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><rect x="14" y="14" width="112" height="60" rx="14" fill="var(--m1)"/><circle cx="40" cy="38" r="12" fill="var(--m2)"/>
+<rect x="14" y="86" width="76" height="11" rx="5.5" fill="var(--m1)"/><rect x="14" y="106" width="112" height="11" rx="5.5" fill="var(--m1)" opacity=".45"/></svg><h3>read the news.</h3><p>Metro news from the backend, page by page.</p></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><path d="M70 16C50 16 38 32 38 52V76L26 92H114L102 76V52C102 32 90 16 70 16Z" fill="var(--m1)"/>
+<circle cx="70" cy="104" r="9" fill="var(--m1)"/><circle cx="102" cy="24" r="15" fill="var(--m2)"/></svg><h3>get notified.</h3><p>Push notifications, plus an in-app list you can read and delete.</p></div></div>
+<div class="item feat" id="features-voice"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><path d="M18 20H122A12 12 0 0 1 134 32V80A12 12 0 0 1 122 92H62L36 112V92H18A12 12 0 0 1 6 80V32A12 12 0 0 1 18 20Z" fill="var(--m1)"/>
+<g fill="var(--bg)"><circle cx="46" cy="56" r="8"/><circle cx="70" cy="56" r="8"/><circle cx="94" cy="56" r="8"/></g></svg><h3>tell us.</h3><p>Send a suggestion, report an app issue, or anything else.</p><div class="chips"><span class="c">Góp ý</span><span class="c">Sự cố ứng dụng</span><span class="c">Khác</span></div></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><rect x="8" y="14" width="88" height="46" rx="20" fill="var(--m1)"/><rect x="44" y="66" width="88" height="46" rx="20" fill="var(--m2)"/>
+<g fill="var(--bg)"><circle cx="34" cy="37" r="6"/><circle cx="52" cy="37" r="6"/><circle cx="70" cy="37" r="6"/></g>
+<g fill="#fff"><circle cx="72" cy="89" r="6"/><circle cx="90" cy="89" r="6"/><circle cx="108" cy="89" r="6"/></g></svg><h3>ask the assistant.</h3><p>Chat with the Metro AI Assistant once you are signed in.</p></div></div>
+<div class="item feat" id="features-around"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><path d="M70 10C50 10 36 25 36 43C36 66 70 98 70 98C70 98 104 66 104 43C104 25 90 10 70 10Z" fill="var(--m1)"/><circle cx="70" cy="43" r="13" fill="var(--bg)"/>
+<path d="M8 108C38 92 100 124 132 102" fill="none" stroke="var(--m2)" stroke-width="9" stroke-linecap="round"/></svg><h3>see the line.</h3><p>Browse the stations and the line on a map.</p></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><g fill="none" stroke-width="9"><circle cx="28" cy="60" r="22" stroke="var(--m1)"/><circle cx="58" cy="60" r="22" stroke="var(--m2)"/><circle cx="88" cy="60" r="22" stroke="var(--m1)"/><circle cx="122" cy="60" r="12" stroke="var(--m2)"/></g></svg><h3>around the metro.</h3><p>Links to partner services and photos of the construction.</p><div class="chips"><span class="c">Go!Bus</span><span class="c">TTGT</span><span class="c">Công dân số</span><span class="c">TNGo</span></div></div></div>
+<div class="item feat" id="features-account"><div class="t a"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><circle cx="50" cy="52" r="38" fill="var(--m1)"/><circle cx="98" cy="72" r="34" fill="var(--m2)"/>
+<g font-family="Montserrat,sans-serif" font-weight="900" font-size="26" text-anchor="middle"><text x="50" y="62" fill="var(--bg)">EN</text><text x="98" y="82" fill="#fff">VI</text></g></svg><h3>two languages.</h3><p>English and Vietnamese. English shows prices in US dollars at a live rate.</p><div class="chips"><span class="c">English</span><span class="c">Tiếng Việt</span></div></div><div class="t b"><div class="acc" data-bleed></div><svg class="mo" viewBox="0 0 140 120"><circle cx="70" cy="38" r="22" fill="var(--m1)"/><path d="M26 108A44 44 0 0 1 114 108Z" fill="var(--m1)"/>
+<circle cx="108" cy="90" r="18" fill="var(--m2)"/><path d="M99 90L106 97L118 83" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>sign in with Google.</h3><p>Sign in with your Google account. Staff accounts open the scanner home.</p><div class="chips"><span class="c">Passenger</span><span class="c">Station staff</span></div></div></div>
+</div>
+</body>
+</html>

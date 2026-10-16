@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>hero: buy, scan, go</title>
+<!-- Signature note:
+       concept: a pitch told at poster scale, one oversized ticket on big flat circles and three beats in huge lowercase type, buy, scan, go
+       shape language: circles that bleed off the edges, a ticket with a tear line and two notches, a 6px route line with ring nodes; flat, no outlines
+       typeface: Montserrat 900 for the beats, 800 and 500 for the rest, loaded from Google Fonts; it is not HURC's face, it is chosen for energy, the identity's own wordmark stays in the official logo file
+       palette logic: official blue #00599D and red #E83A27 do all the work, white ground, black text; the night variant swaps the roles: blue ground, red big circle, white small circle, white tile for the logo
+       presentation: logo top left, the three beats stacked left, the ticket tilted right across the big circle
+       not: a phone mockup, a photograph, a formal panel, anything lit or glossy
+     Render: uvx --from playwright --with pillow python -I <skill-dir>/scripts/render.py assets/source/hero.html --root assets --out assets -->
+<script src="shared.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800;900&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero { height: 540px; }
+.hero .big { width: 660px; height: 660px; left: 690px; top: 190px; background: var(--big); }
+.hero .small { width: 330px; height: 330px; left: 1000px; top: -150px; background: var(--small); }
+.hero .logo { left: 56px; top: 40px; }
+.beats { position: absolute; left: 52px; top: 142px; font: 900 112px/0.94 var(--font); letter-spacing: -0.045em; }
+.beats span { display: block; }
+.beats .b1 { color: var(--h1); } .beats .b2 { color: var(--h2); } .beats .b3 { color: var(--h3); }
+.ticketwrap { position: absolute; left: 570px; top: 124px; width: 500px; height: 310px; transform: rotate(-6deg); filter: drop-shadow(0 22px 28px rgba(0,0,0,.28)); }
+.ticket { position: absolute; inset: 0; background: var(--white); border-radius: 26px; display: flex;
+  -webkit-mask: radial-gradient(circle 17px at 270px 0, #0000 16px, #000 17px), radial-gradient(circle 17px at 270px 100%, #0000 16px, #000 17px);
+  -webkit-mask-composite: source-in;
+  mask: radial-gradient(circle 17px at 270px 0, #0000 16px, #000 17px), radial-gradient(circle 17px at 270px 100%, #0000 16px, #000 17px);
+  mask-composite: intersect; }
+.stub { width: 270px; display: flex; align-items: center; justify-content: center; border-right: 3px dashed rgba(0,89,157,.4); margin: 30px 0; }
+.stub svg { width: 190px; height: 190px; display: block; }
+.main { flex: 1; padding: 34px 26px 30px 28px; display: flex; flex-direction: column; justify-content: space-between; color: var(--black); }
+.main svg.mini { width: 150px; height: 40px; display: block; }
+.main .t { font: 800 30px/1.05 var(--font); color: var(--blue); letter-spacing: -0.02em; }
+.main .s { font: 500 17px/1.3 var(--font); margin-top: 8px; }
+.route { position: absolute; left: 56px; top: 452px; width: 420px; height: 36px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+<div class="item hero" id="hero">
+  <div class="circle big" data-bleed></div>
+  <div class="circle small" data-bleed></div>
+  <div class="logo"><img src="logo.png" width="224" height="59" alt=""></div>
+  <div class="beats"><span class="b1">buy.</span><span class="b2">scan.</span><span class="b3">go.</span></div>
+  <div class="ticketwrap">
+    <div class="ticket">
+      <div class="stub"><svg id="qr" viewBox="0 0 25 25" shape-rendering="crispEdges"></svg></div>
+      <div class="main">
+        <svg class="mini" viewBox="0 0 150 40"><line x1="14" y1="20" x2="136" y2="20" stroke="#00599D" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="20" r="11" fill="#fff" stroke="#00599D" stroke-width="5"/><circle cx="136" cy="20" r="13" fill="#E83A27"/><circle cx="136" cy="20" r="5" fill="#fff"/></svg>
+        <div><div class="t">My ticket</div><div class="s">QR refreshes every 60 seconds</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+// A decorative QR-like pattern (not a real code): three finder squares and seeded random cells.
+(function () {
+  var n = 25, s = 7, svg = document.getElementById("qr"), out = "";
+  function rnd() { s = (s * 16807) % 2147483647; return s / 2147483647; }
+  function finder(x, y) {
+    out += '<rect x="' + x + '" y="' + y + '" width="7" height="7" fill="#00599D"/>' +
+           '<rect x="' + (x + 1) + '" y="' + (y + 1) + '" width="5" height="5" fill="#fff"/>' +
+           '<rect x="' + (x + 2) + '" y="' + (y + 2) + '" width="3" height="3" fill="#00599D"/>';
+  }
+  var skip = function (x, y) { return (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9); };
+  for (var y = 0; y < n; y++) for (var x = 0; x < n; x++)
+    if (!skip(x, y) && rnd() > 0.52) out += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="#00599D"/>';
+  finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+  svg.innerHTML = out;
+})();
+</script>
+</body>
+</html>
